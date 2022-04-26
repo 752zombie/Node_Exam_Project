@@ -1,8 +1,8 @@
 <script>
-    import { Router, Link, Route } from "svelte-navigator";
-    import {loginStore} from "../stores.js";
+    import { Link } from "svelte-navigator";
+    import { loginStore } from "../stores.js";
     import signOut from "../scripts/signout.js"
-    import {navigate} from "svelte-navigator";
+    import { navigate } from "svelte-navigator";
 
     let isLoggedIn = false;
     loginStore.subscribe((value) => isLoggedIn = value);
