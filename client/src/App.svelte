@@ -1,12 +1,18 @@
 <script>
-	export let name;
+	import { Router, Link, Route } from "svelte-navigator";
+	import Navbar from './components/Navbar.svelte'
+	import Home from "./pages/Home.svelte";
+	import Home2 from "./pages/Home2.svelte";
 </script>
 
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
 
+<Router>
+	<Navbar/>
+	<main>	
+			<Route path="/" component={Home} />
+			<Route path="/home2" component={Home2} />
+	</main>
+</Router>
 <style>
 	main {
 		text-align: center;
