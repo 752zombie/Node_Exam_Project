@@ -4,7 +4,15 @@ import loginRouter from "./routers/loginRouter.js";
 import session from "express-session";
 import posts from './routers/posts.js'
 
+import { createServer } from "http";
+import { Server } from "socket.io";
+
+
+
 const app = express();
+
+const httpServer = createServer(app);
+const io = new Server(httpServer);
 
 app.use(express.json());
 
@@ -24,6 +32,13 @@ app.get("*", (req, res) => {
     res.sendFile(path.resolve('../client/public/index.html'));
 })
 
-app.listen(8080, () => {
+io.on('connection', (socket) => {
+    socket.on('chat message', msg => {
+      io.emit('chat message', msg);
+    });
+  });
+  
+  
+httpServer.listen(8080, () => {
     console.log("Server is running on port 8080");
-})
+});
