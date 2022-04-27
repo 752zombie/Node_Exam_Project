@@ -1,9 +1,22 @@
 import express from "express";
 import path from "path";
+import loginRouter from "./routers/loginRouter.js";
+import session from "express-session";
 
 const app = express();
 
 app.use(express.json());
+
+app.use(session({
+    secret: "test",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}));
+
+app.use(loginRouter);
+
+
 
 
 app.use(express.static(path.resolve('../client/public')));

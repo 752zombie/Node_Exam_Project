@@ -2,7 +2,8 @@
 	import { Router, Link, Route } from "svelte-navigator";
 	import Navbar from './components/Navbar.svelte'
 	import Home from "./pages/Home.svelte";
-	import Home2 from "./pages/Home2.svelte";
+	import Login from "./pages/Login.svelte";
+	import Posts from "./pages/Posts.svelte";
 </script>
 
 
@@ -10,7 +11,8 @@
 	<Navbar/>
 	<main>	
 			<Route path="/" component={Home} />
-			<Route path="/home2" component={Home2} />
+			<Route path="/posts" component={Posts} />
+			<Route path="/login" component={Login} />
 	</main>
 </Router>
 <style>
@@ -19,13 +21,6 @@
 		padding: 1em;
 		max-width: 240px;
 		margin: 0 auto;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
 	}
 
 	@media (min-width: 640px) {
