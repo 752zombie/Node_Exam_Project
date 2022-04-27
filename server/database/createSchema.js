@@ -9,4 +9,15 @@ await db.exec(`CREATE TABLE IF NOT EXISTS users (
     );`);
 
 
+await db.exec(`CREATE TABLE IF NOT EXISTS posts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    title VARCHAR(100) NOT NULL,
+    text NOT NULL,
+    date NOT NULL, 
+    user NOT NULL,
+    FOREIGN KEY(user) REFERENCES users(id) 
+    );`);
+
+
+
 await db.close();

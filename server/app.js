@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import loginRouter from "./routers/loginRouter.js";
 import session from "express-session";
+import posts from './routers/posts.js'
 
 const app = express();
 
@@ -15,9 +16,7 @@ app.use(session({
 }));
 
 app.use(loginRouter);
-
-
-
+app.use(posts);
 
 app.use(express.static(path.resolve('../client/public')));
 
