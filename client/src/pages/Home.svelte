@@ -1,25 +1,5 @@
-
-
 <script>
-    import { onMount } from "svelte";
-
-    let socketReady = false;
-    let mounted = false;
     let socket;
-
-    onMount(() => {
-        mounted = true;
-        if (socketReady) {
-            loadSocket();
-        }
-    })
-
-    function socketLoaded() {
-        socketReady = true;
-        if (mounted) {
-            loadSocket();
-        }
-    }
 
     function loadSocket() {
         socket = io();
@@ -28,7 +8,7 @@
 </script>
 
 <svelte:head>
-    <script src="/socket.io/socket.io.js" on:load={socketLoaded}></script>
+    <script async="false" src="/socket.io/socket.io.js" on:load={loadSocket}></script>
 </svelte:head>
 
 <div>
