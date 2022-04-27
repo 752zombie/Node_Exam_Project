@@ -2,10 +2,13 @@
     import { Link } from 'svelte-navigator';
     import { loginStore } from "../stores.js";
     import { onMount } from "svelte";
-        
+    import { useNavigate } from "svelte-navigator"
+
+
+    const navigate = useNavigate();    
     let posts = [];
     let pageToFetch = 1;
-    let shortenedText;
+    
 
     onMount(fetchPosts);
 
@@ -21,9 +24,7 @@
             }
         } catch(err) {
             console.log(err.message)
-     }
-        
-        
+          }  
     }
 
     function nextPage() {
@@ -39,15 +40,27 @@
         }
     }
 
+    function setPostInStore(id) {
+        localStorage.setItem("postId", id)
+        navigate("/post")
+    }
 
 </script>
+
+<svelte:head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">">
+</svelte:head>
 
 <div class="columns">
     <div class="column"></div>
    
     <div class="column">
         
-        <div> <p class="title is-3">Browse hot posts here</p><img src="images/fire_emoji.png" alt="Fire emoji"></div>
+        <div>
+          <p class="title is-3">Browse hot posts here</p>
+          <hr>
+          <img src="images/fire_emoji.png" alt="Fire emoji">
+        </div>
         
 
         {#each posts as post}
@@ -70,11 +83,11 @@
               </div>
             </div>
             <footer class="card-footer">
-              <a href="/view-post" class="card-footer-item">View post</a>
+              <button class="button is-link is-rounded" style="align-item: center;" on:click={() => setPostInStore(post.id)}>View post</button>
             </footer>
           </div>
           <br>
-          <br>
+          
         {/each}
 
         {#if pageToFetch > 1}

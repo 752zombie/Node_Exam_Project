@@ -9,25 +9,31 @@ router.post("/post", async (req, res) => {
         req.session.isLoggedIn = true;
         const user = req.session.user;
 
-        console.log(await db.get("SELECT * FROM posts"))
-
-
         const preparedStatement = await db.prepare("INSERT INTO posts (title, text, date, user) VALUES (?, ?, ?, ?)");
         await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.date, 4 : user.id});
         await preparedStatement.run();
-        
-        // add new user to session as currently logged in user
-        
+                
         res.send({result : "success"});
-    }
-
-    catch(err) {
+    
+    } catch(err) {
         console.log(err.message);
         res.send({ result : "Could not send post to server"});
     }
-
-
 })
+
+
+router.get("/post/:id", async (req, res) => {
+    
+    const preparedStatement = await db.prepare("SELECT * FROM posts WHERE id = ?");
+    await preparedStatement.bind({1 : req.params.id});
+    const post = await preparedStatement.all();
+
+    console.log(post[0])
+    console.log("title " + post[0].title)
+    
+    res.send({result : "success", post : post[0] });
+})
+
 
 router.get("/posts/:page", async (req, res) => {
 
