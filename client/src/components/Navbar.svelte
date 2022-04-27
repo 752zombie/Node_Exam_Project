@@ -14,8 +14,11 @@
     
     {#if !isLoggedIn}
     <Link to="login" class="header-link align-right">Sign in</Link>
+	
     {:else}
     <span class="header-link align-right" on:click={() => signOut(navigate)}>Sign out</span>
+	<div><Link to="user" class="header-link align-right">User</Link></div>
+	<div><Link to="user"><img src="images/user_icon.png" style="width: 40px; margin-left: -50%" alt="user icon"></Link></div>
     {/if}
 </nav>
 

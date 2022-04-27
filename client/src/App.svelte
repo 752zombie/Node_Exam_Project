@@ -4,6 +4,7 @@
 	import Home from "./pages/Home.svelte";
 	import Login from "./pages/Login.svelte";
 	import Posts from "./pages/Posts.svelte";
+	import User from './pages/User.svelte'
 </script>
 
 
@@ -13,6 +14,7 @@
 			<Route path="/" component={Home} />
 			<Route path="/posts" component={Posts} />
 			<Route path="/login" component={Login} />
+			<Route path="/user" component={User} />
 	</main>
 </Router>
 <style>
