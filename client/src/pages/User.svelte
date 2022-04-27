@@ -1,4 +1,9 @@
 <script>
+    import { userStore } from "../stores.js";
+
+    let user = {};
+    userStore.subscribe((value) => user = value);
+
     async function fetchUser() {
         const url = "http://localhost:8080/user/";
         const response = await fetch(url);
@@ -9,4 +14,5 @@
     }
 </script>
 
+<h1>Here is the username {user.username}</h1>
 <div>USER</div>

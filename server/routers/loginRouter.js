@@ -24,9 +24,6 @@ router.post("/sign-up", async (req, res) => {
         await preparedStatement.bind({1 : formData.email, 2 : hash, 3 : formData.username});
         await preparedStatement.run();
         
-        const user = {
-            email : formData.email
-        }
         // add new user to session as currently logged in user
         req.session.isLoggedIn = true;
         req.session.user = user;
@@ -63,12 +60,10 @@ router.post("/sign-in", async (req, res) => {
             }
     
             else if (same) {
-                const user = {
-                    email : formData.email
-                }
                 req.session.isLoggedIn = true;
                 req.session.user = user;
-                res.send({result : "success", user : {firstName : user.first_name, lastName : user.last_name, email : user.email}});
+                console.log(user);
+                res.send({result : "success", user : {username : user.username, email : user.email}});
             }
     
             else {

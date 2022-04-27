@@ -1,6 +1,6 @@
 <script>
     import { useNavigate, useLocation } from "svelte-navigator";
-    import { loginStore } from "../stores.js";
+    import { loginStore, userStore } from "../stores.js";
     const navigate = useNavigate();
     const location = useLocation();
     
@@ -23,6 +23,8 @@
         
         if (data.result === "success") {
             loginStore.set(true);
+            userStore.set(data.user);
+        
             sessionStorage.setItem("isLoggedIn", "true");
             const from = ($location.state && $location.state.from) || "/";
             navigate(from, { replace: true });
@@ -46,6 +48,8 @@
         
         if (data.result === "success") {
             loginStore.set(true);
+            console.log(data);
+            userStore.set(data.user);
             sessionStorage.setItem("isLoggedIn", "true");
             const from = ($location.state && $location.state.from) || "/";
             navigate(from, { replace: true });
