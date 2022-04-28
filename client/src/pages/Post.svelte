@@ -2,6 +2,7 @@
     import { onMount } from 'svelte'
     import { getDate } from '../components/getDate.js'
     import { postStore } from '../stores.js'
+    import { userStore } from '../stores.js'
 
     let photo = ""
     let post = []
@@ -10,6 +11,8 @@
     let currentError = ""
     let postId = ""
     postStore.subscribe((value) => postId = value)
+    let userId = ""
+    userStore.subscribe((value) => userId = value)
     
     //onMount?
     fetchPost(postId)
@@ -56,7 +59,7 @@
             headers : {
                 "Content-Type": "application/json"
             },
-            body : JSON.stringify({comment : comment, date : date, postId : postId})
+            body : JSON.stringify({comment : comment, date : date, postId : postId, userId : userId})
         }
         const response = await fetch("http://localhost:8080/comment", request);
         const data = await response.json();
@@ -166,7 +169,7 @@
         </div>
 
     </div>
-    
+
 
     <div class="column"></div>
 

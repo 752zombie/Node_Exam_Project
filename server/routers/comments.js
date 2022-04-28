@@ -9,8 +9,8 @@ router.post("/comment", async (req, res) => {
     try {
         req.session.isLoggedIn = true;
         
-        const preparedStatement = await db.prepare("INSERT INTO comments (comment, date, post_id) VALUES (?, ?, ?)");
-        await preparedStatement.bind({1 : req.body.comment, 2 : req.body.date, 3 : req.body.postId});
+        const preparedStatement = await db.prepare("INSERT INTO comments (comment, date, post_id, user_id) VALUES (?, ?, ?, ?)");
+        await preparedStatement.bind({1 : req.body.comment, 2 : req.body.date, 3 : req.body.postId, 4 : req.body.userId});
         await preparedStatement.run();
                 
         res.send({result : "success"});

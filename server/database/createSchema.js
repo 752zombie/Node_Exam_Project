@@ -25,7 +25,9 @@ await db.exec(`CREATE TABLE IF NOT EXISTS comments (
     comment NOT NULL,
     date NOT NULL, 
     post_id INTEGER NOT NULL,
-    FOREIGN KEY(post_id) REFERENCES posts(id) 
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY(post_id) REFERENCES posts(id)
+    FOREIGN KEY(user_id) REFERENCES users(id)  
     );`);
     
 
