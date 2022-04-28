@@ -32,8 +32,6 @@ router.get("/comments/:id", async (req, res) => {
     await preparedStatement.bind({1 : req.params.id});
     const comments = await preparedStatement.all();
     
-    console.log(comments)
-
     res.send({result : "success", comments : comments});
 })
 
