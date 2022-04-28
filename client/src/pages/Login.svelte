@@ -48,7 +48,6 @@
         
         if (data.result === "success") {
             loginStore.set(true);
-            console.log(data);
             userStore.set(data.user);
             sessionStorage.setItem("isLoggedIn", "true");
             const from = ($location.state && $location.state.from) || "/";

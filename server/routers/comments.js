@@ -22,9 +22,6 @@ router.post("/comment", async (req, res) => {
 })
 
 router.get("/comments/:id", async (req, res) => {
-    
-    console.log("GET COMMENTS")
-    console.log("ID "   + req.params.id)
 
     const preparedStatement = await db.prepare("SELECT comment, comments.date, username " +
                                                "FROM comments " + 

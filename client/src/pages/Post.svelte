@@ -3,6 +3,7 @@
     import { getDate } from '../components/getDate.js'
     import { postStore } from '../stores.js'
 
+    let photo = ""
     let post = []
     let comments = []
     let comment = ""
@@ -21,6 +22,7 @@
             
             if (data.result === "success") {
                 post = data.post;
+                photo = post.photo
             }
 
         } catch(err) {
@@ -67,7 +69,8 @@
             currentError = data.result;
         }
     }
-    
+
+  
 </script>
 
 
@@ -77,8 +80,11 @@
 
 <div> <p class="title is-3">{post.title} </p></div>
 
-<div class="columns">
+<br>
 
+<div><img src={photo} alt=""> </div>
+    
+<div class="columns">
 
     <div class="column"></div>
 
@@ -160,9 +166,12 @@
         </div>
 
     </div>
+    
 
     <div class="column"></div>
 
 </div>
+
+
 
  

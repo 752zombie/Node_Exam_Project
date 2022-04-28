@@ -62,7 +62,6 @@ router.post("/sign-in", async (req, res) => {
             else if (same) {
                 req.session.isLoggedIn = true;
                 req.session.user = user;
-                console.log(user);
                 res.send({result : "success", user : {username : user.username, email : user.email}});
             }
     

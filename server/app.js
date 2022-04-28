@@ -1,4 +1,5 @@
 import express from "express";
+import bodyParser from 'body-parser'
 import path from "path";
 import loginRouter from "./routers/loginRouter.js";
 import session from "express-session";
@@ -15,6 +16,8 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 app.use(express.json());
 
 app.use(session({
