@@ -21,12 +21,14 @@ app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 app.use(express.json());
 
-app.use(session({
-    secret: "test",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
-}));
+const sessionMiddleware = session({
+  secret: "test",
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+})
+
+app.use(sessionMiddleware);
 
 app.use(loginRouter);
 app.use(posts);
@@ -39,8 +41,37 @@ app.get("*", (req, res) => {
     res.sendFile(path.resolve('../client/public/index.html'));
 })
 
+// convert a connect middleware to a Socket.IO middleware
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+
+io.use(wrap(sessionMiddleware));
+
+io.use((socket, next) => {
+  console.log("my middleware");
+})
+
+io.use((socket, next) => {
+  const session = socket.request.session;
+
+  if (!session || !session.isLoggedIn) {
+    return;
+  }
+  
+  next();
+})
+
 io.on('connection', (socket) => {
-    socket.on('chat message', msg => {
+    socket.on('chat message', (user, msg) => {
+    
+      //TODO: check if existing conversation already exists (from db)
+
+      //TODO: if exists -> load existing conversation and create a socket room
+
+      //TODO: else -> create new conversation, save to db and create new socket room
+
+      //TODO: once connection established -> use socket room to send and receive messages and save them in db
+
+      console.log(user);
       console.log(msg);
       io.emit('chat message', msg);
     });
