@@ -53,6 +53,7 @@ router.post("/sign-in", async (req, res) => {
         const user = await preparedStatement.get();
         await preparedStatement.finalize();
     
+    
         bcrypt.compare(formData.password, user.password, (err, same) => {
             if (err) {
                 res.send({result : "server error"});
@@ -61,7 +62,7 @@ router.post("/sign-in", async (req, res) => {
             else if (same) {
                 req.session.isLoggedIn = true;
                 req.session.user = user;
-                res.send({result : "success", user : {userId : user.id, username : user.username, email : user.email}});
+                res.send({result : "success", user : {userId : user.user, username : user.username, email : user.email}});
             }
     
             else {
