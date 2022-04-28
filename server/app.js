@@ -5,6 +5,7 @@ import loginRouter from "./routers/loginRouter.js";
 import session from "express-session";
 import posts from './routers/posts.js'
 import comments from './routers/comments.js'
+import likes from './routers/likes.js'
 
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -30,6 +31,7 @@ app.use(session({
 app.use(loginRouter);
 app.use(posts);
 app.use(comments);
+app.use(likes);
 
 app.use(express.static(path.resolve('../client/public')));
 

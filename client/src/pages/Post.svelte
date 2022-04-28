@@ -101,7 +101,9 @@
             </p>
             <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
-                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                <i class="fas fa-angle-down" aria-hidden="true">
+                  <button style="margin-right: 20px;" class="button is-info">Like</button>
+                </i>
                 </span>
             </button>
             </header>
@@ -129,7 +131,9 @@
 
         <div class="comment-section">
             {#each comments as comment}
-           
+            
+            <hr>
+
             <article class="media">
                 <figure class="media-left">
                   <p class="image is-64x64">
@@ -163,7 +167,6 @@
                 </div>
               </article>
 
-              <br>
               <hr>
             {/each}
         </div>

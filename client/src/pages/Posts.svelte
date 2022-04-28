@@ -1,50 +1,66 @@
 <script>
-    import { Link } from 'svelte-navigator';
-    import { loginStore } from "../stores.js";
-    import { onMount } from "svelte";
-    import { useNavigate } from "svelte-navigator"
-    import { postStore } from "../stores.js";
+import { Link } from 'svelte-navigator';
+import { loginStore } from "../stores.js";
+import { onMount } from "svelte";
+import { useNavigate } from "svelte-navigator"
+import { postStore } from "../stores.js";
 
 
-    const navigate = useNavigate();    
-    let posts = [];
-    let pageToFetch = 1;
-    
+const navigate = useNavigate();    
+let posts = [];
+let pageToFetch = 1;
 
-    onMount(fetchPosts);
 
-    async function fetchPosts() {
+onMount(fetchPosts);
 
-        try { 
-            const url = "http://localhost:8080/posts/" + pageToFetch;
-            const response = await fetch(url);
-            const data = await response.json();
+async function fetchPosts() {
 
-            if (data.result === "success") {
-                posts = data.posts;
-            }
-        } catch(err) {
-            console.log(err.message)
-          }  
-    }
+    try { 
+        const url = "http://localhost:8080/posts/" + pageToFetch;
+        const response = await fetch(url);
+        const data = await response.json();
 
-    function nextPage() {
-        if (posts.length !== 0) {
-            pageToFetch++;
-            fetchPosts();
+        if (data.result === "success") {
+            posts = data.posts;
         }
-    }
-    function previousPage()  {
-        if (pageToFetch > 1) {
-            pageToFetch--;
-            fetchPosts();
-        }
-    }
+    } catch(err) {
+        console.log(err.message)
+      }  
+}
 
-    function setPostInSession(id) {
-        postStore.set(id)
-        navigate("/post")
+function nextPage() {
+    if (posts.length !== 0) {
+        pageToFetch++;
+        fetchPosts();
     }
+}
+function previousPage()  {
+    if (pageToFetch > 1) {
+        pageToFetch--;
+        fetchPosts();
+    }
+}
+
+function setPostInSession(id) {
+    postStore.set(id)
+    navigate("/post")
+}
+
+async function likePost(id) {
+
+  try { 
+      const url = "http://localhost:8080/like/" + id;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.result === "success") {
+          posts[id-1].like += 1
+      }
+
+  } catch(err) {
+      console.log(err.message)
+    }  
+}
 
 </script>
 
@@ -67,20 +83,33 @@
         {#each posts as post}
         <div class="card">
             <header class="card-header">
+
               <p class="card-header-title">
                 {post.title}
               </p>
               <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
-                  <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  
+                  <strong style="margin-right: 10px;">{post.like}</strong>
+                  
+                  <i class="fas fa-angle-down" aria-hidden="true" style="margin-right: 15px;"> 
+                    <button style="margin-right: 20px;" class="button is-info" on:click={likePost(post.id)}>Like</button> 
+                  </i>
+                  
                 </span>
               </button>
+
             </header>
+
             <div class="card-content">
               <div class="content">
-                {post.text}
+                <p>
+                  {post.text}
+                </p>
                 <br>
-                <p><em>{post.date}</em></p>
+                <p><em>
+                  {post.date}
+                </em></p>
               </div>
             </div>
             <footer class="card-footer">
@@ -104,9 +133,21 @@
     
     <div class="column">
         <Link to="/create-post"> <p class="title is-5">Create post</p> </Link>
-        <Link to="/create-post"><img src="images/plus_icon.png" style="width: 40px" alt="Plus sign"></Link>
+        <Link to="/create-post"><img id="plus_sign" src="images/plus_icon.png" style="width: 40px" alt="Plus sign"></Link>
     </div>
 </div>
+
+
+<style>
+
+    #plus_sign {
+        transition: transform .8s ease-in-out;  
+    }
+
+    #plus_sign:hover {
+      transform:rotate(360deg); 
+    }
+</style>
 
 
 

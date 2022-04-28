@@ -48,7 +48,7 @@ router.get("/posts/:page", async (req, res) => {
     await preparedStatement.bind({1 : offset});
     const posts = await preparedStatement.all();
 
-    //send retrieved courses
+    //send retrieved posts
     res.send({result : "success", posts : posts});
 })
 
