@@ -2,13 +2,17 @@
 import { Link } from 'svelte-navigator';
 import { loginStore } from "../stores.js";
 import { onMount } from "svelte";
-import { useNavigate } from "svelte-navigator"
+import { useNavigate } from "svelte-navigator";
 import { postStore } from "../stores.js";
+import { userStore } from "../stores.js";
 
 
-const navigate = useNavigate();    
+const navigate = useNavigate(); 
+let userLikes = []   
 let posts = [];
 let pageToFetch = 1;
+let user = {};
+userStore.subscribe((value) => user = value);
 
 
 onMount(fetchPosts);
@@ -22,12 +26,74 @@ async function fetchPosts() {
 
         if (data.result === "success") {
             posts = data.posts;
+            checkLikes()
         }
     } catch(err) {
         console.log(err.message)
       }  
 }
 
+// Checks for posts already liked by client
+async function checkLikes() {
+
+  let userLikes = []
+
+  try { 
+      const url = "http://localhost:8080/likes/" + user.userId;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.result === "success") {
+          userLikes = data.userLikes;
+          console.log(userLikes)
+
+          for (let userLike of userLikes) {
+            console.log("postID: " + userLike.post_id)
+            console.log("userID: " + userLike.user_id)
+          }
+      }
+  } catch(err) {
+      console.log(err.message)
+    }  
+}
+
+// Sums number of likes on post
+async function likePost(postId) {
+
+  try { 
+
+      bindLikeToUser(postId)
+      const url = "http://localhost:8080/like/" + postId;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.result === "success") {
+          posts[postId-1].like += 1 // Needs to be -1 since array starts at index 0
+      }
+
+  } catch(err) {
+      console.log(err.message)
+    }
+}
+
+// Sets new like to user
+async function bindLikeToUser(postId) {
+
+    const request = {
+      method : "POST",
+      headers : {
+          "Content-Type": "application/json"
+    },
+      body : JSON.stringify({userId : user.userId, postId : postId})
+    }
+    const response = await fetch("http://localhost:8080/like/post-to-user", request);
+    const data = await response.json();
+
+    console.log(data)
+      
+}
+
+// Pagination
 function nextPage() {
     if (posts.length !== 0) {
         pageToFetch++;
@@ -46,31 +112,20 @@ function setPostInSession(id) {
     navigate("/post")
 }
 
-async function likePost(id) {
-
-  try { 
-      const url = "http://localhost:8080/like/" + id;
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.result === "success") {
-          posts[id-1].like += 1
-      }
-
-  } catch(err) {
-      console.log(err.message)
-    }  
-}
-
 </script>
 
 <svelte:head>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">">
 </svelte:head>
 
+
 <div class="columns">
     <div class="column"></div>
-   
+        <h1>haha</h1>
+        {#each userLikes as userLike}
+          <h1>haha</h1>
+          <h1>{userLike.post_id}</h1>
+        {/each}
     <div class="column">
         
         <div>
@@ -91,9 +146,12 @@ async function likePost(id) {
                 <span class="icon">
                   
                   <strong style="margin-right: 10px;">{post.like}</strong>
+
+
                   
-                  <i class="fas fa-angle-down" aria-hidden="true" style="margin-right: 15px;"> 
-                    <button style="margin-right: 20px;" class="button is-info" on:click={likePost(post.id)}>Like</button> 
+                  
+                  <i class="fas fa-angle-down" aria-hidden="true" style="margin-right: 15px;">                   
+                    <button style="margin-right: 20px;" class="button is-info is-outlined" on:click={likePost(post.id)}>Like</button>
                   </i>
                   
                 </span>
@@ -146,6 +204,10 @@ async function likePost(id) {
 
     #plus_sign:hover {
       transform:rotate(360deg); 
+    }
+
+    .card-footer {
+      justify-content: center;
     }
 </style>
 
