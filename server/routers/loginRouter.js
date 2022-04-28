@@ -26,7 +26,7 @@ router.post("/sign-up", async (req, res) => {
         
         // add new user to session as currently logged in user
         req.session.isLoggedIn = true;
-        req.session.user = user;
+        req.session.user = {email : formData.email, username : formData.username};
         res.send({result : "success", user : {email : formData.email, username : formData.username}});
     }
 

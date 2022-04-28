@@ -14,5 +14,5 @@
 <div>
     <h1>COLOR</h1>
     
-    <button on:click={socket.emit("chat message", "hej med dig")}>Add message</button>
+    <button on:click={socket.emit("chat message", "testUser", "hej med dig")}>Add message</button>
 </div>
