@@ -1,5 +1,7 @@
 <script>
     import { useNavigate } from 'svelte-navigator';
+    import { getDate } from '../components/getDate'
+    
     const navigate = useNavigate(); 
 
     let currentError = ""
@@ -26,12 +28,7 @@
             currentError = data.result;
         }
     }
-
-    function getDate() {
-        const today = new Date();
-        const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()+' '+today.getHours()+':'+today.getMinutes(); 
-        return date   
-    }   
+ 
 </script>
 
 <svelte:head>
@@ -44,7 +41,7 @@
     <div class="column"><p class="title">Here you can create your post</p>
          <input class="input is-info is-rounded" type="text" placeholder="Title" bind:value={title}>
          <textarea class="textarea is-info " placeholder="e.g. Hello Everyone" bind:value={text}></textarea>
-         <button class="button is-success is-light" on:click={createPost}>Submit</button>
+         <button class="button is-success is-light" on:click|preventDefault={createPost}>Submit</button>
     </div>
     
     <div class="column"></div>

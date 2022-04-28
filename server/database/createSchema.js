@@ -19,5 +19,13 @@ await db.exec(`CREATE TABLE IF NOT EXISTS posts (
     );`);
 
 
+await db.exec(`CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    comment NOT NULL,
+    date NOT NULL, 
+    post_id INTEGER NOT NULL,
+    FOREIGN KEY(post_id) REFERENCES posts(id) 
+    );`);
+    
 
 await db.close();

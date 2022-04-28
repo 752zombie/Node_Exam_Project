@@ -3,6 +3,7 @@
     import { loginStore } from "../stores.js";
     import { onMount } from "svelte";
     import { useNavigate } from "svelte-navigator"
+    import { postStore } from "../stores.js";
 
 
     const navigate = useNavigate();    
@@ -40,8 +41,8 @@
         }
     }
 
-    function setPostInStore(id) {
-        localStorage.setItem("postId", id)
+    function setPostInSession(id) {
+        postStore.set(id)
         navigate("/post")
     }
 
@@ -83,7 +84,7 @@
               </div>
             </div>
             <footer class="card-footer">
-              <button class="button is-link is-rounded" style="align-item: center;" on:click={() => setPostInStore(post.id)}>View post</button>
+              <button class="button is-link is-rounded" style="align-item: center;" on:click={setPostInSession(post.id)}>View post</button>
             </footer>
           </div>
           <br>

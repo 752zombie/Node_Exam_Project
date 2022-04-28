@@ -27,11 +27,8 @@ router.get("/post/:id", async (req, res) => {
     const preparedStatement = await db.prepare("SELECT * FROM posts WHERE id = ?");
     await preparedStatement.bind({1 : req.params.id});
     const post = await preparedStatement.all();
-
-    console.log(post[0])
-    console.log("title " + post[0].title)
     
-    res.send({result : "success", post : post[0] });
+    res.send({result : "success", post : post[0]});
 })
 
 
