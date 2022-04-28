@@ -46,9 +46,6 @@ const wrap = middleware => (socket, next) => middleware(socket.request, {}, next
 
 io.use(wrap(sessionMiddleware));
 
-io.use((socket, next) => {
-  console.log("my middleware");
-})
 
 io.use((socket, next) => {
   const session = socket.request.session;
@@ -61,8 +58,21 @@ io.use((socket, next) => {
 })
 
 io.on('connection', (socket) => {
-    socket.on('chat message', (user, msg) => {
+  const session = socket.request.session;
+  if (!session || !session.isLoggedIn) {
+      return;
+  }
+  
+  //console.log("before join");
+  
+  socket.join(session.user.username);
+    socket.on('chat message', (to, msg) => {
+
+      console.log("to: ", to);
+
+    console.log(session.user.username, " :", socket.rooms);
     
+      
       //TODO: check if existing conversation already exists (from db)
 
       //TODO: if exists -> load existing conversation and create a socket room
@@ -71,9 +81,13 @@ io.on('connection', (socket) => {
 
       //TODO: once connection established -> use socket room to send and receive messages and save them in db
 
-      console.log(user);
-      console.log(msg);
-      io.emit('chat message', msg);
+      
+      socket.to("752zombie").emit("chat message", {from : session.user.username, message : msg});
+    
+
+      //console.log(from);
+      //console.log(msg);
+      //io.emit('chat message', msg);
     });
   });
   
