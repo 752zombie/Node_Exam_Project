@@ -44,10 +44,12 @@ router.post("/posts", async (req, res) => {
     const offset = (page - 1) * 5;
     
     //retrieve Posts from db and check for Likes from User
-    const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked " +    
+    const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
                                                "FROM posts as p " + 
                                                "LEFT JOIN post_like_user as l on l.post_id = p.id " +
+                                               "LEFT JOIN comments as c on c.post_id = p.id " + 
                                                "WHERE p.user_id = ? " +
+                                               "GROUP BY p.id " + 
                                                "LIMIT 5 OFFSET ?");
     await preparedStatement.bind({1 : req.body.userId, 2 : offset});
     const posts = await preparedStatement.all();

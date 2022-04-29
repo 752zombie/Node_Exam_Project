@@ -31,6 +31,7 @@ async function fetchPosts() {
 
       if (data.result === "success") {
           posts = data.posts;
+          console.log(posts)
           }    
   } 
   catch(err) {
@@ -158,12 +159,13 @@ function setPostInSession(id) {
               </p>
               <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
-                  
+                  <p style="margin-right: 20px;">Comments <strong >{post.comment_count}</strong></p>
+                 
                   <p style="margin-right: 20px;">Likes <strong >{post.like}</strong></p>
                   
                   {#if post.liked == 0}
                   <i class="fas fa-angle-down" aria-hidden="true" >                   
-                    <button id="like-button" style="margin-right: 80px" class="button is-info" on:click={likePost(post.id)}>Like</button>
+                    <button id="like-button" class="button is-info" on:click={likePost(post.id)}>Like</button>
                   </i>
                   {:else}
                     <button id="unlike-button" class="button is-primary is-outlined" on:click={unlikePost(post.id)}>Liked</button>
@@ -246,11 +248,11 @@ function setPostInSession(id) {
     }
 
     #like-button {
-      margin-right: 60px;
+      margin-right: 170px;
     }
 
     #unlike-button {
-      margin-right: 85px;
+      margin-right: 180px;
     }
 
    
