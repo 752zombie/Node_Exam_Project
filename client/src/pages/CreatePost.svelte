@@ -61,7 +61,7 @@ const onFileSelected =(e)=>{
         </div>       
          
         <div id="app">
-            <h1>Upload Image</h1>
+            <h1><strong>Upload Image </strong> (Optional)</h1>
           
                 {#if photo}
                 <img class="avatar" src="{photo}" alt="d" />

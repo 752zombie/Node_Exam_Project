@@ -11,8 +11,8 @@ let comment = ""
 let currentError = ""
 let postId = ""
 postStore.subscribe((value) => postId = value)
-let userId = ""
-userStore.subscribe((value) => userId = value)
+let user = {}
+userStore.subscribe((value) => user = value)
 
 //onMount?
 fetchPost(postId)
@@ -59,7 +59,7 @@ async function postComment() {
         headers : {
             "Content-Type": "application/json"
         },
-        body : JSON.stringify({comment : comment, date : date, postId : postId, userId : userId})
+        body : JSON.stringify({comment : comment, date : date, postId : postId, userId : user.userId})
     }
     const response = await fetch("http://localhost:8080/comment", request);
     const data = await response.json();

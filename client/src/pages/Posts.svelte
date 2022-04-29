@@ -39,24 +39,6 @@ async function fetchPosts() {
 
 }
 
-// Get number of comments on post
-async function fetchNumberOfComments() {
-
-  let userLikes = []
-
-  try { 
-      const url = "http://localhost:8080/comments/";
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.result === "success") {
-          userLikes = data.userLikes;
-          }
-     } catch(err) {
-      console.log(err.message)
-    }  
-}
-
 // Sums number of likes on Post
 async function likePost(postId) {
 
@@ -92,9 +74,40 @@ async function bindLikeToUser(postId) {
 }
 
 // Remove User's Like from Post
-async function unlikePost() {
-  console.log("UNLIKE")
+async function unlikePost(postId) {
+
+  try { 
+      unbindLikeToUser(postId)
+      const url = "http://localhost:8080/like/unlike/" + postId;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.result === "success") {
+          posts[postId-1].like -= 1 // Needs to be -1 since Posts array starts at index 0
+          posts[postId-1].liked = 0
+      }
+
+  } catch(err) {
+      console.log(err.message)
+    }
 }
+
+
+// Attaches new Like to user_id
+async function unbindLikeToUser(postId) {
+
+const request = {
+  method : "POST",
+  headers : {
+      "Content-Type": "application/json"
+},
+  body : JSON.stringify({userId : user.userId, postId : postId})
+}
+const response = await fetch("http://localhost:8080/like/unlike/post-to-user", request);
+const data = await response.json();   
+
+}
+
 
 // Pagination
 function nextPage() {
@@ -149,11 +162,11 @@ function setPostInSession(id) {
                   <p style="margin-right: 20px;">Likes <strong >{post.like}</strong></p>
                   
                   {#if post.liked == 0}
-                  <i class="fas fa-angle-down" aria-hidden="true" style="margin-right: 15px;">                   
-                    <button style="margin-right: 60px;" class="button is-info" on:click={likePost(post.id)}>Like</button>
+                  <i class="fas fa-angle-down" aria-hidden="true" >                   
+                    <button id="like-button" style="margin-right: 80px" class="button is-info" on:click={likePost(post.id)}>Like</button>
                   </i>
                   {:else}
-                    <button style="margin-right: 85px;" class="button is-primary is-outlined" on:click={unlikePost(post.id)}>Liked</button>
+                    <button id="unlike-button" class="button is-primary is-outlined" on:click={unlikePost(post.id)}>Liked</button>
                   {/if}
                   
                 </span>
@@ -173,7 +186,7 @@ function setPostInSession(id) {
                 <p></p>
                 {/if}
                 
-                <p>
+                <p class="bread-text">
                   {post.text}
                 </p>
                 
@@ -222,6 +235,22 @@ function setPostInSession(id) {
 
     .card-footer {
       justify-content: center;
+    }
+
+    .card-header-title {
+      color: "blue";
+    }
+
+    .bread-text {
+      color:"cornflowerblue"
+    }
+
+    #like-button {
+      margin-right: 60px;
+    }
+
+    #unlike-button {
+      margin-right: 85px;
     }
 
    
