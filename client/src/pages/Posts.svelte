@@ -40,6 +40,7 @@ async function fetchPosts() {
 
 }
 
+
 // Sums number of likes on Post
 async function likePost(postId) {
 
@@ -59,6 +60,7 @@ async function likePost(postId) {
     }
 }
 
+
 // Attaches new Like to user_id
 async function bindLikeToUser(postId) {
 
@@ -73,6 +75,7 @@ async function bindLikeToUser(postId) {
     const data = await response.json();   
     
 }
+
 
 // Remove User's Like from Post
 async function unlikePost(postId) {
@@ -97,16 +100,15 @@ async function unlikePost(postId) {
 // Attaches new Like to user_id
 async function unbindLikeToUser(postId) {
 
-const request = {
-  method : "POST",
-  headers : {
-      "Content-Type": "application/json"
-},
-  body : JSON.stringify({userId : user.userId, postId : postId})
-}
-const response = await fetch("http://localhost:8080/like/unlike/post-to-user", request);
-const data = await response.json();   
-
+  const request = {
+    method : "POST",
+    headers : {
+        "Content-Type": "application/json"
+  },
+    body : JSON.stringify({userId : user.userId, postId : postId})
+  }
+  const response = await fetch("http://localhost:8080/like/unlike/post-to-user", request);
+  const data = await response.json();   
 }
 
 
@@ -133,7 +135,8 @@ function setPostInSession(id) {
 </script>
 
 <svelte:head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </svelte:head>
 
 
@@ -144,9 +147,10 @@ function setPostInSession(id) {
     <div class="column">
         
         <div>
-          <p class="title is-3">Browse hot posts here</p>
+          <p class="title is-1">Hottest posts</p>
           <hr>
-          <img src="images/fire_emoji.png" alt="Fire emoji">
+          <img src="images/fire-gif.gif" id="fire-gif" alt="Fire emoji">
+          <hr>
         </div>
         
 
@@ -154,14 +158,14 @@ function setPostInSession(id) {
         <div class="card">
             <header class="card-header">
 
-              <p class="card-header-title">
-                {post.title}
-              </p>
+              <p class="card-header-title" >{post.title}</p>
+
               <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
-                  <p style="margin-right: 20px;">Comments <strong >{post.comment_count}</strong></p>
+
+                  <p class="post-header-tag">Comments <strong >{post.comment_count}</strong></p>
                  
-                  <p style="margin-right: 20px;">Likes <strong >{post.like}</strong></p>
+                  <p class="post-header-tag">Likes <strong >{post.like}</strong></p>
                   
                   {#if post.liked == 0}
                   <i class="fas fa-angle-down" aria-hidden="true" >                   
@@ -180,29 +184,26 @@ function setPostInSession(id) {
               <div class="content">
 
                 {#if post.photo}
-                <p>
-                  <img src={post.photo} alt="">
-                </p>
+                <p><img src={post.photo} alt=""></p>
                 <hr>
                 {:else}
                 <p></p>
                 {/if}
                 
-                <p class="bread-text">
-                  {post.text}
-                </p>
+                <p class="bread-text"><strong>{post.text}</strong></p>
                 
                 <hr>
                 <br>
-                <p><em>
-                  {post.date}
-                </em></p>
+
+                <p><em>{post.date}</em></p>
+
               </div>
             </div>
             <footer class="card-footer">
               <button class="button is-link is-rounded" style="align-item: center;" on:click={setPostInSession(post.id)}>View post</button>
             </footer>
           </div>
+
           <br>
           
         {/each}
@@ -253,6 +254,10 @@ function setPostInSession(id) {
 
     #unlike-button {
       margin-right: 180px;
+    }
+
+    #fire-gif {
+      height: 10%;
     }
 
    

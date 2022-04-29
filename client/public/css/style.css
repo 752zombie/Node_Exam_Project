@@ -1,0 +1,11 @@
+p {
+    color: blue
+}
+
+.card-header-title {
+    font-size: 20px;
+}
+
+.post-header-tag {
+    margin-right: 20px
+}
