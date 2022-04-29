@@ -81,9 +81,17 @@ router.post("/sign-in", async (req, res) => {
 })
 
 router.post("/sign-out", (req, res) => {
+
+    try {
     req.session.destroy((err) => {
         res.send({result : "success"});
     })
+
+    }
+
+    catch(err) {
+        res.send({result : "Could not logout"});
+    }    
 })
 
 export default router;

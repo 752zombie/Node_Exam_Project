@@ -15,7 +15,9 @@ router.post("/post", async (req, res) => {
                 
         res.send({result : "success"});
     
-    } catch(err) {
+    } 
+    
+    catch(err) {
         console.log(err.message);
         res.send({ result : "Could not send post to server"});
     }
@@ -24,38 +26,56 @@ router.post("/post", async (req, res) => {
 
 router.get("/post/:id", async (req, res) => {
     
-    const preparedStatement = await db.prepare("SELECT * FROM posts WHERE id = ?");
-    await preparedStatement.bind({1 : req.params.id});
-    const post = await preparedStatement.all();
+    try { 
+        const preparedStatement = await db.prepare("SELECT * FROM posts WHERE id = ?");
+        await preparedStatement.bind({1 : req.params.id});
+        const post = await preparedStatement.all();
+        
+        res.send({result : "success", post : post[0]});
     
-    res.send({result : "success", post : post[0]});
+    } 
+    
+    catch (err) {
+        console.log(err.message)
+        res.send({result : "Could not get the post"})
+    }    
+
 })
 
-
+// This function collects the Post & boolean 
+// whether User Liked the Post & number of Comments on Post
 router.post("/posts", async (req, res) => {
 
-    //checks current page and sets max 5 Posts to render 
-    let page = 1;
-    if (req.body.page) {
-        const parsed = parseInt(req.body.page);
-        page = isNaN(parsed) ? 1 : parsed; 
-    }
+    try {
+        //checks current page and sets max 5 Posts to render 
+        let page = 1;
+        if (req.body.page) {
+            const parsed = parseInt(req.body.page);
+            page = isNaN(parsed) ? 1 : parsed; 
+        }
 
-    const offset = (page - 1) * 5;
+        const offset = (page - 1) * 5;
+        
+        //retrieve Posts from db and check for Likes from User
+        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
+                                                    "FROM posts as p " + 
+                                                    "LEFT JOIN post_like_user as l on l.post_id = p.id " +
+                                                    "LEFT JOIN comments as c on c.post_id = p.id " + 
+                                                    "WHERE p.user_id = ? " +
+                                                    "GROUP BY p.id " + 
+                                                    "LIMIT 5 OFFSET ?");
+        await preparedStatement.bind({1 : req.body.userId, 2 : offset});
+        const posts = await preparedStatement.all();
+
+        //send retrieved Posts
+        res.send({result : "success", posts : posts});
+
+    } 
     
-    //retrieve Posts from db and check for Likes from User
-    const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
-                                               "FROM posts as p " + 
-                                               "LEFT JOIN post_like_user as l on l.post_id = p.id " +
-                                               "LEFT JOIN comments as c on c.post_id = p.id " + 
-                                               "WHERE p.user_id = ? " +
-                                               "GROUP BY p.id " + 
-                                               "LIMIT 5 OFFSET ?");
-    await preparedStatement.bind({1 : req.body.userId, 2 : offset});
-    const posts = await preparedStatement.all();
-
-    //send retrieved Posts
-    res.send({result : "success", posts : posts});
+    catch (err) {
+        console.log(err.message)
+        res.send({result : "Could not get the post"})
+}     
 })
 
 export default router;

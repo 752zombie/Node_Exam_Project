@@ -11,7 +11,9 @@ router.get("/like/:post_id", async (req, res) => {
         await preparedStatement.bind({1 : req.params.post_id});
         await preparedStatement.run();     
         
-    } catch(err) {
+    } 
+    
+    catch(err) {
         console.log(err.message);
         res.send({ result : "Could not send post to server"});
     }
@@ -26,7 +28,9 @@ router.get("/like/unlike/:post_id", async (req, res) => {
         await preparedStatement.bind({1 : req.params.post_id});
         await preparedStatement.run();     
         
-    } catch(err) {
+    } 
+
+    catch(err) {
         console.log(err.message);
         res.send({ result : "Could not send post to server"});
     }
@@ -43,6 +47,7 @@ router.post("/like/post-to-user", async (req, res) => {
         await preparedStatement.run();
                 
     } 
+
     catch(err) {
         console.log(err.message);
         res.send({ result : "Could not send post to server"});
@@ -58,9 +63,9 @@ router.post("/like/unlike/post-to-user", async (req, res) => {
         const preparedStatement = await db.prepare("DELETE FROM post_like_user " + 
                                                    "WHERE post_id = ? and user_id = ?");
         await preparedStatement.bind({1 : req.body.postId, 2 : req.body.userId});
-        await preparedStatement.run();
-                
+        await preparedStatement.run();     
     } 
+
     catch(err) {
         console.log(err.message);
         res.send({ result : "Could not send post to server"});
