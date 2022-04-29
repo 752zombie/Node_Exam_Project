@@ -13,11 +13,11 @@ await db.exec(`CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     title VARCHAR(100) NOT NULL,
     text NOT NULL,
-    photo BLOB NOT NULL,
+    photo BLOB,
     like INTEGER DEFAULT 0,
     date NOT NULL, 
-    user NOT NULL,
-    FOREIGN KEY(user) REFERENCES users(id) 
+    user_id NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id) 
     );`);
 
 

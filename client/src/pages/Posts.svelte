@@ -7,8 +7,7 @@ import { postStore } from "../stores.js";
 import { userStore } from "../stores.js";
 
 
-const navigate = useNavigate(); 
-let userLikes = []   
+const navigate = useNavigate();   
 let posts = [];
 let pageToFetch = 1;
 let user = {};
@@ -19,49 +18,33 @@ onMount(fetchPosts);
 
 async function fetchPosts() {
 
-    try { 
-        const url = "http://localhost:8080/posts/" + pageToFetch;
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.result === "success") {
-            posts = data.posts;
-            checkLikes()
-        }
-    } catch(err) {
-        console.log(err.message)
-      }  
-}
-
-// Checks for posts already liked by client
-async function checkLikes() {
-
-  let userLikes = []
-
-  try { 
-      const url = "http://localhost:8080/likes/" + user.userId;
-      const response = await fetch(url);
-      const data = await response.json();
+  try {
+    const request = {
+        method : "POST",
+        headers : {
+            "Content-Type": "application/json"
+      },
+        body : JSON.stringify({userId : user.userId, page : pageToFetch})
+      }
+      const response = await fetch("http://localhost:8080/posts", request);
+      let data = await response.json(); 
 
       if (data.result === "success") {
-          userLikes = data.userLikes;
-          console.log(userLikes)
+          posts = data.posts;
+          console.log(posts)
+          }    
+  } 
+  catch(err) {
+    console.log(err.message)
+  }   
 
-          for (let userLike of userLikes) {
-            console.log("postID: " + userLike.post_id)
-            console.log("userID: " + userLike.user_id)
-          }
-      }
-  } catch(err) {
-      console.log(err.message)
-    }  
 }
 
-// Sums number of likes on post
+
+// Sums number of likes on Post
 async function likePost(postId) {
 
   try { 
-
       bindLikeToUser(postId)
       const url = "http://localhost:8080/like/" + postId;
       const response = await fetch(url);
@@ -69,6 +52,7 @@ async function likePost(postId) {
 
       if (data.result === "success") {
           posts[postId-1].like += 1 // Needs to be -1 since array starts at index 0
+          posts[postId-1].liked = 1
       }
 
   } catch(err) {
@@ -76,7 +60,8 @@ async function likePost(postId) {
     }
 }
 
-// Sets new like to user
+
+// Attaches new Like to user_id
 async function bindLikeToUser(postId) {
 
     const request = {
@@ -87,11 +72,45 @@ async function bindLikeToUser(postId) {
       body : JSON.stringify({userId : user.userId, postId : postId})
     }
     const response = await fetch("http://localhost:8080/like/post-to-user", request);
-    const data = await response.json();
-
-    console.log(data)
-      
+    const data = await response.json();   
+    
 }
+
+
+// Remove User's Like from Post
+async function unlikePost(postId) {
+
+  try { 
+      unbindLikeToUser(postId)
+      const url = "http://localhost:8080/like/unlike/" + postId;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.result === "success") {
+          posts[postId-1].like -= 1 // Needs to be -1 since Posts array starts at index 0
+          posts[postId-1].liked = 0
+      }
+
+  } catch(err) {
+      console.log(err.message)
+    }
+}
+
+
+// Attaches new Like to user_id
+async function unbindLikeToUser(postId) {
+
+  const request = {
+    method : "POST",
+    headers : {
+        "Content-Type": "application/json"
+  },
+    body : JSON.stringify({userId : user.userId, postId : postId})
+  }
+  const response = await fetch("http://localhost:8080/like/unlike/post-to-user", request);
+  const data = await response.json();   
+}
+
 
 // Pagination
 function nextPage() {
@@ -107,6 +126,7 @@ function previousPage()  {
     }
 }
 
+// Needed to fetch current Post in ViewPost  
 function setPostInSession(id) {
     postStore.set(id)
     navigate("/post")
@@ -115,23 +135,22 @@ function setPostInSession(id) {
 </script>
 
 <svelte:head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </svelte:head>
 
 
 <div class="columns">
+
     <div class="column"></div>
-        <h1>haha</h1>
-        {#each userLikes as userLike}
-          <h1>haha</h1>
-          <h1>{userLike.post_id}</h1>
-        {/each}
+        
     <div class="column">
         
         <div>
-          <p class="title is-3">Browse hot posts here</p>
+          <p class="title is-1">Hottest posts</p>
           <hr>
-          <img src="images/fire_emoji.png" alt="Fire emoji">
+          <img src="images/fire-gif.gif" id="fire-gif" alt="Fire emoji">
+          <hr>
         </div>
         
 
@@ -139,20 +158,22 @@ function setPostInSession(id) {
         <div class="card">
             <header class="card-header">
 
-              <p class="card-header-title">
-                {post.title}
-              </p>
+              <p class="card-header-title" >{post.title}</p>
+
               <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
-                  
-                  <strong style="margin-right: 10px;">{post.like}</strong>
 
-
+                  <p class="post-header-tag">Comments <strong >{post.comment_count}</strong></p>
+                 
+                  <p class="post-header-tag">Likes <strong >{post.like}</strong></p>
                   
-                  
-                  <i class="fas fa-angle-down" aria-hidden="true" style="margin-right: 15px;">                   
-                    <button style="margin-right: 20px;" class="button is-info is-outlined" on:click={likePost(post.id)}>Like</button>
+                  {#if post.liked == 0}
+                  <i class="fas fa-angle-down" aria-hidden="true" >                   
+                    <button id="like-button" class="button is-info" on:click={likePost(post.id)}>Like</button>
                   </i>
+                  {:else}
+                    <button id="unlike-button" class="button is-primary is-outlined" on:click={unlikePost(post.id)}>Liked</button>
+                  {/if}
                   
                 </span>
               </button>
@@ -161,19 +182,28 @@ function setPostInSession(id) {
 
             <div class="card-content">
               <div class="content">
-                <p>
-                  {post.text}
-                </p>
+
+                {#if post.photo}
+                <p><img src={post.photo} alt=""></p>
+                <hr>
+                {:else}
+                <p></p>
+                {/if}
+                
+                <p class="bread-text"><strong>{post.text}</strong></p>
+                
+                <hr>
                 <br>
-                <p><em>
-                  {post.date}
-                </em></p>
+
+                <p><em>{post.date}</em></p>
+
               </div>
             </div>
             <footer class="card-footer">
               <button class="button is-link is-rounded" style="align-item: center;" on:click={setPostInSession(post.id)}>View post</button>
             </footer>
           </div>
+
           <br>
           
         {/each}
@@ -189,7 +219,7 @@ function setPostInSession(id) {
 
     </div>
     
-    <div class="column">
+    <div class="column" id="sticky-column">
         <Link to="/create-post"> <p class="title is-5">Create post</p> </Link>
         <Link to="/create-post"><img id="plus_sign" src="images/plus_icon.png" style="width: 40px" alt="Plus sign"></Link>
     </div>
@@ -209,6 +239,28 @@ function setPostInSession(id) {
     .card-footer {
       justify-content: center;
     }
+
+    .card-header-title {
+      color: "blue";
+    }
+
+    .bread-text {
+      color:"cornflowerblue"
+    }
+
+    #like-button {
+      margin-right: 170px;
+    }
+
+    #unlike-button {
+      margin-right: 180px;
+    }
+
+    #fire-gif {
+      height: 10%;
+    }
+
+   
 </style>
 
 

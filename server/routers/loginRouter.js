@@ -52,6 +52,8 @@ router.post("/sign-in", async (req, res) => {
     try {
         const user = await preparedStatement.get();
         await preparedStatement.finalize();
+
+        //console.log("LOGIN " + user)
     
     
         bcrypt.compare(formData.password, user.password, (err, same) => {
@@ -62,7 +64,7 @@ router.post("/sign-in", async (req, res) => {
             else if (same) {
                 req.session.isLoggedIn = true;
                 req.session.user = user;
-                res.send({result : "success", user : {userId : user.user, username : user.username, email : user.email}});
+                res.send({result : "success", user : {userId : user.id, username : user.username, email : user.email}});
             }
     
             else {
@@ -79,9 +81,17 @@ router.post("/sign-in", async (req, res) => {
 })
 
 router.post("/sign-out", (req, res) => {
+
+    try {
     req.session.destroy((err) => {
         res.send({result : "success"});
     })
+
+    }
+
+    catch(err) {
+        res.send({result : "Could not logout"});
+    }    
 })
 
 router.get("/secret", (req, res) => {

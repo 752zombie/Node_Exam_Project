@@ -4,6 +4,25 @@ import { db } from "../database/createConnection.js";
 const router = Router();
 
 
+router.get("/comments", async (req, res) => {
+
+    try {
+    const preparedStatement = await db.prepare("SELECT * FROM comments");
+    await preparedStatement.bind({1 : req.params.id});
+    const comments = await preparedStatement.all();
+
+    res.send({result : "success", comments : comments});
+    
+    }
+
+    catch (err) {
+        console.log(err.message) 
+        res.send({message : "Could not get comments"})
+    }
+})
+
+
+
 router.post("/comment", async (req, res) => {
     
     try {
@@ -15,7 +34,9 @@ router.post("/comment", async (req, res) => {
                 
         res.send({result : "success"});
     
-    } catch(err) {
+    } 
+    
+    catch(err) {
         console.log(err.message);
         res.send({ result : "Could not send post to server"});
     }
@@ -23,16 +44,25 @@ router.post("/comment", async (req, res) => {
 
 router.get("/comments/:id", async (req, res) => {
 
-    const preparedStatement = await db.prepare("SELECT comment, comments.date, username " +
-                                               "FROM comments " + 
-                                               "INNER JOIN posts on " + 
-                                               "posts.id = comments.post_id " +
-                                               "INNER JOIN users on users.id = posts.user " + 
-                                               "WHERE post_id = ?");
-    await preparedStatement.bind({1 : req.params.id});
-    const comments = await preparedStatement.all();
+    try {
+            
+        const preparedStatement = await db.prepare("SELECT comment, comments.date, username " +
+                                                "FROM comments " + 
+                                                "INNER JOIN posts on " + 
+                                                "posts.id = comments.post_id " +
+                                                "INNER JOIN users on users.id = posts.user_id " + 
+                                                "WHERE post_id = ?");
+        await preparedStatement.bind({1 : req.params.id});
+        const comments = await preparedStatement.all();
 
-    res.send({result : "success", comments : comments});
+        res.send({result : "success", comments : comments});
+
+    }
+    
+    catch(err) {
+        console.log(err.message);
+        res.send({ result : "Could not send post to server"});
+    }
 })
 
 
