@@ -1,77 +1,77 @@
 <script>
-    import { onMount } from 'svelte'
-    import { getDate } from '../components/getDate.js'
-    import { postStore } from '../stores.js'
-    import { userStore } from '../stores.js'
+import { onMount } from 'svelte'
+import { getDate } from '../components/getDate.js'
+import { postStore } from '../stores.js'
+import { userStore } from '../stores.js'
 
-    let photo = ""
-    let post = []
-    let comments = []
-    let comment = ""
-    let currentError = ""
-    let postId = ""
-    postStore.subscribe((value) => postId = value)
-    let userId = ""
-    userStore.subscribe((value) => userId = value)
+let photo = ""
+let post = []
+let comments = []
+let comment = ""
+let currentError = ""
+let postId = ""
+postStore.subscribe((value) => postId = value)
+let userId = ""
+userStore.subscribe((value) => userId = value)
+
+//onMount?
+fetchPost(postId)
+async function fetchPost(postId) {
+
+  try { 
+    const url = "http://localhost:8080/post/" + postId;
+    const response = await fetch(url);
+    const data = await response.json();
     
-    //onMount?
-    fetchPost(postId)
-    async function fetchPost(postId) {
-
-        try { 
-            const url = "http://localhost:8080/post/" + postId;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data.result === "success") {
-                post = data.post;
-                photo = post.photo
-            }
-
-        } catch(err) {
-            console.log(err)
-          }  
+    if (data.result === "success") {
+        post = data.post;
+        photo = post.photo
     }
 
-    fetchComments(postId)
-    async function fetchComments(postId) {
-
-        try { 
-            const url = "http://localhost:8080/comments/" + postId;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data.result === "success") {
-                comments = data.comments;
-            }
-
-        } catch(err) {
-            console.log(err)
-        }  
+    } catch(err) {
+        console.log(err)
+      }  
 }
 
-    async function postComment() {
-        
-        const date = getDate()
+fetchComments(postId)
+async function fetchComments(postId) {
 
-        const request = {
-            method : "POST",
-            headers : {
-                "Content-Type": "application/json"
-            },
-            body : JSON.stringify({comment : comment, date : date, postId : postId, userId : userId})
-        }
-        const response = await fetch("http://localhost:8080/comment", request);
+    try { 
+        const url = "http://localhost:8080/comments/" + postId;
+        const response = await fetch(url);
         const data = await response.json();
+        
         if (data.result === "success") {
-            comment = ""
-            fetchPost(postId)
-            fetchComments(postId)
+            comments = data.comments;
         }
-        else {
-            currentError = data.result;
-        }
+
+    } catch(err) {
+        console.log(err)
+    }  
+}
+
+async function postComment() {
+    
+    const date = getDate()
+
+    const request = {
+        method : "POST",
+        headers : {
+            "Content-Type": "application/json"
+        },
+        body : JSON.stringify({comment : comment, date : date, postId : postId, userId : userId})
     }
+    const response = await fetch("http://localhost:8080/comment", request);
+    const data = await response.json();
+    if (data.result === "success") {
+        comment = ""
+        fetchPost(postId)
+        fetchComments(postId)
+    }
+    else {
+        currentError = data.result;
+    }
+}
 
   
 </script>
@@ -85,7 +85,7 @@
 
 <br>
 
-<div><img src={photo} alt=""> </div>
+<div><img src={photo} style="max-width: 500px;" alt=""> </div>
     
 <div class="columns">
 

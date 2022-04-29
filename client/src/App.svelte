@@ -4,7 +4,7 @@
 	import Home from "./pages/Home.svelte";
 	import Login from "./pages/Login.svelte";
 	import Posts from "./pages/Posts.svelte";
-	import Post from "./pages/Post.svelte"
+	import ViewPost from "./pages/ViewPost.svelte"
 	import User from './pages/User.svelte';
 	import CreatePost from './pages/CreatePost.svelte';
 
@@ -16,12 +16,13 @@
 	<main>	
 			<Route path="/" component={Home} />
 			<Route path="/posts" component={Posts} />
-			<Route path="/post" component={Post} />
+			<Route path="/post" component={ViewPost} />
 			<Route path="/login" component={Login} />
 			<Route path="/user" component={User} />
 			<Route path="/create-post" component={CreatePost} />
 	</main>
 </Router>
+
 <style>
 	main {
 		text-align: center;

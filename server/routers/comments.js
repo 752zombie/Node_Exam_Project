@@ -4,6 +4,17 @@ import { db } from "../database/createConnection.js";
 const router = Router();
 
 
+router.get("/comments", async (req, res) => {
+
+    const preparedStatement = await db.prepare("SELECT * FROM comments");
+    await preparedStatement.bind({1 : req.params.id});
+    const comments = await preparedStatement.all();
+
+    res.send({result : "success", comments : comments});
+})
+
+
+
 router.post("/comment", async (req, res) => {
     
     try {

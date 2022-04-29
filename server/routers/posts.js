@@ -9,7 +9,7 @@ router.post("/post", async (req, res) => {
         req.session.isLoggedIn = true;
         const user = req.session.user;
 
-        const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, date, user) VALUES (?, ?, ?, ?, ?)");
+        const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, date, user_id) VALUES (?, ?, ?, ?, ?)");
         await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.date, 5 : user.id});
         await preparedStatement.run();
                 
@@ -32,23 +32,27 @@ router.get("/post/:id", async (req, res) => {
 })
 
 
-router.get("/posts/:page", async (req, res) => {
+router.post("/posts", async (req, res) => {
 
-    //check input
+    //checks current page and sets max 5 Posts to render 
     let page = 1;
-    if (req.params.page) {
-        const parsed = parseInt(req.params.page);
+    if (req.body.page) {
+        const parsed = parseInt(req.body.page);
         page = isNaN(parsed) ? 1 : parsed; 
     }
 
     const offset = (page - 1) * 5;
     
-    //retrieve posts from db
-    const preparedStatement = await db.prepare("SELECT * FROM posts LIMIT 5 OFFSET ?");
-    await preparedStatement.bind({1 : offset});
+    //retrieve Posts from db and check for Likes from User
+    const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked " +    
+                                               "FROM posts as p " + 
+                                               "LEFT JOIN post_like_user as l on l.post_id = p.id " +
+                                               "WHERE p.user_id = ? " +
+                                               "LIMIT 5 OFFSET ?");
+    await preparedStatement.bind({1 : req.body.userId, 2 : offset});
     const posts = await preparedStatement.all();
 
-    //send retrieved posts
+    //send retrieved Posts
     res.send({result : "success", posts : posts});
 })
 

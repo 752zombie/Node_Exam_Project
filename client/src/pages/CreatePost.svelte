@@ -1,53 +1,49 @@
 <script>
-    import { useNavigate } from 'svelte-navigator';
-    import { getDate } from '../components/getDate';
+import { useNavigate } from 'svelte-navigator';
+import { getDate } from '../components/getDate';
+
+
+const navigate = useNavigate(); 
+let currentError = ""
+let title = ""
+let text = ""
+
+
+async function createPost() {
     
-    
-    const navigate = useNavigate(); 
+    const date = getDate()
 
-    let currentError = ""
-    let title = ""
-    let text = ""
+    const request = {
+        method : "POST",
+        headers : {
+            "Content-Type": "application/json"
+        },
+        body : JSON.stringify({title, text, date, photo})
+    }
+    const response = await fetch("http://localhost:8080/post", request);
+    const data = await response.json();
+    if (data.result === "success") {
+        navigate("/posts");
+    }
+    else {
+        currentError = data.result;
+    }
+}
 
-    async function createPost() {
-        
-        const date = getDate()
 
-        console.log(photo)
+// UPLOAD PICTURE
+let  photo, fileinput;
 
-        const request = {
-            method : "POST",
-            headers : {
-                "Content-Type": "application/json"
-            },
-            body : JSON.stringify({title, text, date, photo})
-        }
-        const response = await fetch("http://localhost:8080/post", request);
-        const data = await response.json();
-        if (data.result === "success") {
-            navigate("/posts");
-        }
-        else {
-            currentError = data.result;
-        }
+const onFileSelected =(e)=>{
+
+    let image = e.target.files[0];
+    let reader = new FileReader();
+    reader.readAsDataURL(image);
+    reader.onload = e => {
+        photo = e.target.result
+        };
     }
 
-
-    // UPLOAD PICTURE
-    let  photo, fileinput;
-	
-    const onFileSelected =(e)=>{
-
-        console.log(e)  
-
-        let image = e.target.files[0];
-        let reader = new FileReader();
-        reader.readAsDataURL(image);
-        reader.onload = e => {
-            photo = e.target.result
-            };
-        }
-	
  
 </script>
 

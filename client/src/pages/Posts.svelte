@@ -7,8 +7,7 @@ import { postStore } from "../stores.js";
 import { userStore } from "../stores.js";
 
 
-const navigate = useNavigate(); 
-let userLikes = []   
+const navigate = useNavigate();   
 let posts = [];
 let pageToFetch = 1;
 let user = {};
@@ -19,49 +18,49 @@ onMount(fetchPosts);
 
 async function fetchPosts() {
 
-    try { 
-        const url = "http://localhost:8080/posts/" + pageToFetch;
-        const response = await fetch(url);
-        const data = await response.json();
+  try {
+    const request = {
+        method : "POST",
+        headers : {
+            "Content-Type": "application/json"
+      },
+        body : JSON.stringify({userId : user.userId, page : pageToFetch})
+      }
+      const response = await fetch("http://localhost:8080/posts", request);
+      let data = await response.json(); 
 
-        if (data.result === "success") {
-            posts = data.posts;
-            checkLikes()
-        }
-    } catch(err) {
-        console.log(err.message)
-      }  
+      if (data.result === "success") {
+          posts = data.posts;
+          }    
+  } 
+  catch(err) {
+    console.log(err.message)
+  }   
+
 }
 
-// Checks for posts already liked by client
-async function checkLikes() {
+// Get number of comments on post
+async function fetchNumberOfComments() {
 
   let userLikes = []
 
   try { 
-      const url = "http://localhost:8080/likes/" + user.userId;
+      const url = "http://localhost:8080/comments/";
       const response = await fetch(url);
       const data = await response.json();
 
       if (data.result === "success") {
           userLikes = data.userLikes;
-          console.log(userLikes)
-
-          for (let userLike of userLikes) {
-            console.log("postID: " + userLike.post_id)
-            console.log("userID: " + userLike.user_id)
           }
-      }
-  } catch(err) {
+     } catch(err) {
       console.log(err.message)
     }  
 }
 
-// Sums number of likes on post
+// Sums number of likes on Post
 async function likePost(postId) {
 
   try { 
-
       bindLikeToUser(postId)
       const url = "http://localhost:8080/like/" + postId;
       const response = await fetch(url);
@@ -69,6 +68,7 @@ async function likePost(postId) {
 
       if (data.result === "success") {
           posts[postId-1].like += 1 // Needs to be -1 since array starts at index 0
+          posts[postId-1].liked = 1
       }
 
   } catch(err) {
@@ -76,7 +76,7 @@ async function likePost(postId) {
     }
 }
 
-// Sets new like to user
+// Attaches new Like to user_id
 async function bindLikeToUser(postId) {
 
     const request = {
@@ -87,10 +87,13 @@ async function bindLikeToUser(postId) {
       body : JSON.stringify({userId : user.userId, postId : postId})
     }
     const response = await fetch("http://localhost:8080/like/post-to-user", request);
-    const data = await response.json();
+    const data = await response.json();   
+    
+}
 
-    console.log(data)
-      
+// Remove User's Like from Post
+async function unlikePost() {
+  console.log("UNLIKE")
 }
 
 // Pagination
@@ -107,6 +110,7 @@ function previousPage()  {
     }
 }
 
+// Needed to fetch current Post in ViewPost  
 function setPostInSession(id) {
     postStore.set(id)
     navigate("/post")
@@ -120,12 +124,9 @@ function setPostInSession(id) {
 
 
 <div class="columns">
+
     <div class="column"></div>
-        <h1>haha</h1>
-        {#each userLikes as userLike}
-          <h1>haha</h1>
-          <h1>{userLike.post_id}</h1>
-        {/each}
+        
     <div class="column">
         
         <div>
@@ -145,14 +146,15 @@ function setPostInSession(id) {
               <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
                   
-                  <strong style="margin-right: 10px;">{post.like}</strong>
-
-
+                  <p style="margin-right: 20px;">Likes <strong >{post.like}</strong></p>
                   
-                  
+                  {#if post.liked == 0}
                   <i class="fas fa-angle-down" aria-hidden="true" style="margin-right: 15px;">                   
-                    <button style="margin-right: 20px;" class="button is-info is-outlined" on:click={likePost(post.id)}>Like</button>
+                    <button style="margin-right: 60px;" class="button is-info" on:click={likePost(post.id)}>Like</button>
                   </i>
+                  {:else}
+                    <button style="margin-right: 85px;" class="button is-primary is-outlined" on:click={unlikePost(post.id)}>Liked</button>
+                  {/if}
                   
                 </span>
               </button>
@@ -161,9 +163,21 @@ function setPostInSession(id) {
 
             <div class="card-content">
               <div class="content">
+
+                {#if post.photo}
+                <p>
+                  <img src={post.photo} alt="">
+                </p>
+                <hr>
+                {:else}
+                <p></p>
+                {/if}
+                
                 <p>
                   {post.text}
                 </p>
+                
+                <hr>
                 <br>
                 <p><em>
                   {post.date}
@@ -209,6 +223,8 @@ function setPostInSession(id) {
     .card-footer {
       justify-content: center;
     }
+
+   
 </style>
 
 
