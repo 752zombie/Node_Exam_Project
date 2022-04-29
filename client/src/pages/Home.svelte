@@ -1,25 +1,50 @@
 <script>
+import { io } from "socket.io-client";
+
+import { socketStore } from "../stores.js";
+//import io from "socket.io-client"
+
+
+
     let chatInput = "";
     let userToSendTo = "";
+    
     let socket;
 
-    function loadSocket() {
-        socket = io();
+    socketStore.subscribe((value) => socket = value);
+
+    console.log("socket: ", socket);
+
+    if (!socket.connected) {
+        socketStore.set(io())
         socket.on("chat message", (data) => {
             console.log(data);
         })
+
+        socket.on("connect", () => {
+            console.log("connect: ", socket.id);
+        })
+
+        socket.on("reconnect", (attempt) => {
+            console.log("reconnect: ", attempt);
+        })
     }
+
 
     function sendMessage() {
         //console.log(userToSendTo);
-        socket.emit("chat message", userToSendTo, chatInput);
+        if (socket) {
+            socket.emit("chat message", userToSendTo, chatInput);
+        }
     }
+
+
 
 </script>
 
-<svelte:head>
+<!--<svelte:head>
     <script async="false" src="/socket.io/socket.io.js" on:load={loadSocket}></script>
-</svelte:head>
+</svelte:head>-->
 
 <div>
     <h1>COLOR</h1>
