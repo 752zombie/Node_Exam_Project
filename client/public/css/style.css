@@ -9,3 +9,9 @@ p {
 .post-header-tag {
     margin-right: 20px
 }
+
+#sticky-column {
+    height:90vh; 
+    position: sticky; 
+    top: 3.2rem;
+}

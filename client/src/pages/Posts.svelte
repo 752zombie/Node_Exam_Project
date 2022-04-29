@@ -219,7 +219,7 @@ function setPostInSession(id) {
 
     </div>
     
-    <div class="column">
+    <div class="column" id="sticky-column">
         <Link to="/create-post"> <p class="title is-5">Create post</p> </Link>
         <Link to="/create-post"><img id="plus_sign" src="images/plus_icon.png" style="width: 40px" alt="Plus sign"></Link>
     </div>
