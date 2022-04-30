@@ -38,7 +38,24 @@ await db.exec(`CREATE TABLE IF NOT EXISTS post_like_user (
     user_id INTEGER NOT NULL,
     FOREIGN KEY(post_id) REFERENCES posts(id)
     FOREIGN KEY(user_id) REFERENCES users(id)  
-    );`);    
+    );`);
     
+
+await db.exec(`CREATE TABLE IF NOT EXISTS conversations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    participant_1 INTEGER NOT NULL,
+    participant_2 INTEGER NOT NULL,
+    FOREIGN KEY(participant_1) REFERENCES users(id),
+    FOREIGN KEY(participant_2) REFERENCES users(id) 
+    );`);
+
+await db.exec(`CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    text NOT NULL,
+    FOREIGN KEY(receiver_id) REFERENCES users(id),
+    FOREIGN KEY(receiver_id) REFERENCES users(id) 
+    );`);
 
 await db.close();

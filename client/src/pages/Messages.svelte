@@ -26,6 +26,13 @@
         socket.on("reconnect", (attempt) => {
             console.log("reconnect: ", attempt);
         })
+
+    }
+
+    async function fetchUsers() {
+        const response = await fetch("http://localhost:8080/conversations");
+        const data = await response.json();
+        console.log(data);
     }
 
     function filterIncomingMessage(data) {
@@ -74,4 +81,5 @@
     <input type="text" bind:value={userToSendTo}>
     
     <button on:click={sendMessage}>Add message</button>
+    <button on:click={fetchUsers}>Fetch users</button>
 </div>
