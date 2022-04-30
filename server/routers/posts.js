@@ -60,11 +60,11 @@ router.post("/posts", async (req, res) => {
         const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
                                                     "FROM posts as p " + 
                                                     "LEFT JOIN post_like_user as l on l.post_id = p.id " +
-                                                    "LEFT JOIN comments as c on c.post_id = p.id " + 
-                                                    "WHERE p.user_id = ? " +
+                                                    "LEFT JOIN comments as c on c.post_id = p.id " +                                                    
                                                     "GROUP BY p.id " + 
+                                                    "ORDER BY p.date DESC " +
                                                     "LIMIT 5 OFFSET ?");
-        await preparedStatement.bind({1 : req.body.userId, 2 : offset});
+        await preparedStatement.bind({1 : offset});
         const posts = await preparedStatement.all();
 
         //send retrieved Posts
