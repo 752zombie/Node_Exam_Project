@@ -1,51 +1,46 @@
 <script>
     import { io } from "socket.io-client";
-    
     import { socketStore } from "../stores.js";
-    //import io from "socket.io-client"
+    import MessageTab from "../components/MessageTab.svelte";
     
+    let chatInput = "";
+    let userToSendTo = "";
     
-    
-        let chatInput = "";
-        let userToSendTo = "";
-        
-        let socket;
-    
-        socketStore.subscribe((value) => socket = value);
-    
-        console.log("socket: ", socket);
-    
-        if (!socket.connected) {
-            socketStore.set(io())
-            socket.on("chat message", (data) => {
-                console.log(data);
-            })
-    
-            socket.on("connect", () => {
-                console.log("connect: ", socket.id);
-            })
-    
-            socket.on("reconnect", (attempt) => {
-                console.log("reconnect: ", attempt);
-            })
+    let socket;
+    socketStore.subscribe((value) => socket = value);
+
+    if (!socket.connected) {
+        socketStore.set(io())
+        socket.on("chat message", (data) => {
+            console.log(data);
+        })
+
+        socket.on("connect", () => {
+            console.log("connect: ", socket.id);
+        })
+
+        socket.on("reconnect", (attempt) => {
+            console.log("reconnect: ", attempt);
+        })
+    }
+
+    function sendMessage() {
+        //console.log(userToSendTo);
+        if (socket) {
+            socket.emit("chat message", userToSendTo, chatInput);
         }
-    
-    
-        function sendMessage() {
-            //console.log(userToSendTo);
-            if (socket) {
-                socket.emit("chat message", userToSendTo, chatInput);
-            }
-        }
-    
-    
+    }
+
+
     
     </script>
 
 <h1>Messages</h1>
+
+<MessageTab username="user 1"></MessageTab>
+<MessageTab username="user 2"  newMessageReceived={true}></MessageTab>
     
 <div>
-    <h1>COLOR</h1>
     <input type="text" bind:value={chatInput}>
     <input type="text" bind:value={userToSendTo}>
     
