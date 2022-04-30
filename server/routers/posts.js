@@ -9,6 +9,8 @@ router.post("/post", async (req, res) => {
         req.session.isLoggedIn = true;
         const user = req.session.user;
 
+        console.log(user);
+
         const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, date, user_id) VALUES (?, ?, ?, ?, ?)");
         await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.date, 5 : user.id});
         await preparedStatement.run();

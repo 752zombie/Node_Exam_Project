@@ -10,7 +10,8 @@
 
 <nav class="link-wrapper">
     <Link to="/" class="header-link space-between first-link">Home</Link>
-    <Link to="/posts" class="header-link align-left">Posts</Link>
+    <Link to="/posts" class="header-link align-right">Posts</Link>
+	<Link to="/messages" class="header-link align-left">Messages</Link>
     
     {#if !isLoggedIn}
     <Link to="login" class="header-link align-right">Sign in</Link>

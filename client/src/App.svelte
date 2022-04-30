@@ -7,6 +7,7 @@
 	import ViewPost from "./pages/ViewPost.svelte"
 	import User from './pages/User.svelte';
 	import CreatePost from './pages/CreatePost.svelte';
+	import Messages from "./pages/Messages.svelte";
 
 </script>
 
@@ -20,6 +21,8 @@
 			<Route path="/login" component={Login} />
 			<Route path="/user" component={User} />
 			<Route path="/create-post" component={CreatePost} />
+			<Route path="/messages" component={Messages} />
+			
 	</main>
 </Router>
 
