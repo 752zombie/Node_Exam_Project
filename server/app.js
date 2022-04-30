@@ -51,10 +51,13 @@ io.use((socket, next) => {
   const session = socket.request.session;
 
   if (!session || !session.isLoggedIn) {
-    return;
+    next(new Error("you need to be logged in"));
+  }
+
+  else {
+    next();
   }
   
-  next();
 })
 
 io.on('connection', (socket) => {
@@ -62,15 +65,17 @@ io.on('connection', (socket) => {
   if (!session || !session.isLoggedIn) {
       return;
   }
+
+  console.log(session.user.username, " connected with socketid = ", socket.id);
+  console.log("Total connections: ", io.engine.clientsCount);
   
-  //console.log("before join");
   
   socket.join(session.user.username);
     socket.on('chat message', (to, msg) => {
 
-      console.log("to: ", to);
+//      console.log("to: ", to);
 
-    console.log(session.user.username, " :", socket.rooms);
+  //  console.log(session.user.username, " :", socket.rooms);
     
       
       //TODO: check if existing conversation already exists (from db)
@@ -82,14 +87,16 @@ io.on('connection', (socket) => {
       //TODO: once connection established -> use socket room to send and receive messages and save them in db
 
       
-      socket.to("752zombie").emit("chat message", {from : session.user.username, message : msg});
+      socket.to(to).emit("chat message", {from : session.user.username, message : msg});
     
-
-      //console.log(from);
-      //console.log(msg);
-      //io.emit('chat message', msg);
     });
+
+    socket.on("disconnect", () => {
+        console.log(socket.request.session.user.username, " disconnected with socketId = ", socket.id);
+    })
   });
+
+
   
   
 httpServer.listen(8080, () => {

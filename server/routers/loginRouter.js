@@ -94,4 +94,15 @@ router.post("/sign-out", (req, res) => {
     }    
 })
 
+router.get("/secret", (req, res) => {
+    if (!req.session.isLoggedIn) {
+        res.send("this is a secret");
+    }
+
+    else {
+        res.send("here you go " + req.session.user.username);
+    }
+})
+
+
 export default router;
