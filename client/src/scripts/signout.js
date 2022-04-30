@@ -1,4 +1,7 @@
-import {loginStore} from "../stores.js";
+import { loginStore, socketStore } from "../stores.js";
+
+let socket;
+socketStore.subscribe((value) => socket = value);
 
 async function signOut(navigate) {
     const request = {
@@ -9,6 +12,9 @@ async function signOut(navigate) {
     if (result === "success") {
         loginStore.set(false);
         sessionStorage.removeItem("isLoggedIn");
+        if (socket) {
+            socket.disconnect();
+        }
         navigate("/");
     }
 

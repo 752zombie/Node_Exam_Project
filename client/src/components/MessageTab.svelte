@@ -1,9 +1,16 @@
 <script>
+    import { createEventDispatcher } from 'svelte';
+    const dispatch = createEventDispatcher();
+
     export let username;
     export let newMessageReceived = false;
+
+    function sendUsername()  {
+        dispatch("usernameClicked", {username : username});
+    }
 </script>
 
-<div>
+<div on:click={sendUsername}>
     <span>
         <span>{username + " "}</span>
         {#if newMessageReceived}

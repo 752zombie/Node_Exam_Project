@@ -2,6 +2,9 @@
     import { io } from "socket.io-client";
     import { socketStore } from "../stores.js";
     import MessageTab from "../components/MessageTab.svelte";
+
+    // key: username, value: array of messages to and from that user
+    let users = new Map();
     
     let chatInput = "";
     let userToSendTo = "";
@@ -13,6 +16,7 @@
         socketStore.set(io())
         socket.on("chat message", (data) => {
             console.log(data);
+            filterIncomingMessage(data);
         })
 
         socket.on("connect", () => {
@@ -24,6 +28,23 @@
         })
     }
 
+    function filterIncomingMessage(data) {
+        const from = data.from;
+
+        const messages = users.get(from);
+
+        if (!messages) {
+            users.set(from, [data]);
+            users = users;
+        }
+
+        else {
+            users.set(from, [...messages, data]);
+            //TODO: notify MessageTab that there is a new message
+        }
+        
+    }
+
     function sendMessage() {
         //console.log(userToSendTo);
         if (socket) {
@@ -31,14 +52,22 @@
         }
     }
 
+    function showChatContents(event) {
+        const messages = users.get(event.detail.username);
+        for (let message of messages) {
+            console.log("%s says: %s", message.from, message.message);
+        }
+    }
 
-    
-    </script>
+
+</script>
 
 <h1>Messages</h1>
 
-<MessageTab username="user 1"></MessageTab>
-<MessageTab username="user 2"  newMessageReceived={true}></MessageTab>
+{#each Array.from(users.keys()) as user}
+    <MessageTab username={user} on:usernameClicked={showChatContents}></MessageTab>
+{/each}
+
     
 <div>
     <input type="text" bind:value={chatInput}>
