@@ -15,3 +15,15 @@ p {
     position: sticky; 
     top: 3.2rem;
 }
+
+#stick-column:hover > .plus_sign{
+    color: red
+}
+
+.plus_sign {
+    transition: transform .8s ease-in-out;  
+}
+
+.plus_sign:hover {
+  transform:rotate(360deg); 
+}

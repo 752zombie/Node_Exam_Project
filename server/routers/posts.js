@@ -78,4 +78,68 @@ router.post("/posts", async (req, res) => {
 }     
 })
 
+
+// This function returns Posts based on sort call
+// This function collects the Post & boolean 
+// whether User Liked the Post & number of Comments on Post
+router.post("/posts/sort", async (req, res) => {
+
+    try {
+
+        //checks current page and sets max 5 Posts to render 
+        let page = 1;
+        if (req.body.pageToFetch) {
+            const parsed = parseInt(req.body.page);
+            page = isNaN(parsed) ? 1 : parsed; 
+        }
+
+        const offset = (page - 1) * 5;
+
+        // Sets sorting condition based on req.body 
+        let sqlCall = ""
+
+        if (req.body.sortOrder === "sortByComments") {
+            sqlCall = sortByComments()
+        }
+        else {
+            sqlCall = sortByLikes()
+        }
+
+        //retrieve Posts from db and check for Likes from User
+        const preparedStatement = await db.prepare(sqlCall);
+        await preparedStatement.bind({1 : offset});
+        const posts = await preparedStatement.all();
+
+        //send retrieved Posts
+        console.log(posts)
+        res.send({result : "success", posts : posts});
+
+    } 
+    
+    catch (err) {
+        console.log(err.message)
+        res.send({result : "Could not get the post"})
+}     
+})
+
+function sortByComments() {
+    return "SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
+            "FROM posts as p " + 
+            "LEFT JOIN post_like_user as l on l.post_id = p.id " +
+            "LEFT JOIN comments as c on c.post_id = p.id " + 
+            "GROUP BY p.id " +
+            "ORDER BY COUNT(comment) DESC " + 
+            "LIMIT 5 OFFSET ?"
+}
+
+function sortByLikes() {
+    return "SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
+           "FROM posts as p " + 
+           "LEFT JOIN post_like_user as l on l.post_id = p.id " +
+           "LEFT JOIN comments as c on c.post_id = p.id " + 
+           "GROUP BY p.id " +
+           "ORDER BY p.like DESC " + 
+           "LIMIT 5 OFFSET ?"
+}
+
 export default router;

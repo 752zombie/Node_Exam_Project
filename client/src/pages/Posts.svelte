@@ -5,6 +5,7 @@ import { onMount } from "svelte";
 import { useNavigate } from "svelte-navigator";
 import { postStore } from "../stores.js";
 import { userStore } from "../stores.js";
+import { sortPosts } from '../components/sortingFunction'
 
 
 const navigate = useNavigate();   
@@ -31,9 +32,9 @@ async function fetchPosts() {
 
       if (data.result === "success") {
           posts = data.posts;
-          console.log(posts)
           }    
   } 
+  
   catch(err) {
     console.log(err.message)
   }   
@@ -55,7 +56,9 @@ async function likePost(postId) {
           posts[postId-1].liked = 1
       }
 
-  } catch(err) {
+  } 
+  
+  catch(err) {
       console.log(err.message)
     }
 }
@@ -63,7 +66,7 @@ async function likePost(postId) {
 
 // Attaches new Like to user_id
 async function bindLikeToUser(postId) {
-
+  try {
     const request = {
       method : "POST",
       headers : {
@@ -73,6 +76,12 @@ async function bindLikeToUser(postId) {
     }
     const response = await fetch("http://localhost:8080/like/post-to-user", request);
     const data = await response.json();   
+
+  }
+
+  catch(err) {
+      console.log(err.message)
+    }  
     
 }
 
@@ -126,11 +135,23 @@ function previousPage()  {
     }
 }
 
+
 // Needed to fetch current Post in ViewPost  
 function setPostInSession(id) {
     postStore.set(id)
     navigate("/post")
 }
+
+
+// Sorting options
+async function sortByLikes() {
+  posts = await sortPosts(posts, pageToFetch, "sortByLikes")
+}
+
+async function sortByComments() {
+  posts = await sortPosts(posts, pageToFetch, "sortByComments")
+}
+
 
 </script>
 
@@ -142,7 +163,15 @@ function setPostInSession(id) {
 
 <div class="columns">
 
-    <div class="column"></div>
+    <div class="column" id="sticky-column">
+      <p class="title is-5">Sort your search</p>
+      <div class="columns">
+        <div class="column"><button class="button" on:click={sortByLikes}>Likes</button></div>
+        <div class="column"><button class="button" on:click={fetchPosts}>Freshest</button></div>
+        <div class="column"><button class="button" on:click={sortByComments}>Activity</button></div>
+      </div>
+
+    </div>
         
     <div class="column">
         
@@ -221,20 +250,12 @@ function setPostInSession(id) {
     
     <div class="column" id="sticky-column">
         <Link to="/create-post"> <p class="title is-5">Create post</p> </Link>
-        <Link to="/create-post"><img id="plus_sign" src="images/plus_icon.png" style="width: 40px" alt="Plus sign"></Link>
+        <Link to="/create-post"><img class="plus_sign" src="images/plus_icon.png" style="width: 40px" alt="Plus sign"></Link>
     </div>
 </div>
 
 
 <style>
-
-    #plus_sign {
-        transition: transform .8s ease-in-out;  
-    }
-
-    #plus_sign:hover {
-      transform:rotate(360deg); 
-    }
 
     .card-footer {
       justify-content: center;
