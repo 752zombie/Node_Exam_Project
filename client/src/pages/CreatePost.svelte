@@ -77,7 +77,7 @@ const onFileSelected =(e)=>{
 
         <div>
             <textarea class="textarea" placeholder="e.g. This is my post to the world" bind:value={text}></textarea>
-            <button class="button is-link is-rounded" id="viewPostButton" on:click|preventDefault={createPost}>Submit</button>
+            <button class="button is-light is-rounded" id="viewPostButton" on:click|preventDefault={createPost}>Submit</button>
         </div>    
     </div>
     

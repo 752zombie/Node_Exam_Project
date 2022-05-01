@@ -88,6 +88,7 @@ p {
 
 #viewPostButton {
     background-color: #e4dae6;
+    color: white;
 }
 
 #viewPostButton:hover {

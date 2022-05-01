@@ -199,14 +199,16 @@ function setPostInSession(id) {
         {/if}  
         {/each}
 
-        {#if pageToFetch > 1}
-            <button on:click={previousPage}>Previous page</button>
-        {/if}
-        {#if posts.length !== 0}
-            <button on:click={nextPage}>Next page</button>
-        {:else}
-            <p>There are no more posts</p>
-        {/if}      
+    <div class="pagination">
+          {#if pageToFetch > 1}
+              <button class="button" on:click={previousPage}>Previous page</button>
+          {/if}
+          {#if posts.length !== 0}
+              <button class="button" on:click={nextPage}>Next page</button>
+          {:else}
+              <p>There are no more posts</p>
+          {/if} 
+        </div>     
 
     </div>
     
@@ -237,8 +239,10 @@ function setPostInSession(id) {
       color:"cornflowerblue"
     }
 
-    #fire-gif {
-      height: 10%;
+    .pagination {
+      margin-bottom: 50px;
+      justify-content: center;
+      justify-content: space-around;
     }
 
 </style>
