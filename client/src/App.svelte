@@ -1,6 +1,7 @@
 <script>
 	import { Router, Link, Route } from "svelte-navigator";
 	import Navbar from './components/Navbar.svelte'
+	import Footer from './components/Footer.svelte'
 	import Home from "./pages/Home.svelte";
 	import Login from "./pages/Login.svelte";
 	import Posts from "./pages/Posts.svelte";
@@ -24,6 +25,7 @@
 			<Route path="/messages" component={Messages} />
 			
 	</main>
+	<Footer/>
 </Router>
 
 <style>

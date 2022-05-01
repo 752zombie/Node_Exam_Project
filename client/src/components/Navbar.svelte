@@ -46,9 +46,10 @@
 	}
 	
 	nav {
-		background-color: rgb(72, 72, 199);
-		padding-top: 25px;
-		padding-bottom: 25px;
+		
+		background-color: #dedae6;
+		padding-top: 10px;
+		padding-bottom: 10px;
 	}
 
 	nav :global(.header-link) {
