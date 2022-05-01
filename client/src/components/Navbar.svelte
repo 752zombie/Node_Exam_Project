@@ -1,11 +1,14 @@
 <script>
     import { Link } from "svelte-navigator";
-    import { loginStore } from "../stores.js";
+    import { loginStore, userStore } from "../stores.js";
     import signOut from "../scripts/signout.js"
     import { navigate } from "svelte-navigator";
 
     let isLoggedIn = false;
+	let user;
     loginStore.subscribe((value) => isLoggedIn = value);
+	userStore.subscribe((value) => user = value);
+
 </script>
 
 <nav class="link-wrapper">
@@ -18,7 +21,7 @@
 	
     {:else}
     <span class="header-link align-right" on:click={() => signOut(navigate)}>Sign out</span>
-	<div><Link to="user" class="header-link align-right">User</Link></div>
+	<div><Link to="user" class="header-link align-right">{user.username}</Link></div>
 	<div><Link to="user"><img src="images/user_icon.png" style="width: 40px; margin-left: -50%" alt="user icon"></Link></div>
     {/if}
 </nav>
