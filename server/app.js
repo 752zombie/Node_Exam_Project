@@ -74,7 +74,7 @@ io.on('connection', async (socket) => {
   
   
   socket.join(session.user.username);
-  socket.on('chat message', (to, msg, conversationId) => {
+  socket.on('chat message', async (to, msg, conversationId) => {
 
 
       

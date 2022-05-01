@@ -28,7 +28,7 @@ router.get("/conversations", async (req, res) => {
     }
 })
 
-router.get("/conversation/:id", (req, res) => {
+router.get("/conversation/:id", async (req, res) => {
     const user = req.session.user;
     const conversationId = req.params.id;
 
