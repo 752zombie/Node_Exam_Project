@@ -30,9 +30,7 @@ p {
 
 .flex-container {
     display: flex;
-    justify-content: space-around;
-
-    
+    justify-content: space-around;  
 }
 
 .flex-item {
@@ -49,9 +47,12 @@ p {
     transition-duration: 0.5s;   
 }
 
-#fire-gif {
+.picture {
     border-radius: 50%;
+    max-width: 200px;
+    max-height: 100px;
 }
+
 
 #fire-gif:hover {
     border-radius: 100%;

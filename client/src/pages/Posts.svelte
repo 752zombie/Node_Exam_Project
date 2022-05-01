@@ -12,6 +12,8 @@ let posts = [];
 let pageToFetch = 1;
 let user = {};
 let currentPostSorting = "byDate"
+let topPicture = "fresh.gif"
+let headerTitle = "Fresh post" 
 userStore.subscribe((value) => user = value);
 
 
@@ -31,10 +33,11 @@ async function fetchPosts() {
       let data = await response.json(); 
 
       if (data.result === "success") {
-          posts = data.posts; 
-          console.log(posts)       
+          posts = data.posts;        
           posts.unshift({id: 0}) // Post.id needs to match array index        
-          }    
+          topPicture = "fresh.gif"
+          headerTitle = "Freshest posts"  
+        }    
   } 
   
   catch(err) {
@@ -94,12 +97,17 @@ async function sortByLikes() {
   posts = await sortPosts(posts, pageToFetch, "sortByLikes") 
   posts.unshift({id: 0}) // Post.id needs to match array index
   currentPostSorting = "byLikes"
+  topPicture = "minions-thumbs-up.gif"
+  headerTitle = "Favoured posts"
 }
 
 async function sortByComments() {
   posts = await sortPosts(posts, pageToFetch, "sortByComments")
   posts.unshift({id: 0}) // Post.id needs to match array index
   currentPostSorting = "byComments"
+  topPicture = "activity.gif"
+  headerTitle = "Most commented posts"
+
 }
 
 
@@ -110,6 +118,7 @@ function nextPage() {
         fetchPosts();
     }
 }
+
 function previousPage()  {
     if (pageToFetch > 1) {
         pageToFetch--;
@@ -138,20 +147,19 @@ function setPostInSession(id) {
 
     <div class="column" id="sticky-column">
       <p class="title is-5">Sort your search</p>
-      <div class="columns">
-        <div class="column"><button class="button" on:click={sortByLikes}>Likes</button></div>
-        <div class="column"><button class="button" on:click={fetchPosts}>Freshest</button></div>
-        <div class="column"><button class="button" on:click={sortByComments}>Activity</button></div>
-      </div>
-
+        <div class="columns">
+          <div class="column"><button class="button" on:click={fetchPosts}>Fresh</button></div>
+          <div class="column"><button class="button" on:click={sortByLikes}>Likes</button></div>
+          <div class="column"><button class="button" on:click={sortByComments}>Activity</button></div>        
+        </div>      
     </div>
         
     <div class="column">
         
         <div>
-          <p class="title is-1">Hottest posts</p>
+          <p class="title is-1">Hottest Memes</p>
           <hr>
-          <img src="images/fire-gif.gif" id="fire-gif" alt="Fire emoji">
+          <img src="images/{topPicture}" class="picture" id="fire-gif" alt="Sorting picture">
           <hr>
         </div>
         
