@@ -5,6 +5,13 @@ const router = Router();
 
 router.get("/conversations", async (req, res) => {
     const user = req.session.user;
+
+    if (!user) {
+        res.send({result : "you need to be logged in"});
+        return;
+    }
+
+
     try {
         const preparedStatement = await db.prepare(`SELECT users.id AS userId, users.username, conversations.id AS conversationId
          FROM users INNER JOIN conversations ON (users.id = conversations.participant_1 OR conversations.participant_2 = users.id) AND users.id <> ? 
@@ -21,9 +28,38 @@ router.get("/conversations", async (req, res) => {
     }
 })
 
+router.get("/conversation/:id", (req, res) => {
+    const user = req.session.user;
+    const conversationId = req.params.id;
+
+    if (!user || !conversationId) {
+        res.send({result : "error"});
+        return;
+    }
+
+    try {
+        const preparedStatement = await db.prepare("SELECT * FROM messages WHERE conversation_id = ? AND (sender_id = ? OR receiver_id = ?)");
+        await preparedStatement.bind({1 : conversationId, 2 : user.id, 3 : user.id});
+        const messages = await preparedStatement.all();
+
+        res.send({result : "success", messages : messages});
+    }
+
+    catch(err) {
+        res.send({result : "something went wrong"});
+    }
+
+
+})
+
 router.delete("/conversation/:id", async (req, res) => {
     const user = req.session.user;
     const conversationId = req.params.id;
+
+    if (!user || !conversationId) {
+        res.send({result : "error"});
+        return;
+    }
     
     try {
         // delete messages if both sender and receiver wants the messages deleted
