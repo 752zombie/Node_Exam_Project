@@ -57,3 +57,7 @@ p {
 #fire-gif:hover {
     border-radius: 100%;
 }
+
+.post-header-tag-no-user {
+    margin-right: 100%
+}

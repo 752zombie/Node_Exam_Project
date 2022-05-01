@@ -2,8 +2,7 @@
 import { Link } from 'svelte-navigator';
 import { onMount } from "svelte";
 import { useNavigate } from "svelte-navigator";
-import { postStore } from "../stores.js";
-import { userStore } from "../stores.js";
+import { loginStore, userStore, postStore } from "../stores.js";
 import { sortPosts } from '../components/sortingFunction'
 
 
@@ -15,7 +14,9 @@ let currentPostSorting = "byDate"
 let topPicture = "fresh.gif"
 let headerTitle = "Fresh post" 
 userStore.subscribe((value) => user = value);
-
+let loggedIn = {}
+loginStore.subscribe(value => { loggedIn = value;	});
+console.log(loggedIn)
 
 onMount(fetchPosts);
 
@@ -34,7 +35,8 @@ async function fetchPosts() {
 
       if (data.result === "success") {
           posts = data.posts;        
-          posts.unshift({id: 0}) // Post.id needs to match array index        
+          posts.unshift({id: 0}) // Post.id needs to match array index
+          currentPostSorting = "byDate"        
           topPicture = "fresh.gif"
           headerTitle = "Freshest posts"  
         }    
@@ -175,8 +177,8 @@ function setPostInSession(id) {
               <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
 
-                  <p class="post-header-tag">Comments <strong >{post.comment_count}</strong></p>
-                 
+                  {#if loggedIn}
+                  <p class="post-header-tag">Comments <strong >{post.comment_count}</strong></p>                 
                   <p class="post-header-tag">Likes <strong >{post.like}</strong></p>
                   
                   {#if post.liked == 0}
@@ -185,6 +187,7 @@ function setPostInSession(id) {
                   </i>
                   {:else}
                     <button id="unlike-button" class="button is-primary is-outlined" on:click={likeOrUnlikePost(post.id, "unlike/")}>Liked</button>
+                  {/if}  
                   {/if}
                   
                 </span>
@@ -233,10 +236,16 @@ function setPostInSession(id) {
 
     </div>
     
+    
     <div class="column" id="sticky-column">
+      {#if loggedIn}
         <Link to="/create-post"> <p class="title is-5">Create post</p> </Link>
         <Link to="/create-post"><img class="plus_sign" src="images/plus_icon.png" style="width: 40px" alt="Plus sign"></Link>
+      {:else}
+      <p> Login to create your own posts</p>
+      {/if}
     </div>
+   
 </div>
 
 
