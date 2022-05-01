@@ -27,6 +27,7 @@ router.delete("/conversation/:id", async (req, res) => {
     
     try {
         // delete messages if both sender and receiver wants the messages deleted
+        // the logic is: if mark_delete_id equals NULL (default) then noone has requested a delete. If mark_for_delete equals an id, then the the user with that id has requested a delete   
         let preparedStatement = await db.prepare("DELETE FROM messages WHERE conversation_id = ? AND (sender_id = ? OR receiver_id = ?) AND (mark_for_delete <> ? AND mark_for_delete IS NOT NULL)");
         await preparedStatement.bind({1 : conversationId, 2 : user.id, 3 : user.id, 4 : user.id});
         await preparedStatement.run();
