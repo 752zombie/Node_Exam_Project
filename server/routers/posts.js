@@ -11,8 +11,7 @@ router.post("/post", async (req, res) => {
 
         const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, date, user_id) VALUES (?, ?, ?, ?, ?)");
         await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.date, 5 : user.id});
-        await preparedStatement.run();
-                
+        await preparedStatement.run();               
         res.send({result : "success"});
     
     } 
@@ -27,10 +26,16 @@ router.post("/post", async (req, res) => {
 router.get("/post/:id", async (req, res) => {
     
     try { 
-        const preparedStatement = await db.prepare("SELECT * FROM posts WHERE id = ?");
+        //retrieve Posts from db and check for Likes from User
+        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, u.username, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
+                                                    "FROM posts as p " + 
+                                                    "LEFT JOIN post_like_user as l on l.post_id = p.id " +
+                                                    "LEFT JOIN comments as c on c.post_id = p.id " +
+                                                    "INNER JOIN users as u on u.id = p.user_id " +
+                                                    "WHERE p.id = ? " +                                                     
+                                                    "GROUP BY p.id ");
         await preparedStatement.bind({1 : req.params.id});
-        const post = await preparedStatement.all();
-        
+        const post = await preparedStatement.all();       
         res.send({result : "success", post : post[0]});
     
     } 
@@ -67,8 +72,6 @@ router.post("/posts", async (req, res) => {
                                                     "LIMIT 5 OFFSET ?");
         await preparedStatement.bind({1 : offset});
         const posts = await preparedStatement.all();
-
-        //send retrieved Posts
         res.send({result : "success", posts : posts});
         
     } 
@@ -110,9 +113,6 @@ router.post("/posts/sort", async (req, res) => {
         const preparedStatement = await db.prepare(sqlCall);
         await preparedStatement.bind({1 : offset});
         const posts = await preparedStatement.all();
-
-        //send retrieved Posts
-        console.log(posts)
         res.send({result : "success", posts : posts});
 
     } 

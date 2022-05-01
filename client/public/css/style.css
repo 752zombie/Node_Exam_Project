@@ -61,3 +61,11 @@ p {
 .post-header-tag-no-user {
     margin-right: 100%
 }
+
+#like-button {
+    margin-right: 170px;
+  }
+
+  #unlike-button {
+    margin-right: 180px;
+  }

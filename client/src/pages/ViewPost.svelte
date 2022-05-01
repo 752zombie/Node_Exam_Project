@@ -1,10 +1,10 @@
 <script>
 import { onMount } from 'svelte'
 import { getDate } from '../components/getDate.js'
-import { postStore } from '../stores.js'
-import { userStore } from '../stores.js'
+import { loginStore, userStore, postStore } from "../stores.js";
+import { likeUnlike } from '../components/likes'
 
-let photo = ""
+
 let post = []
 let comments = []
 let comment = ""
@@ -13,6 +13,9 @@ let postId = ""
 postStore.subscribe((value) => postId = value)
 let user = {}
 userStore.subscribe((value) => user = value)
+let loggedIn = {}
+loginStore.subscribe(value => { loggedIn = value;	});
+let currentPostSorting = "fresh"
 
 //onMount?
 fetchPost(postId)
@@ -25,7 +28,6 @@ async function fetchPost(postId) {
     
     if (data.result === "success") {
         post = data.post;
-        photo = post.photo
     }
 
     } catch(err) {
@@ -73,19 +75,28 @@ async function postComment() {
     }
 }
 
+
+// Like or unlike function
+async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
+
+  let data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // exported function
+
+  if (data.result === "success") {
+          console.log("successsss")
+          fetchPost(postId) 
+        }
+}
+
   
 </script>
 
 
 <svelte:head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </svelte:head>
 
-<div> <p class="title is-3">{post.title} </p></div>
-
 <br>
-
-<div><img src={photo} style="max-width: 500px;" alt=""> </div>
     
 <div class="columns">
 
@@ -94,33 +105,61 @@ async function postComment() {
 
     <div class="column">
 
-        <div class="card">
-            <header class="card-header">
-            <p class="card-header-title">
-                {post.title}
-            </p>
-            <button class="card-header-icon" aria-label="more options">
-                <span class="icon">
-                <i class="fas fa-angle-down" aria-hidden="true">
-                  <button style="margin-right: 20px;" class="button is-info">Like</button>
-                </i>
-                </span>
-            </button>
-            </header>
-            <div class="card-content">
-            <div class="content">
-                {post.text}
-                <br>
+      <div class="card">
+        <header class="card-header">
+
+          <p class="card-header-title" >{post.title}</p>
+
+          <button class="card-header-icon" aria-label="more options">
+            <span class="icon">
+
+              {#if loggedIn}
+              <p class="post-header-tag">Comments <strong >{post.comment_count}</strong></p>                 
+              <p class="post-header-tag">Likes <strong >{post.like}</strong></p>
+              
+              {#if post.liked == 0}
+              <i class="fas fa-angle-down" aria-hidden="true" >                   
+                <button id="like-button" class="button is-info" on:click={likeOrUnlikePost(post.id)}>Like</button>
+              </i>
+              {:else}
+                <button id="unlike-button" class="button is-primary is-outlined" on:click={likeOrUnlikePost(post.id, "unlike/")}>Liked</button>
+              {/if}  
+              {/if}
+              
+            </span>
+          </button>
+
+        </header>
+
+        <div class="card-content">
+          <div class="content">
+
+            {#if post.photo}
+            <p><img src={post.photo} alt=""></p>
+            <hr>
+            {:else}
+            <p></p>
+            {/if}
             
+            <p class="bread-text"><strong>{post.text}</strong></p>
+            
+            <hr>
+            
+            <div class="flex-container">
+              <a id="user-tag" class="flex-item" ><em>@{post.username}</em></a>
+              <p class="flex-item">{post.date}</p>
             </div>
-            </div>
-            <footer class="card-footer">
-                <p class="is-center"><em>{post.date}</em></p>
-            </footer>
+
+          </div>
         </div>
+        <footer class="card-footer">
+        </footer>
+      </div>
+
+      <br>
 
         <br>
-
+                                      <!-- Comment section -->
         <div class="comment">
             <textarea class="textarea" placeholder="What are your thoughts?" bind:value={comment}></textarea>
 

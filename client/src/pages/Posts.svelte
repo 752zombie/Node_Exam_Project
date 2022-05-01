@@ -4,6 +4,7 @@ import { onMount } from "svelte";
 import { useNavigate } from "svelte-navigator";
 import { loginStore, userStore, postStore } from "../stores.js";
 import { sortPosts } from '../components/sortingFunction'
+import { likeUnlike } from '../components/likes'
 
 
 const navigate = useNavigate();   
@@ -12,11 +13,10 @@ let pageToFetch = 1;
 let user = {};
 let currentPostSorting = "byDate"
 let topPicture = "fresh.gif"
-let headerTitle = "Fresh post" 
 userStore.subscribe((value) => user = value);
 let loggedIn = {}
 loginStore.subscribe(value => { loggedIn = value;	});
-console.log(loggedIn)
+
 
 onMount(fetchPosts);
 
@@ -37,8 +37,7 @@ async function fetchPosts() {
           posts = data.posts;        
           posts.unshift({id: 0}) // Post.id needs to match array index
           currentPostSorting = "byDate"        
-          topPicture = "fresh.gif"
-          headerTitle = "Freshest posts"  
+          topPicture = "fresh.gif" 
         }    
   } 
   
@@ -48,68 +47,32 @@ async function fetchPosts() {
 }
 
 
-// Increments or decrements Like from Post
-async function likeOrUnlikePost(postId, likeOrUnlike = "") {
+// Like or unlike function
+async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
 
-  try {
-       
-      bindLikeToUser(postId, likeOrUnlike) 
-  
-      const url = "http://localhost:8080/like/" + likeOrUnlike + postId;
-      const response = await fetch(url);
-      const data = await response.json();
+let data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // exported function
 
-      if (data.result === "success") {
+if (data.result === "success") {
         if (currentPostSorting == "byDate") { fetchPosts() } 
         else if (currentPostSorting == "byLikes") { sortByLikes() }
         else { sortByComments() }  
       }
-
-  } catch(err) {
-      console.log(err.message)
-    }
-}
-
-
-// Add or removes Like from User
-async function bindLikeToUser(postId, likeOrUnlike = "") {
-
-  try {
-    const request = {
-      method : "POST",
-      headers : {
-          "Content-Type": "application/json"
-    },
-      body : JSON.stringify({userId : user.userId, postId : postId})
-    }
-    const response = await fetch("http://localhost:8080/like/" + likeOrUnlike + "post-to-user", request);
-    const data = await response.json();   
-
-  }
-
-  catch(err) {
-      console.log(err.message)
-    }  
-  
 }
 
 
 // Sorting options
 async function sortByLikes() {
-  posts = await sortPosts(posts, pageToFetch, "sortByLikes") 
+  posts = await sortPosts(posts, pageToFetch, "sortByLikes") // exported function
   posts.unshift({id: 0}) // Post.id needs to match array index
   currentPostSorting = "byLikes"
   topPicture = "minions-thumbs-up.gif"
-  headerTitle = "Favoured posts"
 }
 
 async function sortByComments() {
-  posts = await sortPosts(posts, pageToFetch, "sortByComments")
+  posts = await sortPosts(posts, pageToFetch, "sortByComments") // exported function
   posts.unshift({id: 0}) // Post.id needs to match array index
   currentPostSorting = "byComments"
   topPicture = "activity.gif"
-  headerTitle = "Most commented posts"
-
 }
 
 
@@ -161,7 +124,8 @@ function setPostInSession(id) {
         <div>
           <p class="title is-1">Hottest Memes</p>
           <hr>
-          <img src="images/{topPicture}" class="picture" id="fire-gif" alt="Sorting picture">
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <img src="images/{topPicture}" class="picture">
           <hr>
         </div>
         
@@ -263,19 +227,10 @@ function setPostInSession(id) {
       color:"cornflowerblue"
     }
 
-    #like-button {
-      margin-right: 170px;
-    }
-
-    #unlike-button {
-      margin-right: 180px;
-    }
-
     #fire-gif {
       height: 10%;
     }
 
-   
 </style>
 
 
