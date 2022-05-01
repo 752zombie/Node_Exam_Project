@@ -47,6 +47,51 @@ router.get("/post/:id", async (req, res) => {
 
 })
 
+
+// Gets all Posts related to User
+router.get("/posts/user/:user_id", async (req, res) => {
+    
+    try { 
+        //retrieve Posts from db and check for Likes from User
+        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, u.username, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count " +    
+                                                    "FROM posts as p " + 
+                                                    "LEFT JOIN post_like_user as l on l.post_id = p.id " +
+                                                    "LEFT JOIN comments as c on c.post_id = p.id " +
+                                                    "INNER JOIN users as u on u.id = p.user_id " +
+                                                    "WHERE u.id = ? " +                                                     
+                                                    "GROUP BY p.id ");
+        await preparedStatement.bind({1 : req.params.user_id});
+        const posts = await preparedStatement.all();       
+        res.send({result : "success", posts : posts});
+    
+    } 
+    
+    catch (err) {
+        console.log(err.message)
+        res.send({result : "Could not get the post"})
+    }    
+
+})
+
+
+// Delete Post
+router.get("/post/delete/:post_id", async (req, res) => {
+    
+    try { 
+        //retrieve Posts from db and check for Likes from User
+        const preparedStatement = await db.prepare("DELETE FROM posts WHERE id = ?");
+        await preparedStatement.bind({1 : req.params.post_id})
+        await preparedStatement.run();
+        res.send({result : "success"})  
+    } 
+    
+    catch (err) {
+        console.log(err.message)
+        res.send({result : "Could not get the post"})
+    }    
+
+})
+
 // This function collects the Post & checks 
 // whether User Liked the Post & number of Comments on Post
 router.post("/posts", async (req, res) => {
@@ -81,6 +126,9 @@ router.post("/posts", async (req, res) => {
         res.send({result : "Could not get the post"})
 }     
 })
+
+
+
 
 
 // This function returns Posts based on sort call
