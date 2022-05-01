@@ -22,11 +22,7 @@
         const data  = await response.json();
         
         if (data.result === "success") {
-            loginStore.set(true);
-            userStore.set(data.user);
-            sessionStorage.setItem("isLoggedIn", "true");
-            const from = ($location.state && $location.state.from) || "/";
-            navigate(from, { replace: true });
+            signIn()
         }
 
         else {
