@@ -16,8 +16,9 @@ p {
     top: 3.2rem;
 }
 
-#stick-column:hover > .plus_sign{
-    color: red
+#stick-column:hover + .plus_sign{
+    color: red;
+    
 }
 
 .plus_sign {
@@ -40,26 +41,18 @@ p {
 #user-tag {
     color: purple;
     opacity : 0.5;
+    transition-duration: 0.5s;
 }
 #user-tag:hover {
     transform: scale(1.3);
     opacity : 1;
-    transition-duration: 0.5s;   
+    transition-duration: 0.5s;  
 }
 
 .picture {
     border-radius: 50%;
     max-width: 200px;
     max-height: 100px;
-}
-
-
-#fire-gif:hover {
-    border-radius: 100%;
-}
-
-.post-header-tag-no-user {
-    margin-right: 100%
 }
 
 #like-button {
@@ -69,3 +62,28 @@ p {
   #unlike-button {
     margin-right: 180px;
   }
+
+.freshSortinfo, .activitySortInfo, .likeSortInfo {
+    display: none;
+}
+
+
+
+#freshInfoButton:hover + .freshSortinfo {
+    margin-top: 5px;
+    display: block;
+    color: rgb(0, 17, 255);
+}
+
+#activityInfoButton:hover + .activitySortInfo {
+    margin-top: 5px;
+    display: block;
+    color: rgb(0, 38, 255);
+}
+
+#likeInfoButton:hover + .likeSortInfo {
+    margin-top: 5px;
+    display: block;
+    color: rgb(0, 102, 255);
+}
+
