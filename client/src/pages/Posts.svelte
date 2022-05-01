@@ -1,6 +1,5 @@
 <script>
 import { Link } from 'svelte-navigator';
-import { loginStore } from "../stores.js";
 import { onMount } from "svelte";
 import { useNavigate } from "svelte-navigator";
 import { postStore } from "../stores.js";
@@ -12,6 +11,7 @@ const navigate = useNavigate();
 let posts = [];
 let pageToFetch = 1;
 let user = {};
+let currentPostSorting = "byDate"
 userStore.subscribe((value) => user = value);
 
 
@@ -31,73 +31,33 @@ async function fetchPosts() {
       let data = await response.json(); 
 
       if (data.result === "success") {
-          posts = data.posts;
+          posts = data.posts; 
+          console.log(posts)       
+          posts.unshift({id: 0}) // Post.id needs to match array index        
           }    
   } 
   
   catch(err) {
     console.log(err.message)
   }   
-
 }
 
 
-// Sums number of likes on Post
-async function likePost(postId) {
+// Increments or decrements Like from Post
+async function likeOrUnlikePost(postId, likeOrUnlike = "") {
 
-  try { 
-      bindLikeToUser(postId)
-      const url = "http://localhost:8080/like/" + postId;
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.result === "success") {
-          posts[postId-1].like += 1 // Needs to be -1 since array starts at index 0
-          posts[postId-1].liked = 1
-      }
-
-  } 
-  
-  catch(err) {
-      console.log(err.message)
-    }
-}
-
-
-// Attaches new Like to user_id
-async function bindLikeToUser(postId) {
   try {
-    const request = {
-      method : "POST",
-      headers : {
-          "Content-Type": "application/json"
-    },
-      body : JSON.stringify({userId : user.userId, postId : postId})
-    }
-    const response = await fetch("http://localhost:8080/like/post-to-user", request);
-    const data = await response.json();   
-
-  }
-
-  catch(err) {
-      console.log(err.message)
-    }  
-    
-}
-
-
-// Remove User's Like from Post
-async function unlikePost(postId) {
-
-  try { 
-      unbindLikeToUser(postId)
-      const url = "http://localhost:8080/like/unlike/" + postId;
+       
+      bindLikeToUser(postId, likeOrUnlike) 
+  
+      const url = "http://localhost:8080/like/" + likeOrUnlike + postId;
       const response = await fetch(url);
       const data = await response.json();
 
       if (data.result === "success") {
-          posts[postId-1].like -= 1 // Needs to be -1 since Posts array starts at index 0
-          posts[postId-1].liked = 0
+        if (currentPostSorting == "byDate") { fetchPosts() } 
+        else if (currentPostSorting == "byLikes") { sortByLikes() }
+        else { sortByComments() }  
       }
 
   } catch(err) {
@@ -106,18 +66,40 @@ async function unlikePost(postId) {
 }
 
 
-// Attaches new Like to user_id
-async function unbindLikeToUser(postId) {
+// Add or removes Like from User
+async function bindLikeToUser(postId, likeOrUnlike = "") {
 
-  const request = {
-    method : "POST",
-    headers : {
-        "Content-Type": "application/json"
-  },
-    body : JSON.stringify({userId : user.userId, postId : postId})
+  try {
+    const request = {
+      method : "POST",
+      headers : {
+          "Content-Type": "application/json"
+    },
+      body : JSON.stringify({userId : user.userId, postId : postId})
+    }
+    const response = await fetch("http://localhost:8080/like/" + likeOrUnlike + "post-to-user", request);
+    const data = await response.json();   
+
   }
-  const response = await fetch("http://localhost:8080/like/unlike/post-to-user", request);
-  const data = await response.json();   
+
+  catch(err) {
+      console.log(err.message)
+    }  
+  
+}
+
+
+// Sorting options
+async function sortByLikes() {
+  posts = await sortPosts(posts, pageToFetch, "sortByLikes") 
+  posts.unshift({id: 0}) // Post.id needs to match array index
+  currentPostSorting = "byLikes"
+}
+
+async function sortByComments() {
+  posts = await sortPosts(posts, pageToFetch, "sortByComments")
+  posts.unshift({id: 0}) // Post.id needs to match array index
+  currentPostSorting = "byComments"
 }
 
 
@@ -143,17 +125,8 @@ function setPostInSession(id) {
 }
 
 
-// Sorting options
-async function sortByLikes() {
-  posts = await sortPosts(posts, pageToFetch, "sortByLikes")
-}
-
-async function sortByComments() {
-  posts = await sortPosts(posts, pageToFetch, "sortByComments")
-}
-
-
 </script>
+
 
 <svelte:head>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
@@ -184,6 +157,8 @@ async function sortByComments() {
         
 
         {#each posts as post}
+
+        {#if post.id != 0}
         <div class="card">
             <header class="card-header">
 
@@ -198,10 +173,10 @@ async function sortByComments() {
                   
                   {#if post.liked == 0}
                   <i class="fas fa-angle-down" aria-hidden="true" >                   
-                    <button id="like-button" class="button is-info" on:click={likePost(post.id)}>Like</button>
+                    <button id="like-button" class="button is-info" on:click={likeOrUnlikePost(post.id)}>Like</button>
                   </i>
                   {:else}
-                    <button id="unlike-button" class="button is-primary is-outlined" on:click={unlikePost(post.id)}>Liked</button>
+                    <button id="unlike-button" class="button is-primary is-outlined" on:click={likeOrUnlikePost(post.id, "unlike/")}>Liked</button>
                   {/if}
                   
                 </span>
@@ -222,9 +197,11 @@ async function sortByComments() {
                 <p class="bread-text"><strong>{post.text}</strong></p>
                 
                 <hr>
-                <br>
-
-                <p><em>{post.date}</em></p>
+                
+                <div class="flex-container">
+                  <a id="user-tag" class="flex-item" ><em>@{post.username}</em></a>
+                  <p class="flex-item">{post.date}</p>
+                </div>
 
               </div>
             </div>
@@ -234,7 +211,7 @@ async function sortByComments() {
           </div>
 
           <br>
-          
+        {/if}  
         {/each}
 
         {#if pageToFetch > 1}

@@ -9,8 +9,6 @@ router.post("/post", async (req, res) => {
         req.session.isLoggedIn = true;
         const user = req.session.user;
 
-        console.log(user);
-
         const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, date, user_id) VALUES (?, ?, ?, ?, ?)");
         await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.date, 5 : user.id});
         await preparedStatement.run();
@@ -44,7 +42,7 @@ router.get("/post/:id", async (req, res) => {
 
 })
 
-// This function collects the Post & boolean 
+// This function collects the Post & checks 
 // whether User Liked the Post & number of Comments on Post
 router.post("/posts", async (req, res) => {
 
@@ -59,19 +57,20 @@ router.post("/posts", async (req, res) => {
         const offset = (page - 1) * 5;
         
         //retrieve Posts from db and check for Likes from User
-        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
+        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, u.username, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
                                                     "FROM posts as p " + 
                                                     "LEFT JOIN post_like_user as l on l.post_id = p.id " +
-                                                    "LEFT JOIN comments as c on c.post_id = p.id " +                                                    
+                                                    "LEFT JOIN comments as c on c.post_id = p.id " +
+                                                    "INNER JOIN users as u on u.id = p.user_id " +                                                     
                                                     "GROUP BY p.id " + 
-                                                    "ORDER BY p.date DESC " +
+                                                    "ORDER BY p.id DESC " +
                                                     "LIMIT 5 OFFSET ?");
         await preparedStatement.bind({1 : offset});
         const posts = await preparedStatement.all();
 
         //send retrieved Posts
         res.send({result : "success", posts : posts});
-
+        
     } 
     
     catch (err) {
@@ -82,7 +81,7 @@ router.post("/posts", async (req, res) => {
 
 
 // This function returns Posts based on sort call
-// This function collects the Post & boolean 
+// This function collects the Post & checks 
 // whether User Liked the Post & number of Comments on Post
 router.post("/posts/sort", async (req, res) => {
 
@@ -97,7 +96,7 @@ router.post("/posts/sort", async (req, res) => {
 
         const offset = (page - 1) * 5;
 
-        // Sets sorting condition based on req.body 
+        // Sets sorting condition based on sort order
         let sqlCall = ""
 
         if (req.body.sortOrder === "sortByComments") {
@@ -125,20 +124,22 @@ router.post("/posts/sort", async (req, res) => {
 })
 
 function sortByComments() {
-    return "SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
-            "FROM posts as p " + 
-            "LEFT JOIN post_like_user as l on l.post_id = p.id " +
-            "LEFT JOIN comments as c on c.post_id = p.id " + 
-            "GROUP BY p.id " +
-            "ORDER BY COUNT(comment) DESC " + 
-            "LIMIT 5 OFFSET ?"
+    return "SELECT p.id, p.title, p.text, p.photo, p.like, p.date, u.username, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
+           "FROM posts as p " + 
+           "LEFT JOIN post_like_user as l on l.post_id = p.id " +
+           "LEFT JOIN comments as c on c.post_id = p.id " +
+           "INNER JOIN users as u on u.id = p.user_id " + 
+           "GROUP BY p.id " +
+           "ORDER BY COUNT(comment) DESC " + 
+           "LIMIT 5 OFFSET ?"
 }
 
 function sortByLikes() {
-    return "SELECT p.id, p.title, p.text, p.photo, p.like, p.date, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
+    return "SELECT p.id, p.title, p.text, p.photo, p.like, p.date, u.username, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
            "FROM posts as p " + 
            "LEFT JOIN post_like_user as l on l.post_id = p.id " +
-           "LEFT JOIN comments as c on c.post_id = p.id " + 
+           "LEFT JOIN comments as c on c.post_id = p.id " +
+           "INNER JOIN users as u on u.id = p.user_id " +  
            "GROUP BY p.id " +
            "ORDER BY p.like DESC " + 
            "LIMIT 5 OFFSET ?"
