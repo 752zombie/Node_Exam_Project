@@ -50,7 +50,7 @@ async function fetchPosts() {
 // Like or unlike function
 async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
 
-let data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // exported function
+let data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // imported function
 
 if (data.result === "success") {
         if (currentPostSorting == "byDate") { fetchPosts() } 
@@ -62,14 +62,14 @@ if (data.result === "success") {
 
 // Sorting options
 async function sortByLikes() {
-  posts = await sortPosts(posts, pageToFetch, "sortByLikes") // exported function
+  posts = await sortPosts(posts, pageToFetch, "sortByLikes") // imported function
   posts.unshift({id: 0}) // Post.id needs to match array index
   currentPostSorting = "byLikes"
   topPicture = "minions-thumbs-up.gif"
 }
 
 async function sortByComments() {
-  posts = await sortPosts(posts, pageToFetch, "sortByComments") // exported function
+  posts = await sortPosts(posts, pageToFetch, "sortByComments") // imported function
   posts.unshift({id: 0}) // Post.id needs to match array index
   currentPostSorting = "byComments"
   topPicture = "activity.gif"

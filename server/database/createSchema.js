@@ -32,6 +32,17 @@ await db.exec(`CREATE TABLE IF NOT EXISTS comments (
     );`);
 
 
+await db.exec(`CREATE TABLE IF NOT EXISTS replies (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    reply NOT NULL,
+    date NOT NULL, 
+    comment_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY(comment_id) REFERENCES comments(id)
+    FOREIGN KEY(user_id) REFERENCES users(id)  
+    );`);    
+
+
 await db.exec(`CREATE TABLE IF NOT EXISTS post_like_user (
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     post_id INTEGER NOT NULL,

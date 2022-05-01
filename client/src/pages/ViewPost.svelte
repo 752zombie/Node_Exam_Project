@@ -35,6 +35,7 @@ async function fetchPost(postId) {
       }  
 }
 
+
 fetchComments(postId)
 async function fetchComments(postId) {
 
@@ -51,6 +52,7 @@ async function fetchComments(postId) {
         console.log(err)
     }  
 }
+
 
 async function postComment() {
     
@@ -79,7 +81,7 @@ async function postComment() {
 // Like or unlike function
 async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
 
-  let data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // exported function
+  let data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // imported function
 
   if (data.result === "success") {
           console.log("successsss")
