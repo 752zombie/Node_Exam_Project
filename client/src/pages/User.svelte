@@ -95,7 +95,7 @@ function setPostInSession(id) {
               <div class="content">
                 {post.text}
 
-                <hr>
+                <hr class="hr-posts-card">
 
                 <p class="post-header-tag">{post.date}</p> 
 
@@ -117,14 +117,11 @@ function setPostInSession(id) {
     .card-footer {
       justify-content: center;
       justify-content: space-around;
+      border: none;
     }
 
     button {
       width: 120px;
-    }
-
-    time {
-        margin-top: 9px;
     }
     
     .post-header-tag {

@@ -1,3 +1,10 @@
+
+<svelte:head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</svelte:head>
+
+
 <footer class="footer-own">
     <div class="content has-text-centered">
       <p>

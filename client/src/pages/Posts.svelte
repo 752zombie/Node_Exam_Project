@@ -181,7 +181,7 @@ function setPostInSession(id) {
                 
                 <p class="bread-text"><strong>{post.text}</strong></p>
                 
-                <hr>
+                <hr class="hr-posts-card">
                 
                 <div class="flex-container">
                   <a id="user-tag" class="flex-item" ><em>@{post.username}</em></a>
@@ -229,6 +229,7 @@ function setPostInSession(id) {
 
     .card-footer {
       justify-content: center;
+      border: none;
     }
 
     .card-header-title {

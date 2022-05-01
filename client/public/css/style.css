@@ -96,3 +96,11 @@ p {
     transition-duration: 0.5s;
 }
 
+.hr-posts-card {
+    margin: 2px;
+}
+
+.card-content {
+    padding-bottom: 5px;
+}
+

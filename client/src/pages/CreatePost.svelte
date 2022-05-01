@@ -1,12 +1,20 @@
 <script>
 import { useNavigate } from 'svelte-navigator';
 import { getDate } from '../components/getDate';
+import { userStore } from '../stores'
 
 
 const navigate = useNavigate(); 
 let currentError = ""
 let title = ""
 let text = ""
+let user = []
+userStore.subscribe((value) => user = value)
+
+
+if (!user.username) {
+    navigate("/")
+}
 
 
 async function createPost() {
