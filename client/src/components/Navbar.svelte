@@ -12,7 +12,7 @@
 </script>
 
 <nav class="link-wrapper">
-    <Link to="/" class="header-link space-between first-link">Home</Link>
+    <Link to="/" class="header-link space-between first-link"><strong>ReddOt</strong><img src="images/fire_emoji.png" alt=""></Link>
     <Link to="/posts" class="header-link align-right">Posts</Link>
 	<Link to="/messages" class="header-link align-left">Messages</Link>
     
@@ -57,6 +57,11 @@
 		color: white;
 		font-size: x-large;
         cursor: pointer;
+	}
+
+	img {
+		width: 30px; 
+		margin-top: 2px;
 	}
 
 </style>

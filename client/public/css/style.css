@@ -17,8 +17,7 @@ p {
 }
 
 #stick-column:hover + .plus_sign{
-    color: red;
-    
+    color: red;   
 }
 
 .plus_sign {
@@ -56,34 +55,38 @@ p {
 }
 
 #like-button {
-    margin-right: 170px;
-  }
-
-  #unlike-button {
+    width: 72px;
     margin-right: 180px;
-  }
+    
+}
+
+#unlike-button {
+    margin-right: 180px;
+}
 
 .freshSortinfo, .activitySortInfo, .likeSortInfo {
     display: none;
 }
 
-
-
 #freshInfoButton:hover + .freshSortinfo {
     margin-top: 5px;
     display: block;
-    color: rgb(0, 17, 255);
+    color: rgb(89, 0, 255);
 }
 
 #activityInfoButton:hover + .activitySortInfo {
     margin-top: 5px;
     display: block;
-    color: rgb(0, 38, 255);
+    color: rgb(89, 0, 255);
 }
 
 #likeInfoButton:hover + .likeSortInfo {
     margin-top: 5px;
     display: block;
-    color: rgb(0, 102, 255);
+    color: rgb(89, 0, 255);
+}
+
+#viewPostButton {
+    background-color: #e4dae6;
 }
 

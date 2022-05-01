@@ -80,12 +80,13 @@ function setPostInSession(id) {
               </p>
 
               <br>
+              
+              <p class="post-header-tag">Comments <strong >{post.comment_count}</strong></p>                 
+              <p class="post-header-tag">Likes <strong >{post.like}</strong></p>
 
-              <p>
-                <time>{post.date}</time>
-              </p>
               <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
+                    
                   <i class="fas fa-angle-down" aria-hidden="true"></i>
                 </span>
               </button>
@@ -93,7 +94,11 @@ function setPostInSession(id) {
             <div class="card-content">
               <div class="content">
                 {post.text}
-                <br>
+
+                <hr>
+
+                <p class="post-header-tag">{post.date}</p> 
+
                 
               </div>
             </div>
@@ -111,5 +116,9 @@ function setPostInSession(id) {
 <style>
     time {
         margin-top: 9px;
+    }
+    
+    .post-header-tag {
+        text-align: center;
     }
 </style>

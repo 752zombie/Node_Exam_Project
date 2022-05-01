@@ -157,10 +157,10 @@ function setPostInSession(id) {
                   
                   {#if post.liked == 0}
                   <i class="fas fa-angle-down" aria-hidden="true" >                   
-                    <button id="like-button" class="button is-info" on:click={likeOrUnlikePost(post.id)}>Like</button>
+                    <button id="like-button" class="button is-info is-light" on:click={likeOrUnlikePost(post.id)}>Like</button>
                   </i>
                   {:else}
-                    <button id="unlike-button" class="button is-primary is-outlined" on:click={likeOrUnlikePost(post.id, "unlike/")}>Liked</button>
+                    <button id="unlike-button" class="button is-primary is-inverted" on:click={likeOrUnlikePost(post.id, "unlike/")}>Liked</button>
                   {/if}  
                   {/if}
                   
@@ -191,7 +191,7 @@ function setPostInSession(id) {
               </div>
             </div>
             <footer class="card-footer">
-              <button class="button is-link is-rounded" style="align-item: center;" on:click={setPostInSession(post.id)}>View post</button>
+              <button class="button is-link is-rounded" id="viewPostButton" on:click={setPostInSession(post.id)}>View post</button>
             </footer>
           </div>
 
