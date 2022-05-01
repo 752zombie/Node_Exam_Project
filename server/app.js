@@ -10,6 +10,7 @@ import messagesRouter from "./routers/messagesRouter.js";
 
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { db } from "./database/createConnection.js";
 
 
 
@@ -62,7 +63,7 @@ io.use((socket, next) => {
   
 })
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   const session = socket.request.session;
   if (!session || !session.isLoggedIn) {
       return;
@@ -73,7 +74,12 @@ io.on('connection', (socket) => {
   
   
   socket.join(session.user.username);
-    socket.on('chat message', (to, msg) => {
+  socket.on('chat message', (to, msg, conversationId) => {
+
+
+      
+
+
 
 //      console.log("to: ", to);
 
@@ -88,8 +94,26 @@ io.on('connection', (socket) => {
 
       //TODO: once connection established -> use socket room to send and receive messages and save them in db
 
+      try {
+          // check if conversation exists and both sender and receiver is a part of it.
+          let preparedStatement = await db.prepare("SELECT * FROM conversations WHERE id = ? AND ((participant_1 = ? OR participant_2 = ?) AND (participant_1 = ? OR participant_2 = ?) )");
+          await preparedStatement.bind({1 : conversationId, 2 : session.user.id, 3 : session.user.id, 4 : to, 5 : to});
+          const conversation = await preparedStatement.get();
+
+          if (conversation) {
+            preparedStatement = await db.prepare("INSERT INTO messages (conversation_id, sender_id, receiver_id, text) VALUES (?, ?, ?, ?) ");
+            await preparedStatement.bind({1 : conversationId, 2 : to, 3 : session.user.id, 4 : msg});
+            await preparedStatement.run();
+            socket.to(to).emit("chat message", {from : session.user.username, message : msg});
+          }
+
+      }
+
+      catch(err) {
+          //TODO: some error handling
+      }
       
-      socket.to(to).emit("chat message", {from : session.user.username, message : msg});
+      
     
     });
 
