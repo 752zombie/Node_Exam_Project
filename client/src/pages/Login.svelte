@@ -86,7 +86,7 @@
     <button on:click={signUp}>Sign up</button><br>
     <span on:click={() => isSignUpForm = false}>Already have an account? Go to sign in</span> <br>
     {:else}
-    <button on:click={signIn}>Sign in</button><br>
+    <button class="button is-link is-rounded" id="viewPostButton" on:click={signIn}>Sign in</button><br>
     <span on:click={() => isSignUpForm = true}>Don't have an account yet? Go to sign up</span> <br>
     {/if}
     {#if currentError}
@@ -110,6 +110,10 @@
 
     #login-container {
         margin-top: 10%;
+    }
+
+    #viewPostButton {
+        margin-top: 5px;
     }
 </style>
 
