@@ -246,6 +246,8 @@ function setPostInSession(id) {
       justify-content: space-around;
     }
 
+    
+
 </style>
 
 
