@@ -103,8 +103,8 @@ function setPostInSession(id) {
               </div>
             </div>
             <footer class="card-footer">
-              <a href="#" class="card-footer-item" on:click={setPostInSession(post.id)}>Open</a>              
-              <a href="#" class="card-footer-item" on:click={deletePost(post.id)}>Delete</a>
+              <button class="button is-link is-rounded" id="viewPostButton" on:click={setPostInSession(post.id)}>Open</button>              
+              <button class="button is-danger is-light is-rounded" on:click={deletePost(post.id)}>Delete</button>
             </footer>
           </div>
 
@@ -114,6 +114,15 @@ function setPostInSession(id) {
 </div>
 
 <style>
+    .card-footer {
+      justify-content: center;
+      justify-content: space-around;
+    }
+
+    button {
+      width: 120px;
+    }
+
     time {
         margin-top: 9px;
     }

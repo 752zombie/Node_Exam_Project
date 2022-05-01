@@ -90,3 +90,8 @@ p {
     background-color: #e4dae6;
 }
 
+#viewPostButton:hover {
+    opacity: 0.7;
+    transition-duration: 0.5s;
+}
+

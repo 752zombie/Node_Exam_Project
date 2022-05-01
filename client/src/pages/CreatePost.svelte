@@ -48,7 +48,8 @@ const onFileSelected =(e)=>{
 </script>
 
 <svelte:head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </svelte:head>
 
 <div class="columns">
@@ -57,7 +58,7 @@ const onFileSelected =(e)=>{
     <div class="column"><p class="title">Here you can create your post</p>
 
         <div>
-            <input class="input is-info is-rounded" type="text" placeholder="Title" bind:value={title}>
+            <input class="input is-rounded" type="text" placeholder="Title" bind:value={title}>
         </div>       
          
         <div id="app">
@@ -75,8 +76,8 @@ const onFileSelected =(e)=>{
         </div>
 
         <div>
-            <textarea class="textarea is-info " placeholder="e.g. This is my post to the world" bind:value={text}></textarea>
-            <button class="button is-success is-light" on:click|preventDefault={createPost}>Submit</button>
+            <textarea class="textarea" placeholder="e.g. This is my post to the world" bind:value={text}></textarea>
+            <button class="button is-link is-rounded" id="viewPostButton" on:click|preventDefault={createPost}>Submit</button>
         </div>    
     </div>
     
@@ -106,5 +107,9 @@ const onFileSelected =(e)=>{
 		height:200px;
 		width:200px;
 	}
+    
+    #viewPostButton {
+    margin-top: 5px;
+  }
 </style>
 

@@ -121,10 +121,10 @@ async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
               
               {#if post.liked == 0}
               <i class="fas fa-angle-down" aria-hidden="true" >                   
-                <button id="like-button" class="button is-info" on:click={likeOrUnlikePost(post.id)}>Like</button>
+                <button id="like-button" class="button is-info is-light" on:click={likeOrUnlikePost(post.id)}>Like</button>
               </i>
               {:else}
-                <button id="unlike-button" class="button is-primary is-outlined" on:click={likeOrUnlikePost(post.id, "unlike/")}>Liked</button>
+                <button id="unlike-button" class="button is-primary is-inverted" on:click={likeOrUnlikePost(post.id, "unlike/")}>Liked</button>
               {/if}  
               {/if}
               
@@ -165,7 +165,7 @@ async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
         <div class="comment">
             <textarea class="textarea" placeholder="What are your thoughts?" bind:value={comment}></textarea>
 
-            <button class="button is-success is-outlined" on:click={postComment}>Submit</button>
+            <button class="button is-link is-rounded" id="viewPostButton" on:click={postComment}>Submit</button>
         </div>
 
         <br>
@@ -186,7 +186,7 @@ async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
                     <p>
                       <strong>{comment.username}</strong> <small>{comment.date}</small> 
                       <br>
-                      {comment.comment}
+                      <strong>{comment.comment}</strong>
                     </p>
                   </div>
                   <nav class="level is-mobile">
@@ -219,6 +219,10 @@ async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
 
 </div>
 
-
+<style> 
+  #viewPostButton {
+    margin-top: 5px;
+  }
+</style>
 
  
