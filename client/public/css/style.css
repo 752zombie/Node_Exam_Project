@@ -71,23 +71,23 @@ p {
 #freshInfoButton:hover + .freshSortinfo {
     margin-top: 5px;
     display: block;
-    color: rgb(89, 0, 255);
+    color: rgb(255,182,193);
 }
 
 #activityInfoButton:hover + .activitySortInfo {
     margin-top: 5px;
     display: block;
-    color: rgb(89, 0, 255);
+    color: rgb(255,182,193);
 }
 
 #likeInfoButton:hover + .likeSortInfo {
     margin-top: 5px;
     display: block;
-    color: rgb(89, 0, 255);
+    color: rgb(255,182,193);
 }
 
 #viewPostButton {
-    background-color: #e4dae6;
+    background-color: rgb(255,182,193);
     color: white;
 }
 

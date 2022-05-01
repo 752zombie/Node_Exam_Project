@@ -16,7 +16,7 @@
 
 <style>
     .footer-own {
-       background-color: #dedae6;
+       background-color: rgb(255,182,193);
        padding-top: 20px;
        padding-bottom: 20px;
        position: fixed;

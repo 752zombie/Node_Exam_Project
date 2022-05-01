@@ -45,9 +45,8 @@
 		margin-right: 20px;
 	}
 	
-	nav {
-		
-		background-color: #dedae6;
+	nav {		
+		background-color: rgb(255,182,193);
 		padding-top: 10px;
 		padding-bottom: 10px;
 	}
