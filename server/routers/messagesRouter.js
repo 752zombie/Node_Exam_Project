@@ -3,6 +3,7 @@ import { db } from "../database/createConnection.js";
 
 const router = Router();
 
+// get all the conversations (shallow) that the logged in user is currently a part of
 router.get("/conversations", async (req, res) => {
     const user = req.session.user;
 
@@ -28,7 +29,8 @@ router.get("/conversations", async (req, res) => {
     }
 })
 
-router.get("/conversation/:id", async (req, res) => {
+// get all the messages in a single conversation
+router.get("/conversations/:id", async (req, res) => {
     const user = req.session.user;
     const conversationId = req.params.id;
 
@@ -52,7 +54,8 @@ router.get("/conversation/:id", async (req, res) => {
 
 })
 
-router.delete("/conversation/:id", async (req, res) => {
+// delete a specific conversation (will not actually be deleted from database until both participants have requested a delete)
+router.delete("/conversations/:id", async (req, res) => {
     const user = req.session.user;
     const conversationId = req.params.id;
 

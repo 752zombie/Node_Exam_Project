@@ -8,7 +8,7 @@
 <footer class="footer-own">
     <div class="content has-text-centered">
       <p style="color: white; font-size: 17px;">
-        <strong style="color: white; font-size: 17px;">ReddOt</strong> by <a href="/#" style="color: white; font-size: 17px;">Magnus Wulff and Matthias Hyldegaard Djernæs</a>. 
+        <strong style="color: white; font-size: 17px;">ReddOt</strong> by <a href="/#" style="color: white; font-size: 17px;">Magnus Söderhamn Wulff and Matthias Hyldegaard Djernæs</a>. 
       </p>
     </div>
   </footer>

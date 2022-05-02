@@ -3,6 +3,7 @@ import { onMount } from 'svelte'
 import { getDate } from '../components/getDate.js'
 import { loginStore, userStore, postStore } from "../stores.js";
 import { likeUnlike } from '../components/likes'
+import { navigate } from 'svelte-navigator';
 
 
 let post = []
@@ -89,6 +90,9 @@ async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
         }
 }
 
+function goToProfile(id) {
+  navigate("/public-profile/" + id);
+}
   
 </script>
 
@@ -148,7 +152,7 @@ async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
             <hr>
             
             <div class="flex-container">
-              <a id="user-tag" class="flex-item" ><em>@{post.username}</em></a>
+              <a id="user-tag" class="flex-item" on:click={() => goToProfile(post.user_id)}><em>@{post.username}</em></a>
               <p class="flex-item">{post.date}</p>
             </div>
 

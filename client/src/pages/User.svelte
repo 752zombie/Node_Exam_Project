@@ -61,8 +61,7 @@ function setPostInSession(id) {
 <div class="columns">
     
     <div class="column is-8">
-        <h1>Here is the username {user.username}</h1>
-        <div>USER</div>
+        <h1>{user.username}</h1>
     </div>
 
 

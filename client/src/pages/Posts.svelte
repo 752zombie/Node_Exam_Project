@@ -98,6 +98,10 @@ function setPostInSession(id) {
     navigate("/post")
 }
 
+function goToProfile(id) {
+  navigate("/public-profile/" + id);
+}
+
 
 </script>
 
@@ -184,7 +188,7 @@ function setPostInSession(id) {
                 <hr class="hr-posts-card">
                 
                 <div class="flex-container">
-                  <a id="user-tag" class="flex-item" ><em>@{post.username}</em></a>
+                  <a id="user-tag" class="flex-item" on:click={() => goToProfile(post.user_id)}><em>@{post.username}</em></a>
                   <p class="flex-item">{post.date}</p>
                 </div>
 
