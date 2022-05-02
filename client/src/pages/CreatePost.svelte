@@ -66,7 +66,7 @@ const onFileSelected =(e)=>{
     <div class="column"><p class="title">Here you can create your post</p>
 
         <div>
-            <input class="input is-rounded" type="text" placeholder="Title" bind:value={title}>
+            <input class="input is-rounded" type="text" maxlength="30" placeholder="Title" bind:value={title}>
         </div>       
          
         <div id="app">

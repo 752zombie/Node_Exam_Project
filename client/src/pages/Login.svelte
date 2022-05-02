@@ -83,7 +83,7 @@
     <input type="password" name="password" id="password" bind:value={passwordInput}> <br>
     
     {#if isSignUpForm}
-    <button on:click={signUp}>Sign up</button><br>
+    <button class="button is-link is-rounded" id="viewPostButton" on:click={signUp}>Sign up</button><br>
     <span on:click={() => isSignUpForm = false}>Already have an account? Go to sign in</span> <br>
     {:else}
     <button class="button is-link is-rounded" id="viewPostButton" on:click={signIn}>Sign in</button><br>
@@ -105,7 +105,7 @@
     }
 
     #error {
-        color: red;
+        color: red;      
     }
 
     #login-container {

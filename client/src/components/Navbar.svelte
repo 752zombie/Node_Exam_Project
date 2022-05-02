@@ -22,7 +22,7 @@
     {:else}
     <span class="header-link align-right" on:click={() => signOut(navigate)}>Sign out</span>
 	<div><Link to="user" class="header-link align-right">{user.username}</Link></div>
-	<div><Link to="user"><img src="images/user_icon.png" style="width: 40px; margin-left: -50%" alt="user icon"></Link></div>
+	<div><Link to="user"><img src="images/user_icon.png" id="userIcon" style="width: 40px; margin-left: -50%" alt="user icon"></Link></div>
     {/if}
 </nav>
 
@@ -62,5 +62,9 @@
 		width: 30px; 
 		margin-top: 2px;
 	}
+
+	img:hover {
+		opacity: 0.5;
+	} 
 
 </style>

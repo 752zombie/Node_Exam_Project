@@ -215,8 +215,11 @@ function setPostInSession(id) {
     
     <div class="column" id="sticky-column">
       {#if loggedIn}
-        <Link to="/create-post"> <p class="title is-5">Create post</p> </Link>
-        <Link to="/create-post"><img class="plus_sign" src="images/plus_icon.png" style="width: 40px" alt="Plus sign"></Link>
+        
+        <Link to="/create-post">
+          <p class="title is-5" id="createPostTag">Create post</p>
+          <img class="plus_sign" src="images/plus_icon.png" style="width: 40px" alt="Plus sign">
+        </Link>
       {:else}
       <p> Login to create your own posts</p>
       {/if}
@@ -226,7 +229,7 @@ function setPostInSession(id) {
 
 
 <style>
-
+    
     .card-footer {
       justify-content: center;
       border: none;
@@ -246,7 +249,7 @@ function setPostInSession(id) {
       justify-content: space-around;
     }
 
-    
+
 
 </style>
 

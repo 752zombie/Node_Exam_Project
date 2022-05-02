@@ -1,6 +1,12 @@
 p {
-    color: blue
+    color: blue;
+    word-wrap: break-word;
 }
+
+textarea { 
+    /* will prevent resizing horizontally */
+    resize:vertical;
+ }
 
 .card-header-title {
     font-size: 20px;
@@ -27,6 +33,15 @@ p {
 .plus_sign:hover {
   transform:rotate(360deg); 
 }
+
+#createPostTag {
+    margin-bottom: 0px;
+}
+
+#createPostTag:hover + .plus_sign {
+    transform:rotate(360deg);
+    transition-duration: .8s; 
+  }
 
 .flex-container {
     display: flex;
@@ -103,5 +118,6 @@ p {
 
 .card-content {
     padding-bottom: 5px;
+    word-break: break-all;
 }
 
