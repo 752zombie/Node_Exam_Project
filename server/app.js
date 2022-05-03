@@ -12,8 +12,6 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { db } from "./database/createConnection.js";
 
-
-
 const app = express();
 
 const httpServer = createServer(app);
@@ -75,24 +73,6 @@ io.on('connection', async (socket) => {
   
   socket.join(session.user.username);
   socket.on('chat message', async (to, msg, conversationId) => {
-
-
-      
-
-
-
-//      console.log("to: ", to);
-
-  //  console.log(session.user.username, " :", socket.rooms);
-    
-      
-      //TODO: check if existing conversation already exists (from db)
-
-      //TODO: if exists -> load existing conversation and create a socket room
-
-      //TODO: else -> create new conversation, save to db and create new socket room
-
-      //TODO: once connection established -> use socket room to send and receive messages and save them in db
 
       try {
           // check if conversation exists and both sender and receiver is a part of it.

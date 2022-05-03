@@ -27,7 +27,8 @@ router.post("/post", async (req, res) => {
 router.get("/post/:id", async (req, res) => {
     
     try { 
-        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, u.username, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
+        //retrieve Posts from db and check for Likes from User
+        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, p.user_id, u.username, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
                                                     "FROM posts as p " + 
                                                     "LEFT JOIN post_like_user as l on l.post_id = p.id " +
                                                     "LEFT JOIN comments as c on c.post_id = p.id " +
@@ -107,7 +108,7 @@ router.post("/posts", async (req, res) => {
         const offset = (page - 1) * 5;
         
         //retrieve Posts from db and check for Likes from User
-        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.video, p.like, p.date, u.username, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
+        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.like, p.date, p.user_id, u.username, ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count  " +    
                                                     "FROM posts as p " + 
                                                     "LEFT JOIN post_like_user as l on l.post_id = p.id " +
                                                     "LEFT JOIN comments as c on c.post_id = p.id " +

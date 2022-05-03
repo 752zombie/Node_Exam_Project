@@ -9,6 +9,7 @@
 	import User from './pages/User.svelte';
 	import CreatePost from './pages/CreatePost.svelte';
 	import Messages from "./pages/Messages.svelte";
+	import PublicProfile from "./pages/PublicProfile.svelte";
 
 </script>
 
@@ -23,6 +24,9 @@
 			<Route path="/user" component={User} />
 			<Route path="/create-post" component={CreatePost} />
 			<Route path="/messages" component={Messages} />
+			<Route path="/public-profile/:id" let:params>
+				<PublicProfile userId={params.id}/>
+			</Route>
 			
 	</main>
 	<Footer/>
