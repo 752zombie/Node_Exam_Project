@@ -14,6 +14,7 @@ await db.exec(`CREATE TABLE IF NOT EXISTS posts (
     title VARCHAR(100) NOT NULL,
     text NOT NULL,
     photo BLOB,
+    video BLOB,
     like INTEGER DEFAULT 0,
     date NOT NULL, 
     user_id NOT NULL,

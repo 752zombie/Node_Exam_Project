@@ -10,11 +10,9 @@ export function getDate() {
     if (minutes < 10) {
         minutes = "0" + minutes
     }
-    console.log(day)
     if (day < 10) {
         day = "0" + day
     }
-    console.log(month)
     if (month < 10) {
         month = "0" + month
     }

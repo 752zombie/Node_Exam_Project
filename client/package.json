@@ -18,8 +18,11 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "filepond": "^4.30.3",
     "sirv-cli": "^2.0.0",
     "socket.io-client": "^4.5.0",
-    "svelte-navigator": "^3.1.5"
+    "svelte-filepond": "^0.2.0",
+    "svelte-navigator": "^3.1.5",
+    "svelte-select": "^4.4.7"
   }
 }

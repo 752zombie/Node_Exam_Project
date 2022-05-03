@@ -1,3 +1,5 @@
+
+
 <script>
 import { useNavigate } from 'svelte-navigator';
 import { getDate } from '../components/getDate';
@@ -8,6 +10,7 @@ const navigate = useNavigate();
 let currentError = ""
 let title = ""
 let text = ""
+let media = "picture"
 let user = []
 userStore.subscribe((value) => user = value)
 
@@ -26,7 +29,7 @@ async function createPost() {
         headers : {
             "Content-Type": "application/json"
         },
-        body : JSON.stringify({title, text, date, photo})
+        body : JSON.stringify({title, text, date, photo, video})
     }
     const response = await fetch("http://localhost:8080/post", request);
     const data = await response.json();
@@ -39,18 +42,20 @@ async function createPost() {
 }
 
 
-// UPLOAD PICTURE
-let  photo, fileinput;
+// UPLOAD MEDIA
+let photo, video, fileinput;
 
-const onFileSelected =(e)=>{
+const onFileSelected = (e) => {
 
     let image = e.target.files[0];
     let reader = new FileReader();
     reader.readAsDataURL(image);
     reader.onload = e => {
-        photo = e.target.result
+        if (media == "picture") { photo = e.target.result }
+        if (media == "video")   { video = e.target.result }     
         };
     }
+
 
  
 </script>
@@ -60,27 +65,75 @@ const onFileSelected =(e)=>{
   <link rel="stylesheet" href="css/style.css">
 </svelte:head>
 
+
+
+
+
 <div class="columns">
+
     <div class="column"></div>
 
-    <div class="column"><p class="title">Here you can create your post</p>
-
+    <div class="column">
+        
+        <p class="title">Here you can create your post</p>
+       
         <div>
             <input class="input is-rounded" type="text" maxlength="30" placeholder="Title" bind:value={title}>
-        </div>       
+        </div>    
+        
+        <br>
          
         <div id="app">
-            <h1><strong>Upload Image </strong> (Optional)</h1>
-          
+
+            <h1><strong>Upload Media </strong> (Optional)</h1>
+
+            <div class="flex-container"> 
+                <label class="flex-item-radio">
+                    <input type=radio bind:group={media} value={"picture"}>
+                    Picture/Gif
+                </label>
+                
+                <label class="flex-item-radio">
+                    <input type=radio bind:group={media} value={"video"}>
+                    Video
+                </label>
+            </div>
+
+            {#if media == "picture"}
+ 
                 {#if photo}
-                <img class="avatar" src="{photo}" alt="d" />
+                     <img class="avatar" src="{photo}" alt="d" />
                 {:else}
-                <img class="avatar" src="https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-alt-512.png" alt="" /> 
+                     <img class="avatar" src="https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-alt-512.png" alt="" /> 
                 {/if}
-                        <img class="upload" src="https://static.thenounproject.com/png/625182-200.png" alt="" on:click={()=>{fileinput.click();}} />
-                <div class="chan" on:click={()=>{fileinput.click();}}>Choose Image</div>
-                <input style="display:none" type="file" accept=".jpg, .jpeg, .png" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
-        
+                    <img class="upload" src="images/picture_icon.png" alt="" on:click={()=>{fileinput.click();}} />
+                    <div class="chan" on:click={()=>{fileinput.click();}}>Choose Image</div>
+                    <input style="display:none"                    
+                           type="file" 
+                           accept=".jpg, .jpeg, .png" on:change={(e)=> onFileSelected(e) } bind:this={fileinput} >
+            
+            {:else}
+
+                {#if video}
+                    <video width="320" height="240" controls>
+                        <source src={video} type="video/mp4">
+                        <source src="movie.ogg" type="video/ogg">
+                        <track src="" kind="captions" srclang="en" label="english_captions">
+                        Your browser does not support the video tag.
+                    </video>
+                {:else}
+                    <img class="avatar" src="https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-alt-512.png" alt="" /> 
+                {/if}
+                    <img class="upload" src="images/video_icon.png" alt="" on:click={()=>{fileinput.click();}} />
+                    <div class="chan" on:click={()=>{fileinput.click();}}>Choose Video</div>
+                    <input style="display:none"                    
+                        type="file"
+                        data-max-file-size="50MB"
+                        data-max-files="1"
+                        on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
+      
+            {/if}
+
         </div>
 
         <div>

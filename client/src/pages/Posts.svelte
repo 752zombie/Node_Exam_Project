@@ -7,7 +7,8 @@ import { sortPosts } from '../components/sortingFunction'
 import { likeUnlike } from '../components/likes'
 
 
-const navigate = useNavigate();   
+const navigate = useNavigate();
+  
 let posts = [];
 let pageToFetch = 1;
 let user = {};
@@ -37,7 +38,8 @@ async function fetchPosts() {
           posts = data.posts;        
           posts.unshift({id: 0}) // Post.id needs to match array index
           currentPostSorting = "byDate"        
-          topPicture = "fresh.gif" 
+          topPicture = "fresh.gif"
+          console.log(posts) 
         }    
   } 
   
@@ -111,10 +113,10 @@ function setPostInSession(id) {
 <div class="columns">
 
     <div class="column" id="sticky-column">
+
       <p class="title is-5">Sort your search</p>
         <div class="columns">
-          <div class="column">
-            <!-- svelte-ignore a11y-mouse-events-have-key-events on:mouseover={freshInfo} on:mouseleave={freshInfo} -->
+          <div class="column">   
             <button class="button" id="freshInfoButton" on:click={fetchPosts}>Fresh</button>
             <p class="freshSortinfo">Sort by date</p>
           </div>
@@ -173,10 +175,22 @@ function setPostInSession(id) {
               <div class="content">
 
                 {#if post.photo}
-                <p><img src={post.photo} alt=""></p>
-                <hr>
+                  <p><img src={post.photo} alt=""></p>
+                
+                  <hr>
+
+                {:else if post.video}               
+                  <video width="520" height="340" controls>
+                      <source src={post.video} type="video/mp4">
+                      <source src="movie.ogg" type="video/ogg">
+                      <track src="" kind="captions" srclang="en" label="english_captions">
+                      Your browser does not support the video tag.
+                  </video>
+
+                  <hr>
+
                 {:else}
-                <p></p>
+                  <p></p>
                 {/if}
                 
                 <p class="bread-text"><strong>{post.text}</strong></p>
