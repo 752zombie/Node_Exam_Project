@@ -102,7 +102,7 @@ const onFileSelected = (e) => {
                      <img class="avatar" src="https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-alt-512.png" alt="" /> 
                 {/if}
                     <img class="upload" src="images/picture_icon.png" alt="" on:click={()=>{fileinput.click();}} />
-                    <div class="chan" on:click={()=>{fileinput.click();}}>Choose Image</div>
+                    <div class="chan" on:click={()=>{fileinput.click();}}>Choose Image </div>
                     <input style="display:none"                    
                            type="file" 
                            accept=".jpg, .jpeg, .png" on:change={(e)=> onFileSelected(e) } bind:this={fileinput} >
@@ -122,7 +122,7 @@ const onFileSelected = (e) => {
                     <img class="avatar" src="https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-alt-512.png" alt="" /> 
                 {/if}
                     <img class="upload" src="images/video_icon.png" alt="" on:click={()=>{fileinput.click();}} />
-                    <div class="chan" on:click={()=>{fileinput.click();}}>Choose Video (MP4 Format)</div>
+                    <div class="chan" on:click={()=>{fileinput.click();}}>Choose Video (mp4)</div>
                     <input style="display:none"                    
                         type="file"
                         data-max-file-size="5MB"

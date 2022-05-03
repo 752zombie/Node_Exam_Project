@@ -29,6 +29,7 @@ async function fetchPost(postId) {
     
     if (data.result === "success") {
         post = data.post;
+        console.log(post)
     }
 
     } catch(err) {
@@ -141,10 +142,21 @@ function goToProfile(id) {
           <div class="content">
 
             {#if post.photo}
-            <p><img src={post.photo} alt=""></p>
-            <hr>
+              <p><img src={post.photo} alt=""></p>
+            
+              <hr>
+
+            {:else if post.video}               
+              <video width="520" height="340" controls>
+                  <source src={post.video} type="video/mp4">
+                  <track src="" kind="captions" srclang="en" label="english_captions">
+                  Your browser does not support the video tag.
+              </video>
+
+              <hr>
+
             {:else}
-            <p></p>
+              <p></p>
             {/if}
             
             <p class="bread-text"><strong>{post.text}</strong></p>
@@ -166,7 +178,7 @@ function goToProfile(id) {
 
         <br>
                                       <!-- Comment section -->
-        <div class="comment">
+        <div class="comment"> 
             <textarea class="textarea" placeholder="What are your thoughts?" bind:value={comment}></textarea>
 
             <button class="button is-link is-rounded" id="viewPostButton" on:click={postComment}>Submit</button>
