@@ -186,7 +186,6 @@ function goToProfile(id) {
                 {:else if post.video}               
                   <video width="520" height="340" controls>
                       <source src={post.video} type="video/mp4">
-                      <source src="movie.ogg" type="video/ogg">
                       <track src="" kind="captions" srclang="en" label="english_captions">
                       Your browser does not support the video tag.
                   </video>

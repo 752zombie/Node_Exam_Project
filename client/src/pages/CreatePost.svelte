@@ -57,17 +57,12 @@ const onFileSelected = (e) => {
     }
 
 
- 
 </script>
 
 <svelte:head>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
   <link rel="stylesheet" href="css/style.css">
 </svelte:head>
-
-
-
-
 
 <div class="columns">
 
@@ -116,7 +111,9 @@ const onFileSelected = (e) => {
 
                 {#if video}
                     <video width="320" height="240" controls>
+                        <source src={video} type="video/mpg">
                         <source src={video} type="video/mp4">
+                        
                         <source src="movie.ogg" type="video/ogg">
                         <track src="" kind="captions" srclang="en" label="english_captions">
                         Your browser does not support the video tag.
@@ -125,10 +122,10 @@ const onFileSelected = (e) => {
                     <img class="avatar" src="https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-alt-512.png" alt="" /> 
                 {/if}
                     <img class="upload" src="images/video_icon.png" alt="" on:click={()=>{fileinput.click();}} />
-                    <div class="chan" on:click={()=>{fileinput.click();}}>Choose Video</div>
+                    <div class="chan" on:click={()=>{fileinput.click();}}>Choose Video (MP4 Format)</div>
                     <input style="display:none"                    
                         type="file"
-                        data-max-file-size="50MB"
+                        data-max-file-size="5MB"
                         data-max-files="1"
                         on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
       
