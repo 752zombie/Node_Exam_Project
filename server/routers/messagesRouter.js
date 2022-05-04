@@ -56,7 +56,7 @@ router.get("/conversations/:id", async (req, res) => {
 
 // adds a message to a conversation
 // creates a new conversation if an existing one does not exists or reuses an existing one
-router.post("/message", async (req, res) => {
+router.post("/messages", async (req, res) => {
     const user = req.session.user;
     const message = req.body;
     if (!user) {
@@ -70,9 +70,9 @@ router.post("/message", async (req, res) => {
     }
 
     try {
-        const preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
+        let preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
         await preparedStatement.bind({1 : user.id, 2 : message.receiver, 3 : message.receiver, 4 : user.id});
-        const conversation = await preparedStatement.get();
+        let conversation = await preparedStatement.get();
         console.log(conversation);
 
         if (!conversation) {
@@ -85,14 +85,15 @@ router.post("/message", async (req, res) => {
             conversation = await preparedStatement.get();
         }
 
-        preparedStatement = await db.prepare("INSERT INTO messages (sender_id, receiver_id, text) VALUES (?, ?)");
-        await preparedStatement.bind({1 : user.id, 2 : message.receiver});
+        preparedStatement = await db.prepare("INSERT INTO messages (sender_id, receiver_id, text, conversation_id) VALUES (?, ?, ?, ?)");
+        await preparedStatement.bind({1 : user.id, 2 : message.receiver, 3 : message.text, 4 : conversation.id});
         await preparedStatement.run();
 
         res.send({result : "success"});
     }
 
     catch(err) {
+        console.log(err.message);
         res.send({result : "error"});
     }
 
