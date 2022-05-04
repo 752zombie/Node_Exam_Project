@@ -1,10 +1,13 @@
 <script>
     import { io } from "socket.io-client";
     import { socketStore } from "../stores.js";
+    import { onMount } from "svelte";
     import MessageTab from "../components/MessageTab.svelte";
 
+    onMount(fetchConversations);
+
     // key: username, value: array of messages to and from that user
-    let users = new Map();
+    let conversations = new Map();
     
     let chatInput = "";
     let userToSendTo = "";
@@ -29,24 +32,45 @@
 
     }
 
-    async function fetchUsers() {
+    async function fetchConversations() {
         const response = await fetch("http://localhost:8080/conversations");
         const data = await response.json();
         console.log(data);
+        if (data.result === "success") {
+            for (let conversation of data.data) {
+                conversations.set(conversation.conversationId, 
+                {
+                    isCached : false,
+                    conversationId : conversation.conversationId,
+                    userId : conversation.userId,
+                    username : conversation.username,
+                    messages : []
+                });
+            }
+
+            conversations = conversations;
+        }
     }
+
+    async function fetchConversation(id) {
+        const response = await fetch("http://localhost:8080/conversations/" + id);
+        const data = await response.json();
+
+        return data.result === "success" ? data.messages : [];
+    } 
 
     function filterIncomingMessage(data) {
         const from = data.from;
 
-        const messages = users.get(from);
+        const messages = conversations.get(from);
 
         if (!messages) {
-            users.set(from, [data]);
-            users = users;
+            conversations.set(from, [data]);
+            conversations = conversations;
         }
 
         else {
-            users.set(from, [...messages, data]);
+            conversations.set(from, [...messages, data]);
             //TODO: notify MessageTab that there is a new message
         }
         
@@ -59,10 +83,20 @@
         }
     }
 
-    function showChatContents(event) {
-        const messages = users.get(event.detail.username);
+    async function showChatContents(event) {
+        const conversation = conversations.get(event.detail.conversationId);
+
+        let messages = [];
+
+        if (!conversation.isCached) {
+            //fetch messages from server
+            messages = await fetchConversation(conversation.conversationId);
+            conversation.isCached = true;
+        }
+
+    
         for (let message of messages) {
-            console.log("%s says: %s", message.from, message.message);
+            console.log("%s says: %s", message.sender_id, message.text);
         }
     }
 
@@ -71,8 +105,8 @@
 
 <h1>Messages</h1>
 
-{#each Array.from(users.keys()) as user}
-    <MessageTab username={user} on:usernameClicked={showChatContents}></MessageTab>
+{#each Array.from(conversations.values()) as conversation}
+    <MessageTab conversation={conversation} on:usernameClicked={showChatContents}></MessageTab>
 {/each}
 
     
@@ -81,5 +115,5 @@
     <input type="text" bind:value={userToSendTo}>
     
     <button on:click={sendMessage}>Add message</button>
-    <button on:click={fetchUsers}>Fetch users</button>
+    <button on:click={fetchConversations}>Fetch users</button>
 </div>
