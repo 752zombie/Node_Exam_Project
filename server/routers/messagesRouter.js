@@ -40,7 +40,10 @@ router.get("/conversations/:id", async (req, res) => {
     }
 
     try {
-        const preparedStatement = await db.prepare("SELECT * FROM messages WHERE conversation_id = ? AND (sender_id = ? OR receiver_id = ?)");
+        const preparedStatement = await db.prepare(`SELECT users.username AS sender, messages.text 
+        FROM messages INNER JOIN users ON sender_id = users.id 
+        WHERE conversation_id = ? AND (sender_id = ? OR receiver_id = ?)`);
+        
         await preparedStatement.bind({1 : conversationId, 2 : user.id, 3 : user.id});
         const messages = await preparedStatement.all();
 

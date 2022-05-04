@@ -84,7 +84,7 @@ io.on('connection', async (socket) => {
             preparedStatement = await db.prepare("INSERT INTO messages (conversation_id, sender_id, receiver_id, text) VALUES (?, ?, ?, ?) ");
             await preparedStatement.bind({1 : conversationId, 2 : to, 3 : session.user.id, 4 : msg});
             await preparedStatement.run();
-            socket.to(to).emit("chat message", {from : session.user.username, message : msg});
+            socket.to(to).emit("chat message", {sender : session.user.username, text : msg, conversationId : conversation.id, senderId : session.user.id});
           }
 
       }

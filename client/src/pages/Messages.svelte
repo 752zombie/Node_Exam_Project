@@ -60,17 +60,27 @@
     } 
 
     function filterIncomingMessage(data) {
-        const from = data.from;
+        const sender = data.sender;
+        const conversationId = data.conversationId;
 
-        const messages = conversations.get(from);
 
-        if (!messages) {
-            conversations.set(from, [data]);
+        const conversation = conversations.get(conversationId);
+        const messages = conversation.messages;
+
+        if (!conversation) {
+            conversations.set(conversationId, 
+            {
+                isCached : true,
+                conversationId : conversationId,
+                userId : data.senderId,
+                username : sender,
+                messages : [data.text]
+            });
             conversations = conversations;
         }
 
         else {
-            conversations.set(from, [...messages, data]);
+            conversations.set(sender, [...messages, data]);
             //TODO: notify MessageTab that there is a new message
         }
         
@@ -90,9 +100,13 @@
 
         if (!conversation.isCached) {
             //fetch messages from server
-            messages = await fetchConversation(conversation.conversationId);
+            constmessages = await fetchConversation(conversation.conversationId);
             conversation.isCached = true;
         }
+
+        
+
+
 
     
         for (let message of messages) {
