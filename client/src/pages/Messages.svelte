@@ -74,13 +74,13 @@
                 conversationId : conversationId,
                 userId : data.senderId,
                 username : sender,
-                messages : [data.text]
+                messages : [{sender : sender, text : data.text}]
             });
             conversations = conversations;
         }
 
         else {
-            conversations.set(sender, [...messages, data]);
+            conversations.set(sender, [...messages, {sender : sender, text : data.text}]);
             //TODO: notify MessageTab that there is a new message
         }
         
@@ -125,9 +125,5 @@
 
     
 <div>
-    <input type="text" bind:value={chatInput}>
-    <input type="text" bind:value={userToSendTo}>
     
-    <button on:click={sendMessage}>Add message</button>
-    <button on:click={fetchConversations}>Fetch users</button>
 </div>
