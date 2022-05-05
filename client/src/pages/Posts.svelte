@@ -39,7 +39,6 @@ async function fetchPosts() {
           posts.unshift({id: 0}) // Post.id needs to match array index
           currentPostSorting = "byDate"        
           topPicture = "fresh.gif"
-          console.log(posts) 
         }    
   } 
   
@@ -135,7 +134,7 @@ function goToProfile(id) {
         </div>      
     </div>
         
-    <div class="column">
+    <div class="column is-two-fifths">
         
         <div>
           <p class="title is-1">Hottest Memes</p>
@@ -157,7 +156,7 @@ function goToProfile(id) {
               <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
 
-                  {#if loggedIn}
+                  {#if loggedIn && loggedIn != "undefined"}
                   <p class="post-header-tag">Comments <strong >{post.comment_count}</strong></p>                 
                   <p class="post-header-tag">Likes <strong >{post.like}</strong></p>
                   

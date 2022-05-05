@@ -9,6 +9,15 @@
     loginStore.subscribe((value) => isLoggedIn = value);
 	userStore.subscribe((value) => user = value);
 
+	let options = ""
+	function userOptionsIn() {		
+		options = "HELLE"
+	}
+
+	function userOptionsOut() {
+		options = ""
+	}
+
 </script>
 
 <nav class="link-wrapper">
@@ -21,8 +30,11 @@
 	
     {:else}
     <span class="header-link align-right" on:click={() => signOut(navigate)}>Sign out</span>
-	<div><Link to="user" class="header-link align-right">{user.username}</Link></div>
-	<div><Link to="user"><img src="images/user_icon.png" id="userIcon" style="width: 40px; margin-left: -50%" alt="user icon"></Link></div>
+	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+	<div on:mouseover={userOptionsIn} on:mouseout={userOptionsOut}><Link to="user" class="header-link align-right" >{user.username}</Link></div>
+	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+	<div on:mouseover={userOptionsIn} on:mouseout={userOptionsOut}><Link to="user"><img src="images/user_icon.png" id="userIcon" style="width: 40px; margin-left: -50%" alt="user icon" ></Link></div>
+	<div> </div>
     {/if}
 </nav>
 

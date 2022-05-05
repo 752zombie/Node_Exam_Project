@@ -51,10 +51,20 @@ const onFileSelected = (e) => {
     let reader = new FileReader();
     reader.readAsDataURL(image);
     reader.onload = e => {
-        if (media == "picture") { photo = e.target.result }
-        if (media == "video")   { video = e.target.result }     
-        };
-    }
+        if (media == "picture") { photo = e.target.result } 
+        if (media == "video")   {
+            video = e.target.result  
+            // Checks video format = mp4
+            let formatString = video.split(";")[0]  
+            let format = formatString.split("/")[1]                                   
+            if (format != "mp4") {
+                video = ""
+                alert("Video needs to be .MP4 formatted")
+            }
+            
+        } 
+    };
+}
 
 
 </script>
