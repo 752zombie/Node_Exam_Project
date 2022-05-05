@@ -11,6 +11,10 @@ let comments = []
 let comment = ""
 let currentError = ""
 let postId = ""
+let replies = []
+let reply = ""
+
+
 postStore.subscribe((value) => postId = value)
 let user = {}
 userStore.subscribe((value) => user = value)
@@ -29,7 +33,6 @@ async function fetchPost(postId) {
     
     if (data.result === "success") {
         post = data.post;
-        console.log(post)
     }
 
     } catch(err) {
@@ -48,6 +51,7 @@ async function fetchComments(postId) {
         
         if (data.result === "success") {
             comments = data.comments;
+            console.log(comments)
         }
 
     } catch(err) {
@@ -94,6 +98,56 @@ async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
 function goToProfile(id) {
   navigate("/public-profile/" + id);
 }
+
+
+fetchReplies(postId)
+async function fetchReplies(postId) {
+  
+  try { 
+    const url = "http://localhost:8080/comment/replies/" + postId;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    console.log(data)
+
+    if (data.result === "success") {
+        replies = data.replies;
+        console.log(replies)
+    }
+
+    } catch(err) {
+        console.log(err)
+      }  
+}
+
+
+async function postReply(commentId) {
+  console.log("POST REPLY")
+  console.log(commentId, reply)
+
+  const date = getDate()
+
+    const request = {
+        method : "POST",
+        headers : {
+            "Content-Type": "application/json"
+        },
+        body : JSON.stringify({reply : reply, date : date, commentId : commentId, userId : user.userId})
+    }
+    const response = await fetch("http://localhost:8080/comment/reply", request);
+    const data = await response.json();
+
+    if (data.result === "success") {
+        reply = ""
+        await fetchReplies(postId)
+        await fetchComments(postId)
+
+    }
+    else {
+        currentError = data.result;
+    }
+}
+
   
 </script>
 
@@ -103,12 +157,13 @@ function goToProfile(id) {
   <link rel="stylesheet" href="css/style.css">
 </svelte:head>
 
+<svelte:window/>
+
 <br>
     
-<div class="columns">
+<div class="columns mb-6">
 
     <div class="column"></div>
-
 
     <div class="column">
 
@@ -179,7 +234,7 @@ function goToProfile(id) {
         <br>
                                       <!-- Comment section -->
         <div class="comment"> 
-            <textarea class="textarea" placeholder="What are your thoughts?" bind:value={comment}></textarea>
+            <textarea class="textarea" id="textarea-mb" placeholder="Write a comment" bind:value={comment}></textarea>
 
             <button class="button is-link is-rounded" id="viewPostButton" on:click={postComment}>Submit</button>
         </div>
@@ -199,35 +254,44 @@ function goToProfile(id) {
                 </figure>
                 <div class="media-content">
                   <div class="content">
-                    <p>
-                      <strong>{comment.username}</strong> <small>{comment.date}</small> 
+                    
+                      <div class="flex-container">
+                        <a class="flex-item" id="reply-author" on:click={() => goToProfile(post.user_id)}><em>@{comment.username}</em></a>
+                        <p class="flex-item"><small>{comment.date}</small> </p>
+                      </div>                                         
                       <br>
                       <strong>{comment.comment}</strong>
-                    </p>
-                  </div>
-                  <nav class="level is-mobile">
-                    <div class="level-left">
-                      <a class="level-item" href="/#">
-                        <span class="icon is-small"><i class="fas fa-reply"></i></span>
-                      </a>
-                      <a class="level-item" href="/#">
-                        <span class="icon is-small"><i class="fas fa-retweet"></i></span>
-                      </a>
-                      <a class="level-item" href="/#">
-                        <span class="icon is-small"><i class="fas fa-heart"></i></span>
-                      </a>
-                    </div>
-                  </nav>
-                </div>
-                <div class="media-right">
-                  <button class="delete"></button>
-                </div>
+                         
+                    
+                  </div>                  
+                </div>                        
               </article>
 
-              <hr>
+            <hr class="hr-posts-card">
+
+                                                <!-- REPLY section -->
+            <div class="reply-container">
+              <div class="flex-container" id="flex-container-mb">
+                <input class="flex-item input is-rounded" type="text" placeholder="Write a reply" bind:value={reply}>
+                <button class="flex-item button is-link is-rounded" id="viewPostButton" on:click={postReply(comment.comment_id)}>Submit</button>
+              </div>
+              {#each replies as reply}
+              {#if reply.comment_id == comment.comment_id}
+                <div id="reply-container">
+                  <div class="flex-container">
+                    <a class="flex-item" id="reply-author" on:click={() => goToProfile(post.user_id)}><em>@{reply.username}</em></a>
+                    <p class="flex-item"><small>{reply.date}</small> </p>
+                   </div>    
+                  <textarea class="textarea" id="old-comment" rows="1" readonly>{reply.reply}</textarea>                          
+                </div>
+              {/if}
+              {/each}
+                          
+            </div>  
+           
             {/each}
         </div>
-
+              
     </div>
 
 
@@ -235,9 +299,13 @@ function goToProfile(id) {
 
 </div>
 
-<style> 
-  #viewPostButton {
-    margin-top: 5px;
+<style>
+  #flex-container-mb {
+    margin-bottom: 15px;
+  }
+
+  #textarea-mb {
+    margin-bottom: 5px;
   }
 </style>
 

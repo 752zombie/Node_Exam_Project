@@ -42,11 +42,61 @@ router.post("/comment", async (req, res) => {
     }
 })
 
+
+router.post("/comment/reply", async (req, res) => {
+    
+    try {
+        req.session.isLoggedIn = true;
+        
+        const preparedStatement = await db.prepare("INSERT INTO replies (reply, date, comment_id, user_id) VALUES (?, ?, ?, ?)");
+        await preparedStatement.bind({1 : req.body.reply, 2 : req.body.date, 3 : req.body.commentId, 4 : req.body.userId});
+        await preparedStatement.run();
+                
+        res.send({result : "success"});
+    
+    } 
+    
+    catch(err) {
+        console.log(err.message);
+        res.send({ result : "Could not send post to server"});
+    }
+})
+
+
+// Get replies on Comments from Post
+router.get("/comment/replies/:post_id", async (req, res) => {
+    
+    try {
+        req.session.isLoggedIn = true;
+        
+        console.log("PARAMS " + req.params.post_id)
+
+        const preparedStatement = await db.prepare("SELECT * FROM replies as r " + 
+                                                   "INNER JOIN comments as c on c.id = r.comment_id " +
+                                                   "INNER JOIN posts as p on p.id = c.post_id " +
+                                                   "INNER JOIN users as u on u.id = r.user_id " +
+                                                   "WHERE p.id = ?"                                           );
+        await preparedStatement.bind({1 : req.params.post_id});
+        const replies = await preparedStatement.all();
+
+        console.log(replies)
+                
+        res.send({result : "success", replies : replies});
+    
+    } 
+    
+    catch(err) {
+        console.log(err.message);
+        res.send({ result : "Could not send post to server"});
+    }
+})
+
+
 router.get("/comments/:id", async (req, res) => {
 
     try {
             
-        const preparedStatement = await db.prepare("SELECT comment, comments.date, username " +
+        const preparedStatement = await db.prepare("SELECT comments.id as comment_id, comment, comments.date, username " +
                                                    "FROM comments " + 
                                                    "INNER JOIN posts on " + 
                                                    "posts.id = comments.post_id " +

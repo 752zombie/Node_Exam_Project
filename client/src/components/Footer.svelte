@@ -1,11 +1,11 @@
 
 <svelte:head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+
   <link rel="stylesheet" href="css/style.css">
 </svelte:head>
 
 
-<footer class="footer-own">
+<footer class="footer-own" >
     <div class="content has-text-centered">
       <p style="color: white; font-size: 17px;">
         <strong style="color: white; font-size: 17px;">ReddOt</strong> by <a href="/#" style="color: white; font-size: 17px;">Magnus Söderhamn Wulff and Matthias Hyldegaard Djernæs</a>. 
@@ -21,7 +21,8 @@
        padding-bottom: 20px;
        position: fixed;
        bottom: 0;
-       width: 100%;      
+       width: 100%;
+       text-align: center;      
     }
 
     

@@ -6,6 +6,7 @@ p {
 textarea { 
     /* will prevent resizing horizontally */
     resize:vertical;
+    margin-bottom: 0px;
  }
 
 .card-header-title {
@@ -131,4 +132,47 @@ textarea {
 .filepond--credits {
     display: none;
 }
+
+.reply-container {
+    margin-left: 18%;
+}
+
+#old-comment {
+    background-color: rgb(255,182,193);
+    resize: none;
+    border-radius: 18px;
+    color: white;    
+}
+
+#old-comment:focus {
+    outline-width: 0;
+}
+
+#reply-author {
+    text-align: left;
+}
+
+#reply-author {
+    color: purple;
+    opacity : 0.5;
+    transition-duration: 0.5s;
+
+}
+
+#reply-author:hover {
+    transform: scale(1.3);
+    opacity : 1;
+    transition-duration: 0.5s;
+ 
+}
+
+.columns {
+    margin-bottom: 40px;
+}
+
+#reply-container {
+    margin-bottom: 15px; 
+}
+
+
 
