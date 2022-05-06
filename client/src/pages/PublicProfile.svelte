@@ -1,35 +1,27 @@
 <script>
+    import { socketStore } from "../stores.js";
+    import { io } from "socket.io-client";
+    
     export let userId;
 
     let textFieldOpen = false;
     let messageText = "";
     let result = undefined;
 
+    let socket;
+    socketStore.subscribe((value) => socket = value);
+
+    if (!socket.connected) {
+        socketStore.set(io());
+    }
+
     function writeMessage() {
         textFieldOpen = true;
     }
 
-    async function sendMessage() {
-        const request = {
-            method : "POST",
-            headers : {
-                "Content-Type": "application/json"
-            },
-            body : JSON.stringify({receiver : userId, text : messageText})
-        }
-        const response = await fetch("http://localhost:8080/messages", request);
-        const data  = await response.json();
-
-        if (data.result === "success") {
-            result = "Message sent succesfully";
-        }
-
-        else {
-            result = "An error occured";
-        }
-        
+    function sendMessage() {
+        socket.emit("chat message", userId, messageText);
         textFieldOpen = false;
-
     }
 </script>
 <h1>This is a public profile for {userId}</h1>

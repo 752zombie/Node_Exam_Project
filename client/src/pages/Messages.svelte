@@ -65,7 +65,6 @@
 
 
         const conversation = conversations.get(conversationId);
-        const messages = conversation.messages;
 
         if (!conversation) {
             conversations.set(conversationId, 
@@ -80,7 +79,7 @@
         }
 
         else {
-            conversations.set(sender, [...messages, {sender : sender, text : data.text}]);
+            conversations.set(conversationId, {...conversation, messages : [...conversation.messages, {sender : sender, text : data.text}]});
             //TODO: notify MessageTab that there is a new message
         }
         
@@ -95,22 +94,23 @@
 
     async function showChatContents(event) {
         const conversation = conversations.get(event.detail.conversationId);
+        console.log(conversation);
 
         let messages = [];
 
         if (!conversation.isCached) {
             //fetch messages from server
-            constmessages = await fetchConversation(conversation.conversationId);
+            messages = await fetchConversation(conversation.conversationId);
+            conversation.messages = messages;
             conversation.isCached = true;
         }
 
-        
-
-
-
+        else {
+            messages = conversation.messages;
+        }
     
         for (let message of messages) {
-            console.log("%s says: %s", message.sender_id, message.text);
+            console.log("%s says: %s", message.sender, message.text);
         }
     }
 
