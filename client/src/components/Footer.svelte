@@ -1,10 +1,3 @@
-
-<svelte:head>
-
-  <link rel="stylesheet" href="css/style.css">
-</svelte:head>
-
-
 <footer class="footer-own" >
     <div class="content has-text-centered">
       <p style="color: white; font-size: 17px;">
@@ -25,5 +18,8 @@
        text-align: center;      
     }
 
-    
+    p {
+    color: blue;
+    word-wrap: break-word;
+}    
 </style>  

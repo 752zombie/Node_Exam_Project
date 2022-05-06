@@ -1,6 +1,6 @@
 <script>
     import { io } from "socket.io-client";
-    import { socketStore } from "../stores.js";
+    import { socketStore, userStore } from "../stores.js";
     import { onMount } from "svelte";
     import MessageTab from "../components/MessageTab.svelte";
 
@@ -15,10 +15,11 @@
     let socket;
     socketStore.subscribe((value) => socket = value);
 
+    let user;
+    userStore.subscribe((value) => user = value);
+
     if (!socket.connected) {
         socketStore.set(io());
-        
-
     }
 
     console.log("socket connected: ", socket.connected);
@@ -90,13 +91,13 @@
                 conversationId : conversationId,
                 userId : data.senderId,
                 username : sender,
-                messages : [{sender : sender, text : data.text}]
+                messages : [{sender : sender, text : data.text, senderId : data.senderId}]
             });
             conversations = conversations;
         }
 
         else {
-            conversations.set(conversationId, {...conversation, messages : [...conversation.messages, {sender : sender, text : data.text}]});
+            conversations.set(conversationId, {...conversation, messages : [...conversation.messages, {sender : sender, text : data.text, senderId : data.senderId}]});
             //TODO: notify MessageTab that there is a new message
         }
         
@@ -130,9 +131,36 @@
 {#each Array.from(conversations.values()) as conversation}
     <MessageTab conversation={conversation} on:usernameClicked={showChatContents}></MessageTab>
 {/each}
-    
-<div>
+
+<div id="active-chat">
     {#each activeMessages as message}
-        <p><em>{message.sender}</em>: {message.text}</p>
+        <p class={user.userId === message.senderId ? "right" : "left"}><em>{message.sender}</em>: {message.text}</p>
     {/each}
 </div>
+
+
+
+<style>
+
+    
+    #active-chat {
+        height: 40vh;
+        width: 40vw;
+        overflow-y: auto;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 3px;
+        border-color: blue;
+        border-style: solid;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .right {
+        margin-left: auto;
+    }
+
+    .left {
+        margin-right: auto;
+    }
+</style>
