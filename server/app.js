@@ -79,8 +79,8 @@ io.on('connection', async (socket) => {
 
       try {
           // check if conversation exists and both sender and receiver is a part of it.
-          let preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? OR participant_2 = ?) AND (participant_1 = ? OR participant_2 = ?)");
-          await preparedStatement.bind({1 : session.user.id, 2 : session.user.id, 3 : to, 4 : to});
+          let preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
+          await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
           let conversation = await preparedStatement.get();
 
           // conversation does not exist: create conversation and retrieve conversation id
@@ -89,8 +89,8 @@ io.on('connection', async (socket) => {
             await preparedStatement.bind({1 : session.user.id, 2 : to});
             await preparedStatement.run();
             
-            preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? OR participant_2 = ?) AND (participant_1 = ? OR participant_2 = ?)");
-            await preparedStatement.bind({1 : session.user.id, 2 : session.user.id, 3 : to, 4 : to});
+            preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
+            await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
             conversation = await preparedStatement.get();
           }
 
@@ -103,7 +103,7 @@ io.on('connection', async (socket) => {
       }
 
       catch(err) {
-          //TODO: some error handling
+          console.log(err.message);
       }
       
       

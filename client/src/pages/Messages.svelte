@@ -8,34 +8,42 @@
 
     // key: username, value: array of messages to and from that user
     let conversations = new Map();
-    
-    let chatInput = "";
-    let userToSendTo = "";
+    let activeConversation;
+
+    $: activeMessages = activeConversation ? activeConversation.messages : [];
     
     let socket;
     socketStore.subscribe((value) => socket = value);
 
     if (!socket.connected) {
-        socketStore.set(io())
-        socket.on("chat message", (data) => {
-            console.log(data);
+        socketStore.set(io());
+        
+
+    }
+
+    console.log("socket connected: ", socket.connected);
+
+    socket.off();
+
+    socket.on("chat message", (data) => {
             filterIncomingMessage(data);
         })
 
-        socket.on("connect", () => {
-            console.log("connect: ", socket.id);
-        })
+    socket.on("connect", () => {
+        console.log("connect: ", socket.id);
+    })
 
-        socket.on("reconnect", (attempt) => {
-            console.log("reconnect: ", attempt);
-        })
+    socket.on("reconnect", (attempt) => {
+        console.log("reconnect: ", attempt);
+    })
 
-    }
+    
+
 
     async function fetchConversations() {
         const response = await fetch("http://localhost:8080/conversations");
         const data = await response.json();
-        console.log(data);
+
         if (data.result === "success") {
             for (let conversation of data.data) {
                 conversations.set(conversation.conversationId, 
@@ -56,14 +64,23 @@
         const response = await fetch("http://localhost:8080/conversations/" + id);
         const data = await response.json();
 
-        return data.result === "success" ? data.messages : [];
+        if (data.result === "success") {
+            const conversation = conversations.get(id);
+            conversation.messages = data.messages;
+            conversation.isCached = true;
+            
+            return data.messages;
+        }
+
+        return [];
+
     } 
 
     function filterIncomingMessage(data) {
+        console.log(data);
         const sender = data.sender;
         const conversationId = data.conversationId;
-
-
+        
         const conversation = conversations.get(conversationId);
 
         if (!conversation) {
@@ -85,24 +102,14 @@
         
     }
 
-    function sendMessage() {
-        //console.log(userToSendTo);
-        if (socket) {
-            socket.emit("chat message", userToSendTo, chatInput);
-        }
-    }
-
     async function showChatContents(event) {
         const conversation = conversations.get(event.detail.conversationId);
-        console.log(conversation);
 
         let messages = [];
 
         if (!conversation.isCached) {
             //fetch messages from server
             messages = await fetchConversation(conversation.conversationId);
-            conversation.messages = messages;
-            conversation.isCached = true;
         }
 
         else {
@@ -112,8 +119,9 @@
         for (let message of messages) {
             console.log("%s says: %s", message.sender, message.text);
         }
-    }
 
+        activeConversation = conversation;
+    }
 
 </script>
 
@@ -122,8 +130,9 @@
 {#each Array.from(conversations.values()) as conversation}
     <MessageTab conversation={conversation} on:usernameClicked={showChatContents}></MessageTab>
 {/each}
-
     
 <div>
-    
+    {#each activeMessages as message}
+        <p><em>{message.sender}</em>: {message.text}</p>
+    {/each}
 </div>
