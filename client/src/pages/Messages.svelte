@@ -132,9 +132,13 @@
     <MessageTab conversation={conversation} on:usernameClicked={showChatContents}></MessageTab>
 {/each}
 
+<h2>{activeConversation ? "Currently chatting with: " + activeConversation.username : "pick a user to the left to start chatting"}</h2>
+
 <div id="active-chat">
     {#each activeMessages as message}
-        <p class={user.userId === message.senderId ? "right" : "left"}><em>{message.sender}</em>: {message.text}</p>
+        <div class={user.userId === message.senderId ? "right" : "left"}>
+            <p>{message.text}</p>
+        </div>
     {/each}
 </div>
 
@@ -158,9 +162,28 @@
 
     .right {
         margin-left: auto;
+        display: inline-block;
+        border-style: solid;
+        border-color: dodgerblue;
+        background-color: dodgerblue;
+        border-radius: 5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        margin-right: 5px;
+        color: white;
+        padding: 3px;
     }
 
     .left {
         margin-right: auto;
+        display: inline-block;
+        border-style: solid;
+        border-color: lightgrey;
+        background-color: lightgrey;
+        border-radius: 5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        margin-left: 5px;
+        padding: 3px;
     }
 </style>
