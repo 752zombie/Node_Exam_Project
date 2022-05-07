@@ -33,4 +33,8 @@
         justify-content: center;
         cursor: pointer;
     }
+
+    div:hover {
+        background-color: rgb(62, 154, 185);
+    }
 </style>

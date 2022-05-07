@@ -139,7 +139,7 @@
     }
 
     function sendMessage() {
-        if (activeConversation) {
+        if (activeConversation && /[^\s]/g.test(writeMessageField)) {
             socket.emit("chat message", activeConversation.userId, writeMessageField);
             console.log({sender : user.username, senderId : user.userId, text : writeMessageField});
             activeConversation.messages.push({sender : user.username, senderId : user.userId, text : writeMessageField});
@@ -193,22 +193,33 @@
 </script>
 
 <h1>Messages</h1>
-<div id="users">
-    {#each Array.from(conversations.values()) as conversation}
-        <MessageTab conversation={conversation} on:usernameClicked={showChatContents}></MessageTab>
-    {/each}
-</div>
-
-
-<h2>{activeConversation ? "Currently chatting with: " + activeConversation.username : "Pick a user to the left to start chatting"}</h2>
-
-<div id="active-chat">
-    {#each activeMessages as message}
-        <div class={user.userId === message.senderId ? "right" : "left"}>
-            <pre>{message.text}</pre>
+<div id="outer">
+    <div id="outer-users">
+        <h2 id="users-header">Active conversations</h2>
+        <div id="users">
+            {#each Array.from(conversations.values()) as conversation}
+                <MessageTab conversation={conversation} on:usernameClicked={showChatContents}></MessageTab>
+            {/each}
+        </div>    
+    </div>
+    <div id="outer.chat">
+        <h2>{activeConversation ? "Currently chatting with: " + activeConversation.username : "Pick a user to the left to start chatting"}</h2>
+        
+        <div id="active-chat">
+            {#each activeMessages as message}
+                <div class={user.userId === message.senderId ? "right" : "left"}>
+                    <pre>{message.text}</pre>
+                </div>
+            {/each}
         </div>
-    {/each}
+    </div>
+
+    <div id="invisible"></div>
 </div>
+
+
+
+
 
 <div>
     <textarea id="write-message-field" cols="60" rows="5" placeholder="type a message here" bind:value={writeMessageField}></textarea><br>
@@ -233,6 +244,7 @@
         border-style: solid;
         display: flex;
         flex-direction: column;
+        text-align: left;
     }
 
     .right {
@@ -277,4 +289,25 @@
         overflow-y: auto;
         border: 5px solid blue;
     }
+
+    #outer-users {
+        flex: 1;
+    }
+
+    #invisible {
+        flex: 1;
+    }
+
+    #outer {
+        display: flex;
+    }
+
+    #users-header {
+        text-align: left;
+    }
+
+    button {
+        cursor: pointer;
+    }
+    
 </style>
