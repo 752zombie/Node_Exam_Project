@@ -79,6 +79,10 @@ io.on('connection', async (socket) => {
             await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
             let conversation = await preparedStatement.get();
 
+            preparedStatement = await db.prepare("UPDATE conversations SET mark_for_delete = NULL WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
+            await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
+            await preparedStatement.run();
+
             // conversation does not exist: create conversation and retrieve conversation id
             if (!conversation) {
                 preparedStatement = await db.prepare("INSERT INTO conversations (participant_1, participant_2) VALUES (?, ?)");

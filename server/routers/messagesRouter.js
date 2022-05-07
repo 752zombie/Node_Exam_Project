@@ -42,9 +42,9 @@ router.get("/conversations/:id", async (req, res) => {
     try {
         const preparedStatement = await db.prepare(`SELECT users.username AS sender, users.id as senderId, messages.text 
         FROM messages INNER JOIN users ON sender_id = users.id 
-        WHERE conversation_id = ? AND (sender_id = ? OR receiver_id = ?)`);
+        WHERE conversation_id = ? AND (sender_id = ? OR receiver_id = ?) AND (mark_for_delete IS NULL OR mark_for_delete <> ?)`);
         
-        await preparedStatement.bind({1 : conversationId, 2 : user.id, 3 : user.id});
+        await preparedStatement.bind({1 : conversationId, 2 : user.id, 3 : user.id, 4 : user.id});
         const messages = await preparedStatement.all();
 
         res.send({result : "success", messages : messages});
