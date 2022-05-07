@@ -114,10 +114,10 @@
 
         else {
             conversations.set(conversationId, {...conversation, messages : [...conversation.messages, {sender : sender, text : data.text, senderId : data.senderId}]});
+            conversation
             //TODO: notify MessageTab that there is a new message
         }
 
-        console.log("reached here")
 
         activeConversation = conversations.get(activeConversation.conversationId);
         

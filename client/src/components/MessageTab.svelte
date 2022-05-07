@@ -3,19 +3,17 @@
     const dispatch = createEventDispatcher();
 
     export let conversation;
-    export let newMessageReceived = false;
+
 
     function sendConversation()  {
         dispatch("usernameClicked", {conversationId : conversation.conversationId});
     }
+
 </script>
 
 <div on:click={sendConversation}>
     <span>
         <span>{conversation.username + " "}</span>
-        {#if newMessageReceived}
-            <span>(New message!)</span>
-        {/if}
     </span>
 </div>
 
