@@ -3,10 +3,12 @@
     const dispatch = createEventDispatcher();
 
     export let conversation;
+    export let numberOfNewmessages = 0;
 
 
     function sendConversation()  {
         dispatch("usernameClicked", {conversationId : conversation.conversationId});
+        numberOfNewmessages = 0;
     }
 
 </script>
@@ -14,6 +16,7 @@
 <div on:click={sendConversation}>
     <span>
         <span>{conversation.username + " "}</span>
+        <span id="new-messages">{numberOfNewmessages > 0 ? `(${numberOfNewmessages})` : ""}</span>
     </span>
 </div>
 
@@ -30,6 +33,10 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
+    }
+
+    #new-messages {
+        color: green;
     }
 
     div:hover {

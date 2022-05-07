@@ -69,7 +69,8 @@
                     conversationId : conversation.conversationId,
                     userId : conversation.userId,
                     username : conversation.username,
-                    messages : []
+                    messages : [],
+                    numberOfNewmessages : 0
                 });
             }
 
@@ -107,24 +108,40 @@
                 conversationId : conversationId,
                 userId : data.senderId,
                 username : sender,
-                messages : [{sender : sender, text : data.text, senderId : data.senderId}]
+                messages : [{sender : sender, text : data.text, senderId : data.senderId}],
+                numberOfNewmessages : 0
             });
-            conversations = conversations;
         }
 
         else {
             conversations.set(conversationId, {...conversation, messages : [...conversation.messages, {sender : sender, text : data.text, senderId : data.senderId}]});
-            conversation
             //TODO: notify MessageTab that there is a new message
         }
 
+        console.log("active conversation :", activeConversation);
 
-        activeConversation = conversations.get(activeConversation.conversationId);
+        if (activeConversation && conversation) {
+            if (activeConversation.conversationId !== conversation.conversationId) {
+                conversations.get(conversationId).numberOfNewmessages++;
+            } 
+        }
+
+        else {
+            conversations.get(conversationId).numberOfNewmessages++
+        }
+        
+        conversations = conversations;
+        if (activeConversation) {
+            activeConversation = conversations.get(activeConversation.conversationId);
+        }
+        
         
     }
 
     async function showChatContents(event) {
         const conversation = conversations.get(event.detail.conversationId);
+
+        conversation.numberOfNewmessages = 0;
 
 
         if (!conversation.isCached) {
@@ -134,7 +151,7 @@
 
         writeMessageField = "";
 
-
+        conversations = conversations;
         activeConversation = conversation;
     }
 
@@ -198,7 +215,7 @@
         <h2 id="users-header">Active conversations</h2>
         <div id="users">
             {#each Array.from(conversations.values()) as conversation}
-                <MessageTab conversation={conversation} on:usernameClicked={showChatContents}></MessageTab>
+                <MessageTab conversation={conversation} on:usernameClicked={showChatContents} numberOfNewmessages={conversation.numberOfNewmessages}></MessageTab>
             {/each}
         </div>    
     </div>
