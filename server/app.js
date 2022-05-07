@@ -22,10 +22,10 @@ app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:500
 app.use(express.json());
 
 const sessionMiddleware = session({
-  secret: "test",
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
+    secret: "test",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
 })
 
 app.use(sessionMiddleware);
@@ -49,74 +49,64 @@ io.use(wrap(sessionMiddleware));
 
 
 io.use((socket, next) => {
-  const session = socket.request.session;
+    const session = socket.request.session;
 
-  if (!session || !session.isLoggedIn) {
-    next(new Error("you need to be logged in"));
-  }
+    if (!session || !session.isLoggedIn) {
+        next(new Error("you need to be logged in"));
+    }
 
-  else {
-    next();
-  }
-  
+    else {
+        next();
+    }
 })
 
 io.on('connection', async (socket) => {
-  const session = socket.request.session;
-  if (!session || !session.isLoggedIn) {
-      return;
-  }
-
-  console.log(session.user.username, " connected with socketid = ", socket.id);
-  console.log("Total connections: ", io.engine.clientsCount);
-  
-  
-  socket.join(session.user.id);
-  socket.on('chat message', async (to, msg) => {
-
-    console.log("to: ", to);
-    console.log("msg: ", msg);
-
-      try {
-          // check if conversation exists and both sender and receiver is a part of it.
-          let preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
-          await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
-          let conversation = await preparedStatement.get();
-
-          // conversation does not exist: create conversation and retrieve conversation id
-          if (!conversation) {
-            preparedStatement = await db.prepare("INSERT INTO conversations (participant_1, participant_2) VALUES (?, ?)");
-            await preparedStatement.bind({1 : session.user.id, 2 : to});
-            await preparedStatement.run();
-            
-            preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
-            await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
-            conversation = await preparedStatement.get();
-          }
-
-          preparedStatement = await db.prepare("INSERT INTO messages (conversation_id, sender_id, receiver_id, text) VALUES (?, ?, ?, ?) ");
-          await preparedStatement.bind({1 : conversation.id, 2 : session.user.id, 3 : to, 4 : msg});
-          await preparedStatement.run();
-          socket.to(parseInt(to)).emit("chat message", {sender : session.user.username, text : msg, conversationId : conversation.id, senderId : session.user.id});
-          
-
-      }
-
-      catch(err) {
-          console.log(err.message);
-      }
-      
-      
+    const session = socket.request.session;
     
-    });
+    if (!session || !session.isLoggedIn) {
+        return;
+    }
+
+    console.log(session.user.username, " connected with socketid = ", socket.id);
+    console.log("Total connections: ", io.engine.clientsCount);
+
+
+    socket.join(session.user.id);
+    socket.on('chat message', async (to, msg) => {
+        try {
+            // check if conversation exists and both sender and receiver is a part of it.
+            let preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
+            await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
+            let conversation = await preparedStatement.get();
+
+            // conversation does not exist: create conversation and retrieve conversation id
+            if (!conversation) {
+                preparedStatement = await db.prepare("INSERT INTO conversations (participant_1, participant_2) VALUES (?, ?)");
+                await preparedStatement.bind({1 : session.user.id, 2 : to});
+                await preparedStatement.run();
+                
+                preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
+                await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
+                conversation = await preparedStatement.get();
+            }
+
+            preparedStatement = await db.prepare("INSERT INTO messages (conversation_id, sender_id, receiver_id, text) VALUES (?, ?, ?, ?) ");
+            await preparedStatement.bind({1 : conversation.id, 2 : session.user.id, 3 : to, 4 : msg});
+            await preparedStatement.run();
+            socket.to(parseInt(to)).emit("chat message", {sender : session.user.username, text : msg, conversationId : conversation.id, senderId : session.user.id});
+        }
+
+        catch(err) {
+            console.log(err.message);
+        }
+               
+        });
 
     socket.on("disconnect", () => {
         console.log(socket.request.session.user.username, " disconnected with socketId = ", socket.id);
     })
   });
-
-
-  
+ 
   
 httpServer.listen(8080, () => {
     console.log("Server is running on port 8080");
