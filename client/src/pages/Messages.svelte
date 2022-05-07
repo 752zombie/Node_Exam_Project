@@ -1,16 +1,30 @@
 <script>
     import { io } from "socket.io-client";
     import { socketStore, userStore } from "../stores.js";
-    import { onMount } from "svelte";
+    import { onMount, afterUpdate } from "svelte";
     import MessageTab from "../components/MessageTab.svelte";
+
+    afterUpdate(() => {
+        // scroll to buttom of chat
+        const activeChatDiv = document.getElementById("active-chat");
+        activeChatDiv.scrollTop = activeChatDiv.scrollHeight;
+        
+        // focus on where text field where you write the message
+        document.getElementById("write-message-field").focus();
+    })
 
     onMount(fetchConversations);
 
     // key: username, value: array of messages to and from that user
     let conversations = new Map();
     let activeConversation;
+    let writeMessageField = "";
+    let activeMessages;
 
-    $: activeMessages = activeConversation ? activeConversation.messages : [];
+    $: {activeMessages = activeConversation ? activeConversation.messages : [];
+        console.log(activeMessages);
+        console.log("reactivity triggered");
+    }
     
     let socket;
     socketStore.subscribe((value) => socket = value);
@@ -100,29 +114,51 @@
             conversations.set(conversationId, {...conversation, messages : [...conversation.messages, {sender : sender, text : data.text, senderId : data.senderId}]});
             //TODO: notify MessageTab that there is a new message
         }
+
+        console.log("reached here")
+
+        activeConversation = conversations.get(activeConversation.conversationId);
         
     }
 
     async function showChatContents(event) {
         const conversation = conversations.get(event.detail.conversationId);
 
-        let messages = [];
 
         if (!conversation.isCached) {
             //fetch messages from server
-            messages = await fetchConversation(conversation.conversationId);
+            await fetchConversation(conversation.conversationId);
         }
 
-        else {
-            messages = conversation.messages;
-        }
-    
-        for (let message of messages) {
-            console.log("%s says: %s", message.sender, message.text);
-        }
+        writeMessageField = "";
+
 
         activeConversation = conversation;
     }
+
+    function sendMessage() {
+        if (activeConversation) {
+            socket.emit("chat message", activeConversation.userId, writeMessageField);
+            console.log({sender : user.username, senderId : user.userId, text : writeMessageField});
+            activeConversation.messages.push({sender : user.username, senderId : user.userId, text : writeMessageField});
+            writeMessageField = "";
+            activeConversation = activeConversation;
+
+        }
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === "Enter" && !event.shiftKey && !event.repeat) {
+            event.preventDefault();
+            sendMessage();
+        }
+
+        else if (!event.shiftKey && event.key === "Enter") {
+            event.preventDefault();
+        }
+    }
+
+
 
 </script>
 
@@ -132,21 +168,27 @@
     <MessageTab conversation={conversation} on:usernameClicked={showChatContents}></MessageTab>
 {/each}
 
-<h2>{activeConversation ? "Currently chatting with: " + activeConversation.username : "pick a user to the left to start chatting"}</h2>
+<h2>{activeConversation ? "Currently chatting with: " + activeConversation.username : "Pick a user to the left to start chatting"}</h2>
 
 <div id="active-chat">
     {#each activeMessages as message}
         <div class={user.userId === message.senderId ? "right" : "left"}>
-            <p>{message.text}</p>
+            <pre>{message.text}</pre>
         </div>
     {/each}
 </div>
 
+<div>
+    <textarea id="write-message-field" cols="60" rows="5" placeholder="type a message here" bind:value={writeMessageField}></textarea>
+    <button on:click={sendMessage}>Send</button>
+</div>
+
+
+<svelte:window on:keydown={handleKeyPress}/>
+
 
 
 <style>
-
-    
     #active-chat {
         height: 40vh;
         width: 40vw;
@@ -185,5 +227,9 @@
         margin-bottom: 5px;
         margin-left: 5px;
         padding: 3px;
+    }
+
+    pre {
+        font-family: Arial, Helvetica, sans-serif;
     }
 </style>
