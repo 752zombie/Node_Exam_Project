@@ -193,10 +193,12 @@
 </script>
 
 <h1>Messages</h1>
+<div id="users">
+    {#each Array.from(conversations.values()) as conversation}
+        <MessageTab conversation={conversation} on:usernameClicked={showChatContents}></MessageTab>
+    {/each}
+</div>
 
-{#each Array.from(conversations.values()) as conversation}
-    <MessageTab conversation={conversation} on:usernameClicked={showChatContents}></MessageTab>
-{/each}
 
 <h2>{activeConversation ? "Currently chatting with: " + activeConversation.username : "Pick a user to the left to start chatting"}</h2>
 
@@ -267,5 +269,12 @@
     #delete-button {
         color: white;
         background-color: red;
+    }
+
+    #users {
+        width: fit-content;
+        height: 20vh;
+        overflow-y: auto;
+        border: 5px solid blue;
     }
 </style>
