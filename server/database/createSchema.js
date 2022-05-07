@@ -60,8 +60,10 @@ await db.exec(`CREATE TABLE IF NOT EXISTS conversations (
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     participant_1 INTEGER NOT NULL,
     participant_2 INTEGER NOT NULL,
+    mark_for_delete INTEGER,
     FOREIGN KEY(participant_1) REFERENCES users(id),
-    FOREIGN KEY(participant_2) REFERENCES users(id) 
+    FOREIGN KEY(participant_2) REFERENCES users(id),
+    FOREIGN KEY(mark_for_delete) REFERENCES users(id) 
     );`);
 
 await db.exec(`CREATE TABLE IF NOT EXISTS messages (

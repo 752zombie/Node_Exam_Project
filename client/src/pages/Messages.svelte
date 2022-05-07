@@ -59,6 +59,8 @@
         const response = await fetch("http://localhost:8080/conversations");
         const data = await response.json();
 
+        console.log(data.data);
+
         if (data.result === "success") {
             for (let conversation of data.data) {
                 conversations.set(conversation.conversationId, 
@@ -147,6 +149,34 @@
         }
     }
 
+    async function deleteConversation() {
+        if (activeConversation) {
+            const request = {
+                method : "DELETE",
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                body : JSON.stringify({})
+            }
+
+            const response = await fetch("http://localhost:8080/conversations/" + activeConversation.conversationId, request);
+            const data = await response.json();
+
+            if (data.result === "success") {
+                console.log("successfully deleted");
+                conversations.delete(activeConversation.conversationId);
+                activeConversation = undefined;
+                conversations = conversations;
+            }
+
+            else {
+                console.log("something went wrong");
+            }
+        }
+
+
+    }
+
     function handleKeyPress(event) {
         if (event.key === "Enter" && !event.shiftKey && !event.repeat) {
             event.preventDefault();
@@ -179,8 +209,9 @@
 </div>
 
 <div>
-    <textarea id="write-message-field" cols="60" rows="5" placeholder="type a message here" bind:value={writeMessageField}></textarea>
-    <button on:click={sendMessage}>Send</button>
+    <textarea id="write-message-field" cols="60" rows="5" placeholder="type a message here" bind:value={writeMessageField}></textarea><br>
+    <button on:click={sendMessage}>Send</button><br>
+    <button id="delete-button" on:click={deleteConversation}>Delete conversation</button>
 </div>
 
 
@@ -231,5 +262,10 @@
 
     pre {
         font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #delete-button {
+        color: white;
+        background-color: red;
     }
 </style>

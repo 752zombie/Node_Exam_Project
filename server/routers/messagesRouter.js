@@ -14,11 +14,11 @@ router.get("/conversations", async (req, res) => {
 
 
     try {
-        const preparedStatement = await db.prepare(`SELECT users.id AS userId, users.username, conversations.id AS conversationId
+        const preparedStatement = await db.prepare(`SELECT users.id AS userId, users.username, conversations.id AS conversationId, conversations.mark_for_delete as markForDelete
          FROM users INNER JOIN conversations ON (users.id = conversations.participant_1 OR conversations.participant_2 = users.id) AND users.id <> ? 
-         WHERE conversations.participant_1 = ? OR conversations.participant_2 = ?`);
+         WHERE (conversations.participant_1 = ? OR conversations.participant_2 = ?) AND (conversations.mark_for_delete IS NULL OR conversations.mark_for_delete <> ?)`);
         
-        await preparedStatement.bind({1 : user.id, 2 : user.id, 3 : user.id});
+        await preparedStatement.bind({1 : user.id, 2 : user.id, 3 : user.id, 4 : user.id});
         const users = await preparedStatement.all();
         res.send({result : "success", data : users});
     }
@@ -76,7 +76,6 @@ router.post("/messages", async (req, res) => {
         let preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
         await preparedStatement.bind({1 : user.id, 2 : message.receiver, 3 : message.receiver, 4 : user.id});
         let conversation = await preparedStatement.get();
-        console.log(conversation);
 
         if (!conversation) {
             preparedStatement = await db.prepare("INSERT INTO conversations (participant_1, participant_2) VALUES (?, ?)");
@@ -129,15 +128,20 @@ router.delete("/conversations/:id", async (req, res) => {
         await preparedStatement.bind({1 : user.id, 2 : user.id, 3 : user.id, 4 : conversationId});
         await preparedStatement.run();
 
+        preparedStatement = await db.prepare("UPDATE conversations SET mark_for_delete = ? WHERE (participant_1 = ? OR participant_2 = ?) AND id = ?");
+        await preparedStatement.bind({1 : user.id, 2 : user.id, 3 : user.id, 4 : conversationId});
+        await preparedStatement.run();
+
         preparedStatement = await db.prepare("SELECT * FROM messages WHERE (sender_id = ? OR receiver_id = ?) AND conversation_id = ?");
         await preparedStatement.bind({1 : user.id, 2 : user.id, 3 : conversationId});
-        const messages = await db.all();
+        const messages = await preparedStatement.all();
+
 
         // the conversation has no messages and should be deleted
         if (messages.length === 0) {
-            preparedStatement = await db.prepare("DELETE FROM conversations WHERE (participant_1 = ? OR participant_2 = ?) and conversation_id = ?");
-            await db.bind({1 : user.id, 2 : user.id, 3 : conversationId});
-            await db.run();
+            preparedStatement = await db.prepare("DELETE FROM conversations WHERE (participant_1 = ? OR participant_2 = ?) AND id = ?");
+            await preparedStatement.bind({1 : user.id, 2 : user.id, 3 : conversationId});
+            await preparedStatement.run();
         }
 
         res.send({result : "success"});
@@ -145,6 +149,7 @@ router.delete("/conversations/:id", async (req, res) => {
     }
 
     catch(err) {
+        console.log(err.message);
         res.send({result : "something went wrong"});
     }
 })
