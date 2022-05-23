@@ -52,6 +52,11 @@
         console.log("reconnect: ", attempt);
     })
 
+    // function to trigger svelte reactivity on conversations
+    function renderConversations() {
+        conversations = conversations;
+    }
+
     
 
     // get enough data about all conversations the currently logged in user is a part of to display username and fetch conversation content lazily
@@ -74,7 +79,7 @@
                 });
             }
 
-            conversations = conversations;
+            renderConversations();
         }
     }
 
@@ -132,7 +137,7 @@
             conversations.get(conversationId).numberOfNewmessages++
         }
         
-        conversations = conversations;
+        renderConversations();
         if (activeConversation) {
             activeConversation = conversations.get(activeConversation.conversationId);
         }
@@ -155,7 +160,7 @@
 
         writeMessageField = "";
 
-        conversations = conversations;
+        renderConversations();
         activeConversation = conversation;
     }
 
@@ -178,7 +183,7 @@
                 console.log("successfully deleted");
                 conversations.delete(activeConversation.conversationId);
                 activeConversation = undefined;
-                conversations = conversations;
+                renderConversations();
             }
 
             else {
