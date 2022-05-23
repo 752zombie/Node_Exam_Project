@@ -13,9 +13,9 @@
         document.getElementById("write-message-field").focus();
     })
 
-    onMount(fetchConversations);
+    onMount(fetchConversationsShallow);
 
-    // key: username, value: array of messages to and from that user
+    // key: conversation id, value: object which contains conversation metadata and the actual messages
     let conversations = new Map();
     let activeConversation;
     let writeMessageField = "";
@@ -54,8 +54,8 @@
 
     
 
-
-    async function fetchConversations() {
+    // get enough data about all conversations the currently logged in user is a part of to display username and fetch conversation content lazily
+    async function fetchConversationsShallow() {
         const response = await fetch("http://localhost:8080/conversations");
         const data = await response.json();
 
@@ -67,7 +67,7 @@
                 {
                     isCached : false,
                     conversationId : conversation.conversationId,
-                    userId : conversation.userId,
+                    userId : conversation.userId, // user id of person you are communicating with
                     username : conversation.username,
                     messages : [],
                     numberOfNewmessages : 0
@@ -78,6 +78,7 @@
         }
     }
 
+    // get the contents of single conversation
     async function fetchConversation(id) {
         const response = await fetch("http://localhost:8080/conversations/" + id);
         const data = await response.json();
@@ -94,6 +95,7 @@
 
     } 
 
+    // put message in correct conversation
     function filterIncomingMessage(data) {
         console.log(data);
         const sender = data.sender;
@@ -138,6 +140,8 @@
         
     }
 
+    // called when clicking on username on the left
+    // triggers rerender of active chat window
     async function showChatContents(event) {
         const conversation = conversations.get(event.detail.conversationId);
 
@@ -155,17 +159,8 @@
         activeConversation = conversation;
     }
 
-    function sendMessage() {
-        if (activeConversation && /[^\s]/g.test(writeMessageField)) {
-            socket.emit("chat message", activeConversation.userId, writeMessageField);
-            console.log({sender : user.username, senderId : user.userId, text : writeMessageField});
-            activeConversation.messages.push({sender : user.username, senderId : user.userId, text : writeMessageField});
-            writeMessageField = "";
-            activeConversation = activeConversation;
 
-        }
-    }
-
+    // delete currently active conversation
     async function deleteConversation() {
         if (activeConversation) {
             const request = {
@@ -194,6 +189,19 @@
 
     }
 
+    // send message to currently active conversation
+    function sendMessage() {
+        if (activeConversation && /[^\s]/g.test(writeMessageField)) {
+            socket.emit("chat message", activeConversation.userId, writeMessageField);
+            console.log({sender : user.username, senderId : user.userId, text : writeMessageField});
+            activeConversation.messages.push({sender : user.username, senderId : user.userId, text : writeMessageField});
+            writeMessageField = "";
+            activeConversation = activeConversation;
+
+        }
+    }
+
+    // send message when enter key is pressed
     function handleKeyPress(event) {
         if (event.key === "Enter" && !event.shiftKey && !event.repeat) {
             event.preventDefault();
@@ -205,12 +213,11 @@
         }
     }
 
-
-
 </script>
 
 <h1>Messages</h1>
 <div id="outer">
+    <!-- List to the left of conversations (displayed as usernames) -->
     <div id="outer-users">
         <h2 id="users-header">Active conversations</h2>
         <div id="users">
@@ -219,6 +226,8 @@
             {/each}
         </div>    
     </div>
+
+    <!-- Chat window-->
     <div id="outer.chat">
         <h2>{activeConversation ? "Currently chatting with: " + activeConversation.username : "Pick a user to the left to start chatting"}</h2>
         
@@ -231,13 +240,14 @@
         </div>
     </div>
 
+    <!-- DO NOT DELETE - is for styling-->
     <div id="invisible"></div>
 </div>
 
 
 
 
-
+<!-- Message field and buttons-->
 <div>
     <textarea id="write-message-field" cols="60" rows="5" placeholder="type a message here" bind:value={writeMessageField}></textarea><br>
     <button on:click={sendMessage}>Send</button><br>
