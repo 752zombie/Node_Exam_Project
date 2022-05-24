@@ -57,6 +57,10 @@
         activeConversation = conversation;
     }
 
+    function clearMessageField() {
+        writeMessageField = "";
+    }
+
     
 
     // get enough data about all conversations the currently logged in user is a part of to display username and fetch conversation content lazily
@@ -114,7 +118,7 @@
         }
 
         else {
-            conversations.set(conversationId, {...conversation, messages : [...conversation.messages, {sender : sender, text : data.text, senderId : data.senderId}]});
+            conversation.messages.push({sender : sender, text : data.text, senderId : data.senderId});
         }
 
         conversation = conversations.get(conversationId);
@@ -126,13 +130,11 @@
         else if (activeConversation.conversationId !== conversation.conversationId) {
             conversation.numberOfNewmessages++
         }
-
         
         renderConversations();
-        if (activeConversation) {
-            setActiveConversation(conversations.get(activeConversation.conversationId));
-        }
         
+        setActiveConversation(activeConversation);
+
         
     }
 
@@ -143,14 +145,12 @@
 
         conversation.numberOfNewmessages = 0;
 
-
         if (!conversation.isCached) {
             //fetch messages from server
             await fetchConversation(conversation.conversationId);
         }
 
-        writeMessageField = "";
-
+        clearMessageField();
         renderConversations();
         setActiveConversation(conversation);
     }
@@ -190,9 +190,9 @@
         if (activeConversation && /[^\s]/g.test(writeMessageField)) {
             socket.emit("chat message", activeConversation.userId, writeMessageField);
             activeConversation.messages.push({sender : user.username, senderId : user.userId, text : writeMessageField});
-            writeMessageField = "";
+            
+            clearMessageField();
             setActiveConversation(activeConversation);
-
         }
     }
 
