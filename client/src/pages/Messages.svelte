@@ -57,6 +57,10 @@
         conversations = conversations;
     }
 
+    function setActiveConversation(conversation) {
+        activeConversation = conversation;
+    }
+
     
 
     // get enough data about all conversations the currently logged in user is a part of to display username and fetch conversation content lazily
@@ -139,7 +143,7 @@
         
         renderConversations();
         if (activeConversation) {
-            activeConversation = conversations.get(activeConversation.conversationId);
+            setActiveConversation(conversations.get(activeConversation.conversationId));
         }
         
         
@@ -161,7 +165,7 @@
         writeMessageField = "";
 
         renderConversations();
-        activeConversation = conversation;
+        setActiveConversation(conversation);
     }
 
 
@@ -182,7 +186,7 @@
             if (data.result === "success") {
                 console.log("successfully deleted");
                 conversations.delete(activeConversation.conversationId);
-                activeConversation = undefined;
+                setActiveConversation(undefined);
                 renderConversations();
             }
 
@@ -201,7 +205,7 @@
             console.log({sender : user.username, senderId : user.userId, text : writeMessageField});
             activeConversation.messages.push({sender : user.username, senderId : user.userId, text : writeMessageField});
             writeMessageField = "";
-            activeConversation = activeConversation;
+            setActiveConversation(activeConversation);
 
         }
     }
