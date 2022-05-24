@@ -171,7 +171,6 @@
             const data = await response.json();
 
             if (data.result === "success") {
-                console.log("successfully deleted");
                 conversations.delete(activeConversation.conversationId);
                 setActiveConversation(undefined);
                 renderConversations();

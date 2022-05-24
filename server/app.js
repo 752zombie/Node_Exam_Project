@@ -7,10 +7,10 @@ import posts from './routers/posts.js'
 import comments from './routers/comments.js'
 import likes from './routers/likes.js'
 import messagesRouter from "./routers/messagesRouter.js";
+import chat from "./sockets/chat.js";
 
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { db } from "./database/createConnection.js";
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:500
 app.use(express.json());
 
 const sessionMiddleware = session({
-    secret: "test",
+    secret: "test",// TODO: make secret
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }
@@ -72,39 +72,7 @@ io.on('connection', async (socket) => {
 
 
     socket.join(session.user.id);
-    socket.on('chat message', async (to, msg) => {
-        try {
-            // check if conversation exists and both sender and receiver is a part of it.
-            let preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
-            await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
-            let conversation = await preparedStatement.get();
-
-            preparedStatement = await db.prepare("UPDATE conversations SET mark_for_delete = NULL WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
-            await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
-            await preparedStatement.run();
-
-            // conversation does not exist: create conversation and retrieve conversation id
-            if (!conversation) {
-                preparedStatement = await db.prepare("INSERT INTO conversations (participant_1, participant_2) VALUES (?, ?)");
-                await preparedStatement.bind({1 : session.user.id, 2 : to});
-                await preparedStatement.run();
-                
-                preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
-                await preparedStatement.bind({1 : session.user.id, 2 : to, 3 : to, 4 : session.user.id});
-                conversation = await preparedStatement.get();
-            }
-
-            preparedStatement = await db.prepare("INSERT INTO messages (conversation_id, sender_id, receiver_id, text) VALUES (?, ?, ?, ?) ");
-            await preparedStatement.bind({1 : conversation.id, 2 : session.user.id, 3 : to, 4 : msg});
-            await preparedStatement.run();
-            socket.to(parseInt(to)).emit("chat message", {sender : session.user.username, text : msg, conversationId : conversation.id, senderId : session.user.id});
-        }
-
-        catch(err) {
-            console.log(err.message);
-        }
-               
-        });
+    socket.on('chat message', chat(socket, session));
 
     socket.on("disconnect", () => {
         console.log(socket.request.session.user.username, " disconnected with socketId = ", socket.id);
