@@ -21,10 +21,7 @@
     let writeMessageField = "";
     let activeMessages;
 
-    $: {activeMessages = activeConversation ? activeConversation.messages : [];
-        console.log(activeMessages);
-        console.log("reactivity triggered");
-    }
+    $: activeMessages = activeConversation ? activeConversation.messages : [];
     
     let socket;
     socketStore.subscribe((value) => socket = value);
@@ -36,7 +33,6 @@
         socketStore.set(io());
     }
 
-    console.log("socket connected: ", socket.connected);
 
     socket.off();
 
@@ -68,8 +64,6 @@
         const response = await fetch("http://localhost:8080/conversations");
         const data = await response.json();
 
-        console.log(data.data);
-
         if (data.result === "success") {
             for (let conversation of data.data) {
                 conversations.set(conversation.conversationId, 
@@ -87,7 +81,7 @@
         }
     }
 
-    // get the contents of single conversation
+    // fetch the messages of single conversation and put them into the appropriate conversation 
     async function fetchConversation(id) {
         const response = await fetch("http://localhost:8080/conversations/" + id);
         const data = await response.json();
@@ -96,21 +90,16 @@
             const conversation = conversations.get(id);
             conversation.messages = data.messages;
             conversation.isCached = true;
-            
-            return data.messages;
         }
-
-        return [];
 
     } 
 
     // put message in correct conversation
     function filterIncomingMessage(data) {
-        console.log(data);
         const sender = data.sender;
         const conversationId = data.conversationId;
         
-        const conversation = conversations.get(conversationId);
+        let conversation = conversations.get(conversationId);
 
         if (!conversation) {
             conversations.set(conversationId, 
@@ -126,20 +115,18 @@
 
         else {
             conversations.set(conversationId, {...conversation, messages : [...conversation.messages, {sender : sender, text : data.text, senderId : data.senderId}]});
-            //TODO: notify MessageTab that there is a new message
         }
 
-        console.log("active conversation :", activeConversation);
+        conversation = conversations.get(conversationId);
 
-        if (activeConversation && conversation) {
-            if (activeConversation.conversationId !== conversation.conversationId) {
-                conversations.get(conversationId).numberOfNewmessages++;
-            } 
+        if (!activeConversation) {
+            conversation.numberOfNewmessages++
         }
 
-        else {
-            conversations.get(conversationId).numberOfNewmessages++
+        else if (activeConversation.conversationId !== conversation.conversationId) {
+            conversation.numberOfNewmessages++
         }
+
         
         renderConversations();
         if (activeConversation) {
@@ -202,7 +189,6 @@
     function sendMessage() {
         if (activeConversation && /[^\s]/g.test(writeMessageField)) {
             socket.emit("chat message", activeConversation.userId, writeMessageField);
-            console.log({sender : user.username, senderId : user.userId, text : writeMessageField});
             activeConversation.messages.push({sender : user.username, senderId : user.userId, text : writeMessageField});
             writeMessageField = "";
             setActiveConversation(activeConversation);
