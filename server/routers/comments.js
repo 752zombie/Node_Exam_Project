@@ -78,8 +78,6 @@ router.get("/comment/replies/:post_id", async (req, res) => {
                                                    "WHERE p.id = ?"                                           );
         await preparedStatement.bind({1 : req.params.post_id});
         const replies = await preparedStatement.all();
-
-        console.log(replies)
                 
         res.send({result : "success", replies : replies});
     

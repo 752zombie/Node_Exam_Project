@@ -20,9 +20,8 @@ let user = {}
 userStore.subscribe((value) => user = value)
 let loggedIn = {}
 loginStore.subscribe(value => { loggedIn = value;	});
-let currentPostSorting = "fresh"
 
-//onMount?
+
 fetchPost(postId)
 async function fetchPost(postId) {
 
@@ -51,7 +50,6 @@ async function fetchComments(postId) {
         
         if (data.result === "success") {
             comments = data.comments;
-            console.log(comments)
         }
 
     } catch(err) {
@@ -84,22 +82,6 @@ async function postComment() {
 }
 
 
-// Like or unlike function
-async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
-
-  let data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // imported function
-
-  if (data.result === "success") {
-          console.log("successsss")
-          fetchPost(postId) 
-        }
-}
-
-function goToProfile(id) {
-  navigate("/public-profile/" + id);
-}
-
-
 fetchReplies(postId)
 async function fetchReplies(postId) {
   
@@ -107,12 +89,9 @@ async function fetchReplies(postId) {
     const url = "http://localhost:8080/comment/replies/" + postId;
     const response = await fetch(url);
     const data = await response.json();
-    
-    console.log(data)
 
     if (data.result === "success") {
         replies = data.replies;
-        console.log(replies)
     }
 
     } catch(err) {
@@ -122,30 +101,46 @@ async function fetchReplies(postId) {
 
 
 async function postReply(commentId) {
-  console.log("POST REPLY")
-  console.log(commentId, reply)
 
   const date = getDate()
 
-    const request = {
-        method : "POST",
-        headers : {
-            "Content-Type": "application/json"
-        },
-        body : JSON.stringify({reply : reply, date : date, commentId : commentId, userId : user.userId})
-    }
-    const response = await fetch("http://localhost:8080/comment/reply", request);
-    const data = await response.json();
+  const request = {
+      method : "POST",
+      headers : {
+          "Content-Type": "application/json"
+      },
+      body : JSON.stringify({reply : reply, date : date, commentId : commentId, userId : user.userId})
+  }
+  const response = await fetch("http://localhost:8080/comment/reply", request);
+  const data = await response.json();
 
-    if (data.result === "success") {
-        reply = ""
-        await fetchReplies(postId)
-        await fetchComments(postId)
+  if (data.result === "success") {
+      reply = ""
+      await fetchPost(postId)
+      await fetchReplies(postId)
+      await fetchComments(postId)
+      
+  }
+  else {
+      currentError = data.result;
+  }
+}
 
-    }
-    else {
-        currentError = data.result;
-    }
+
+
+// Like or unlike function
+async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
+
+const data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // imported function
+
+if (data.statusText == "OK") {
+  fetchPost(postId) 
+}
+}
+
+
+function goToProfile(id) {
+  navigate("/public-profile/" + id);
 }
 
   
@@ -176,7 +171,7 @@ async function postReply(commentId) {
             <span class="icon">
 
               {#if loggedIn}
-              <p class="post-header-tag">Comments <strong >{post.comment_count}</strong></p>                 
+              <p class="post-header-tag">Comments <strong >{post.comment_count + post.reply_count}</strong></p>                 
               <p class="post-header-tag">Likes <strong >{post.like}</strong></p>
               
               {#if post.liked == 0}
@@ -184,7 +179,7 @@ async function postReply(commentId) {
                 <button id="like-button" class="button is-info is-light" on:click={likeOrUnlikePost(post.id)}>Like</button>
               </i>
               {:else}
-                <button id="unlike-button" class="button is-primary is-inverted" on:click={likeOrUnlikePost(post.id, "unlike/")}>Liked</button>
+                <button id="unlike-button" class="button is-primary is-inverted" on:click={likeOrUnlikePost(post.id, "unlike")}>Liked</button>
               {/if}  
               {/if}
               
@@ -281,8 +276,12 @@ async function postReply(commentId) {
                   <div class="flex-container">
                     <a class="flex-item" id="reply-author" on:click={() => goToProfile(post.user_id)}><em>@{reply.username}</em></a>
                     <p class="flex-item"><small>{reply.date}</small> </p>
-                   </div>    
-                  <textarea class="textarea" id="old-comment" rows="1" readonly>{reply.reply}</textarea>                          
+                   </div>
+                  {#if reply.reply.length > 54}     
+                    <textarea class="textarea" id="old-comment" rows="2" readonly>{reply.reply}</textarea>
+                  {:else}
+                  <textarea class="textarea" id="old-comment" rows="1" readonly>{reply.reply}</textarea>
+                  {/if}
                 </div>
               {/if}
               {/each}
@@ -306,6 +305,7 @@ async function postReply(commentId) {
 
   #textarea-mb {
     margin-bottom: 5px;
+    overflow-y: hidden
   }
 </style>
 

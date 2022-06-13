@@ -8,6 +8,7 @@ let user = {};
 userStore.subscribe((value) => user = value);
 const navigate = useNavigate(); 
 
+
 onMount(fetchUserPosts)
 async function fetchUserPosts() {
 
@@ -17,7 +18,6 @@ async function fetchUserPosts() {
         const data = await response.json();
         if (data.result === "success") {
             posts = data.posts;
-            console.log(posts)
         }
 
     } catch (err) {
@@ -29,10 +29,16 @@ async function fetchUserPosts() {
 async function deletePost(postId) {
     
     try {
-        const url = "http://localhost:8080/post/delete/" + postId;
-        const response = await fetch(url);
-        const data = await response.json();
-        if (data.result === "success") {
+        const request = {
+          method : "DELETE",
+          headers : {
+              "Content-Type": "application/json"
+          },
+          body : JSON.stringify({postId})
+      }
+        const data = await fetch("http://localhost:8080/post", request);
+
+        if (data.statusText === "OK") {
             fetchUserPosts()
         }
 
@@ -40,6 +46,8 @@ async function deletePost(postId) {
         console.log(err)
     }
 }
+
+
 
 
 // Needed to fetch current Post in ViewPost  
@@ -61,7 +69,8 @@ function setPostInSession(id) {
 <div class="columns">
     
     <div class="column is-8">
-        <h1>{user.username}</h1>
+      
+        <h1>Welcome, {user.username}. Here you can see and manage your posts!</h1>
     </div>
 
 

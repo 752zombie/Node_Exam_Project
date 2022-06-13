@@ -22,7 +22,6 @@
 
 <nav class="link-wrapper">
     <Link to="/" class="header-link space-between first-link"><strong>ReddOt</strong><img src="images/fire_emoji.png" alt=""></Link>
-    <Link to="/posts" class="header-link align-right">Posts</Link>
 	<Link to="/messages" class="header-link align-left">Messages</Link>
     
     {#if !isLoggedIn}
