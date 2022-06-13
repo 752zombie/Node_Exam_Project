@@ -58,6 +58,24 @@ async function fetchComments(postId) {
 }
 
 
+fetchReplies(postId)
+async function fetchReplies(postId) {
+  
+  try { 
+    const url = "http://localhost:8080/comment/replies/" + postId;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.result === "success") {
+        replies = data.replies;
+    }
+
+    } catch(err) {
+        console.log(err)
+      }  
+}
+
+
 async function postComment() {
     
     const date = getDate()
@@ -81,23 +99,6 @@ async function postComment() {
     }
 }
 
-
-fetchReplies(postId)
-async function fetchReplies(postId) {
-  
-  try { 
-    const url = "http://localhost:8080/comment/replies/" + postId;
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.result === "success") {
-        replies = data.replies;
-    }
-
-    } catch(err) {
-        console.log(err)
-      }  
-}
 
 
 async function postReply(commentId) {
@@ -125,7 +126,6 @@ async function postReply(commentId) {
       currentError = data.result;
   }
 }
-
 
 
 // Like or unlike function

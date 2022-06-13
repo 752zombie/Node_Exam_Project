@@ -3,25 +3,6 @@ import { db } from "../database/createConnection.js";
 
 const router = Router();
 
-router.post("/post", async (req, res) => {
-    
-    try {
-        req.session.isLoggedIn = true;
-        const user = req.session.user;
-
-        const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, video, date, user_id) VALUES (?, ?, ?, ?, ?, ?)");
-        await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.video, 5 : req.body.date, 6 : user.id});
-        await preparedStatement.run();               
-        res.send({result : "success"});
-    
-    } 
-    
-    catch(err) {
-        console.log(err.message);
-        res.send({ result : "Could not send post to server"});
-    }
-})
-
 
 //Get Post and check for Likes from User
 router.get("/post/:id", async (req, res) => {
@@ -79,23 +60,25 @@ router.get("/posts/user/:user_id", async (req, res) => {
 })
 
 
-// Delete Post
-router.delete("/post", async (req, res) => {
+router.post("/post", async (req, res) => {
+    
+    try {
+        req.session.isLoggedIn = true;
+        const user = req.session.user;
 
-    try { 
-        //retrieve Posts from db and check for Likes from User
-        const preparedStatement = await db.prepare("DELETE FROM posts WHERE id = ?");
-        await preparedStatement.bind({1 : req.body.postId})
-        await preparedStatement.run();
-        res.send({})  
+        const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, video, date, user_id) VALUES (?, ?, ?, ?, ?, ?)");
+        await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.video, 5 : req.body.date, 6 : user.id});
+        await preparedStatement.run();               
+        res.send({result : "success"});
+    
     } 
     
-    catch (err) {
-        console.log(err.message)
-        res.send({result : "Could not delete the post"})
-    }    
-
+    catch(err) {
+        console.log(err.message);
+        res.send({ result : "Could not send post to server"});
+    }
 })
+
 
 // This function collects the Post & checks 
 // whether User Liked the Post & number of Comments on Post
@@ -174,6 +157,7 @@ router.post("/posts/sort", async (req, res) => {
 }     
 })
 
+
 function sortByComments() {
     return "SELECT p.id, p.title, p.text, p.photo, p.video, p.like, p.date, u.username, " +
            "ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count, COUNT(reply) as reply_count " +    
@@ -199,5 +183,25 @@ function sortByLikes() {
            "ORDER BY p.like DESC " + 
            "LIMIT 5 OFFSET ?"
 }
+
+
+// Delete Post
+router.delete("/post", async (req, res) => {
+
+    try { 
+        //retrieve Posts from db and check for Likes from User
+        const preparedStatement = await db.prepare("DELETE FROM posts WHERE id = ?");
+        await preparedStatement.bind({1 : req.body.postId})
+        await preparedStatement.run();
+        res.send({})  
+    } 
+    
+    catch (err) {
+        console.log(err.message)
+        res.send({result : "Could not delete the post"})
+    }    
+
+})
+
 
 export default router;

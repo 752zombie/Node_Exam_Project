@@ -7,7 +7,6 @@ import { userStore } from '../stores'
 
 
 const navigate = useNavigate(); 
-let currentError = ""
 let title = ""
 let text = ""
 let media = "picture"
@@ -37,7 +36,7 @@ async function createPost() {
         navigate("/posts");
     }
     else {
-        currentError = data.result;
+        console.log(data.result)
     }
 }
 

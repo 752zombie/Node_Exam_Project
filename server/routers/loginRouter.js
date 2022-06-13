@@ -6,6 +6,17 @@ import { db } from "../database/createConnection.js";
 const router = Router();
 
 
+router.get("/secret", (req, res) => {
+    if (!req.session.isLoggedIn) {
+        res.send("this is a secret");
+    }
+
+    else {
+        res.send("here you go " + req.session.user.username);
+    }
+})
+
+
 router.post("/sign-up", async (req, res) => {
     const formData = req.body;
     // check for valid fields
@@ -94,15 +105,7 @@ router.post("/sign-out", (req, res) => {
     }    
 })
 
-router.get("/secret", (req, res) => {
-    if (!req.session.isLoggedIn) {
-        res.send("this is a secret");
-    }
 
-    else {
-        res.send("here you go " + req.session.user.username);
-    }
-})
 
 
 export default router;

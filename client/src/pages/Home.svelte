@@ -46,7 +46,23 @@
       }   
     }
     
+      
+    // Sorting options
+    async function sortByLikes() {
+      posts = await sortPosts(posts, pageToFetch, "sortByLikes") // imported function
+      posts.unshift({id: 0}) // Post.id needs to match array index
+      currentPostSorting = "byLikes"
+      topPicture = "minions-thumbs-up.gif"
+    }
     
+    async function sortByComments() {
+      posts = await sortPosts(posts, pageToFetch, "sortByComments") // imported function
+      posts.unshift({id: 0}) // Post.id needs to match array index
+      currentPostSorting = "byComments"
+      topPicture = "activity.gif"
+    }
+    
+
     // Like or unlike function
     async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
       
@@ -64,23 +80,7 @@
       }
      
     }
-    
-    
-    // Sorting options
-    async function sortByLikes() {
-      posts = await sortPosts(posts, pageToFetch, "sortByLikes") // imported function
-      posts.unshift({id: 0}) // Post.id needs to match array index
-      currentPostSorting = "byLikes"
-      topPicture = "minions-thumbs-up.gif"
-    }
-    
-    async function sortByComments() {
-      posts = await sortPosts(posts, pageToFetch, "sortByComments") // imported function
-      posts.unshift({id: 0}) // Post.id needs to match array index
-      currentPostSorting = "byComments"
-      topPicture = "activity.gif"
-    }
-    
+
     
     // Pagination
     function nextPage() {

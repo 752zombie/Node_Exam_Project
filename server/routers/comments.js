@@ -22,55 +22,12 @@ router.get("/comments", async (req, res) => {
 })
 
 
-
-router.post("/comment", async (req, res) => {
-    
-    try {
-        req.session.isLoggedIn = true;
-        
-        const preparedStatement = await db.prepare("INSERT INTO comments (comment, date, post_id, user_id) VALUES (?, ?, ?, ?)");
-        await preparedStatement.bind({1 : req.body.comment, 2 : req.body.date, 3 : req.body.postId, 4 : req.body.userId});
-        await preparedStatement.run();
-                
-        res.send({result : "success"});
-    
-    } 
-    
-    catch(err) {
-        console.log(err.message);
-        res.send({ result : "Could not send post to server"});
-    }
-})
-
-
-router.post("/comment/reply", async (req, res) => {
-    
-    try {
-        req.session.isLoggedIn = true;
-        
-        const preparedStatement = await db.prepare("INSERT INTO replies (reply, date, comment_id, user_id) VALUES (?, ?, ?, ?)");
-        await preparedStatement.bind({1 : req.body.reply, 2 : req.body.date, 3 : req.body.commentId, 4 : req.body.userId});
-        await preparedStatement.run();
-                
-        res.send({result : "success"});
-    
-    } 
-    
-    catch(err) {
-        console.log(err.message);
-        res.send({ result : "Could not send post to server"});
-    }
-})
-
-
 // Get replies on Comments from Post
 router.get("/comment/replies/:post_id", async (req, res) => {
     
     try {
         req.session.isLoggedIn = true;
         
-        console.log("PARAMS " + req.params.post_id)
-
         const preparedStatement = await db.prepare("SELECT * FROM replies as r " + 
                                                    "INNER JOIN comments as c on c.id = r.comment_id " +
                                                    "INNER JOIN posts as p on p.id = c.post_id " +
@@ -112,6 +69,49 @@ router.get("/comments/:id", async (req, res) => {
         res.send({ result : "Could not send post to server"});
     }
 })
+
+
+router.post("/comment", async (req, res) => {
+    
+    try {
+        req.session.isLoggedIn = true;
+        
+        const preparedStatement = await db.prepare("INSERT INTO comments (comment, date, post_id, user_id) VALUES (?, ?, ?, ?)");
+        await preparedStatement.bind({1 : req.body.comment, 2 : req.body.date, 3 : req.body.postId, 4 : req.body.userId});
+        await preparedStatement.run();
+                
+        res.send({result : "success"});
+    
+    } 
+    
+    catch(err) {
+        console.log(err.message);
+        res.send({ result : "Could not send post to server"});
+    }
+})
+
+
+router.post("/comment/reply", async (req, res) => {
+    
+    try {
+        req.session.isLoggedIn = true;
+        
+        const preparedStatement = await db.prepare("INSERT INTO replies (reply, date, comment_id, user_id) VALUES (?, ?, ?, ?)");
+        await preparedStatement.bind({1 : req.body.reply, 2 : req.body.date, 3 : req.body.commentId, 4 : req.body.userId});
+        await preparedStatement.run();
+                
+        res.send({result : "success"});
+    
+    } 
+    
+    catch(err) {
+        console.log(err.message);
+        res.send({ result : "Could not send post to server"});
+    }
+})
+
+
+
 
 
 

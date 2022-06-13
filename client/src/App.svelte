@@ -4,7 +4,6 @@
 	import Footer from './components/Footer.svelte'
 	import Home from "./pages/Home.svelte";
 	import Login from "./pages/Login.svelte";
-	import Posts from "./pages/Posts.svelte";
 	import ViewPost from "./pages/ViewPost.svelte"
 	import User from './pages/User.svelte';
 	import CreatePost from './pages/CreatePost.svelte';
@@ -18,7 +17,6 @@
 	<Navbar/>
 	<main>	
 			<Route path="/" component={Home} />
-			<Route path="/posts" component={Posts} />
 			<Route path="/post" component={ViewPost} />
 			<Route path="/login" component={Login} />
 			<Route path="/user" component={User} />
