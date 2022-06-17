@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from 'body-parser'
 import path from "path";
+import "dotenv/config"
 import loginRouter from "./routers/loginRouter.js";
 import session from "express-session";
 import posts from './routers/posts.js'
@@ -22,7 +23,7 @@ app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:500
 app.use(express.json());
 
 const sessionMiddleware = session({
-    secret: "test",// TODO: make secret
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }
