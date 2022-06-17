@@ -52,7 +52,6 @@ io.use((socket, next) => {
     const session = socket.request.session;
 
     if (!session || !session.isLoggedIn) {
-        console.log("denied");
         next(new Error("you need to be logged in"));
     }
 
@@ -62,7 +61,7 @@ io.use((socket, next) => {
 })
 
 io.on('connection', async (socket) => {
-    console.log("approved");
+
     const session = socket.request.session;
     
     if (!session || !session.isLoggedIn) {
