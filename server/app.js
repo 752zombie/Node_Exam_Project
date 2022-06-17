@@ -4,9 +4,9 @@ import path from "path";
 import "dotenv/config"
 import loginRouter from "./routers/loginRouter.js";
 import session from "express-session";
-import posts from './routers/posts.js'
-import comments from './routers/comments.js'
-import likes from './routers/likes.js'
+import postsRouter from './routers/postsRouter.js'
+import commentsRouter from './routers/commentsRouter.js'
+import likesRouter from './routers/likesRouter.js'
 import messagesRouter from "./routers/messagesRouter.js";
 import chat from "./sockets/chat.js";
 
@@ -31,9 +31,9 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 app.use(loginRouter);
-app.use(posts);
-app.use(comments);
-app.use(likes);
+app.use(postsRouter);
+app.use(commentsRouter);
+app.use(likesRouter);
 app.use(messagesRouter);
 
 app.use(express.static(path.resolve('../client/public')));
