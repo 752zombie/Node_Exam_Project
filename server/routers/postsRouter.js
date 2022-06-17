@@ -79,16 +79,16 @@ router.post("/post", async (req, res) => {
     }
 })
 
-
+// TODO: should be GET, instead of POST
 // This function collects the Post & checks 
 // whether User Liked the Post & number of Comments on Post
-router.post("/posts", async (req, res) => {
+router.get("/posts/:page", async (req, res) => {
 
     try {
         //checks current page and sets max 5 Posts to render 
         let page = 1;
-        if (req.body.page) {
-            const parsed = parseInt(req.body.page);
+        if (req.params.page) {
+            const parsed = parseInt(req.params.page);
             page = isNaN(parsed) ? 1 : parsed; 
         }
 

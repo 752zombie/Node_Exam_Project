@@ -23,14 +23,7 @@
     async function fetchPosts() {
     
       try {
-        const request = {
-            method : "POST",
-            headers : {
-                "Content-Type": "application/json"
-          },
-            body : JSON.stringify({userId : user.userId, page : pageToFetch})
-          }
-          const response = await fetch("http://localhost:8080/posts", request);
+          const response = await fetch("http://localhost:8080/posts/" + pageToFetch);
           let data = await response.json(); 
     
           if (data.result === "success") {
