@@ -3,6 +3,41 @@ import { db } from "../database/createConnection.js";
 
 const router = Router();
 
+// This function collects the Post & checks 
+// whether User Liked the Post & number of Comments on Post
+router.get("/posts/:page", async (req, res) => {
+
+    try {
+        //checks current page and sets max 5 Posts to render 
+        let page = 1;
+        if (req.params.page) {
+            const parsed = parseInt(req.params.page);
+            page = isNaN(parsed) ? 1 : parsed; 
+        }
+
+        const offset = (page - 1) * 5;
+        
+        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.video, p.like, p.date, p.user_id, u.username, " +
+                                                   "ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count, COUNT(reply) as reply_count " +    
+                                                   "FROM posts as p " + 
+                                                   "LEFT JOIN post_like_user as l on l.post_id = p.id " +
+                                                   "LEFT JOIN comments as c on c.post_id = p.id " +
+                                                   "LEFT JOIN replies as r on r.comment_id = c.id " +      
+                                                   "INNER JOIN users as u on u.id = p.user_id " +                                                     
+                                                   "GROUP BY p.id " + 
+                                                   "ORDER BY p.id DESC " +
+                                                   "LIMIT 5 OFFSET ?");
+        await preparedStatement.bind({1 : offset});
+        const posts = await preparedStatement.all();
+        res.send({result : "success", posts : posts});
+        
+    } 
+    
+    catch (err) {
+        console.log(err.message)
+        res.send({result : "Could not get the post"})
+}     
+})
 
 //Get Post and check for Likes from User
 router.get("/post/:id", async (req, res) => {
@@ -79,42 +114,7 @@ router.post("/post", async (req, res) => {
     }
 })
 
-// TODO: should be GET, instead of POST
-// This function collects the Post & checks 
-// whether User Liked the Post & number of Comments on Post
-router.get("/posts/:page", async (req, res) => {
 
-    try {
-        //checks current page and sets max 5 Posts to render 
-        let page = 1;
-        if (req.params.page) {
-            const parsed = parseInt(req.params.page);
-            page = isNaN(parsed) ? 1 : parsed; 
-        }
-
-        const offset = (page - 1) * 5;
-        
-        const preparedStatement = await db.prepare("SELECT p.id, p.title, p.text, p.photo, p.video, p.like, p.date, p.user_id, u.username, " +
-                                                   "ifnull(l.user_id, 0) as liked, COUNT(comment) as comment_count, COUNT(reply) as reply_count " +    
-                                                   "FROM posts as p " + 
-                                                   "LEFT JOIN post_like_user as l on l.post_id = p.id " +
-                                                   "LEFT JOIN comments as c on c.post_id = p.id " +
-                                                   "LEFT JOIN replies as r on r.comment_id = c.id " +      
-                                                   "INNER JOIN users as u on u.id = p.user_id " +                                                     
-                                                   "GROUP BY p.id " + 
-                                                   "ORDER BY p.id DESC " +
-                                                   "LIMIT 5 OFFSET ?");
-        await preparedStatement.bind({1 : offset});
-        const posts = await preparedStatement.all();
-        res.send({result : "success", posts : posts});
-        
-    } 
-    
-    catch (err) {
-        console.log(err.message)
-        res.send({result : "Could not get the post"})
-}     
-})
 
 
 // This function returns Posts based on sort call

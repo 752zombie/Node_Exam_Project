@@ -26,7 +26,6 @@ router.get("/comments", async (req, res) => {
 router.get("/comment/replies/:post_id", async (req, res) => {
     
     try {
-        req.session.isLoggedIn = true;
         
         const preparedStatement = await db.prepare("SELECT * FROM replies as r " + 
                                                    "INNER JOIN comments as c on c.id = r.comment_id " +
