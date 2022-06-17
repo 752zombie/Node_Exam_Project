@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from 'body-parser'
 import path from "path";
-import "dotenv/config"
+import "dotenv/config";
 import loginRouter from "./routers/loginRouter.js";
 import session from "express-session";
 import postsRouter from './routers/postsRouter.js'
