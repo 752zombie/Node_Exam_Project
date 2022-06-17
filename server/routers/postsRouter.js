@@ -98,7 +98,6 @@ router.get("/posts/user/:user_id", async (req, res) => {
 router.post("/post", async (req, res) => {
     
     try {
-        req.session.isLoggedIn = true;
         const user = req.session.user;
 
         const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, video, date, user_id) VALUES (?, ?, ?, ?, ?, ?)");

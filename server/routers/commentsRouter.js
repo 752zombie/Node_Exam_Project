@@ -73,7 +73,6 @@ router.get("/comments/:id", async (req, res) => {
 router.post("/comment", async (req, res) => {
     
     try {
-        req.session.isLoggedIn = true;
         
         const preparedStatement = await db.prepare("INSERT INTO comments (comment, date, post_id, user_id) VALUES (?, ?, ?, ?)");
         await preparedStatement.bind({1 : req.body.comment, 2 : req.body.date, 3 : req.body.postId, 4 : req.body.userId});
@@ -93,7 +92,6 @@ router.post("/comment", async (req, res) => {
 router.post("/comment/reply", async (req, res) => {
     
     try {
-        req.session.isLoggedIn = true;
         
         const preparedStatement = await db.prepare("INSERT INTO replies (reply, date, comment_id, user_id) VALUES (?, ?, ?, ?)");
         await preparedStatement.bind({1 : req.body.reply, 2 : req.body.date, 3 : req.body.commentId, 4 : req.body.userId});
