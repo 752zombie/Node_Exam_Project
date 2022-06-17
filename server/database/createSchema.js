@@ -74,7 +74,7 @@ await db.exec(`CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY(conversation_id) REFERENCES conversations(id),
     FOREIGN KEY(mark_for_delete) REFERENCES users(id),
     FOREIGN KEY(receiver_id) REFERENCES users(id),
-    FOREIGN KEY(receiver_id) REFERENCES users(id) 
+    FOREIGN KEY(sender_id) REFERENCES users(id) 
     );`);
 
 await db.close();
