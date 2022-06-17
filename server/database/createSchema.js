@@ -28,11 +28,8 @@ await db.exec(`CREATE TABLE IF NOT EXISTS comments (
     date NOT NULL, 
     post_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    CONSTRAINT fk_posts
-    CONSTRAINT fk_users
-        FOREIGN KEY(post_id) REFERENCES posts(id)
-        FOREIGN KEY(user_id) REFERENCES users(id)
-        ON DELETE CASCADE  
+    FOREIGN KEY(post_id) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY(user_id) REFERENCES users(id)  
     );`);
 
 
@@ -42,8 +39,8 @@ await db.exec(`CREATE TABLE IF NOT EXISTS replies (
     date NOT NULL, 
     comment_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    FOREIGN KEY(comment_id) REFERENCES comments(id)
-    FOREIGN KEY(user_id) REFERENCES users(id)  
+    FOREIGN KEY(comment_id) REFERENCES comments(id) ON DELETE CASCADE,
+    FOREIGN KEY(user_id) REFERENCES users(id) 
     );`);    
 
 
@@ -51,8 +48,8 @@ await db.exec(`CREATE TABLE IF NOT EXISTS post_like_user (
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     post_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    FOREIGN KEY(post_id) REFERENCES posts(id)
-    FOREIGN KEY(user_id) REFERENCES users(id)  
+    FOREIGN KEY(post_id) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE 
     );`);
     
 
