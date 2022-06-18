@@ -8,7 +8,7 @@ router.get("/comment/replies/:post_id", async (req, res) => {
     
     try {
         
-        const preparedStatement = await db.prepare("SELECT * FROM replies as r " + 
+        const preparedStatement = await db.prepare("SELECT r.reply, r.comment_id, r.user_id, r.date, r.id, username FROM replies as r " + 
                                                    "INNER JOIN comments as c on c.id = r.comment_id " +
                                                    "INNER JOIN users as u on u.id = r.user_id " +
                                                    "WHERE c.id = ?");
@@ -30,7 +30,7 @@ router.get("/comments/:id", async (req, res) => {
 
     try {
             
-        const preparedStatement = await db.prepare("SELECT comments.id as comment_id, comment, comments.date, username " +
+        const preparedStatement = await db.prepare("SELECT comments.id as comment_id, comment, comments.date, username, comments.user_id as user_id " +
                                                    "FROM comments " + 
                                                    "INNER JOIN users on users.id = comments.user_id  " + 
                                                    "WHERE post_id = ?");

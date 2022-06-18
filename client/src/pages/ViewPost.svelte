@@ -1,7 +1,7 @@
 <script>
 import { onMount } from 'svelte'
 import { getDate } from '../components/getDate.js'
-import { loginStore, userStore, postStore } from "../stores.js";
+import { loginStore, userStore } from "../stores.js";
 import { likeUnlike } from '../components/likes'
 import { navigate } from 'svelte-navigator';
 
@@ -15,10 +15,9 @@ let replies = [];
 let reply = "";
 
 
-postStore.subscribe((value) => postId = value);
 let user = {}
 userStore.subscribe((value) => user = value);
-let loggedIn = {}
+let loggedIn;
 loginStore.subscribe(value => { loggedIn = value;	});
 
 
@@ -56,6 +55,8 @@ async function fetchComments(postId) {
         
         if (data.result === "success") {
             comments = data.comments;
+            console.log("Comments:");
+            console.log(comments);
         }
 
     } catch(err) {
@@ -74,6 +75,8 @@ async function fetchReplies(postId) {
 
     if (data.result === "success") {
         replies = data.replies;
+        console.log("Replies");
+        console.log(replies);
     }
 
     } catch(err) {
@@ -101,7 +104,7 @@ async function postComment() {
         fetchComments(postId)
     }
     else {
-        currentError = data.result;
+        currentError = data.result; //TODO: does not exist
     }
 }
 
@@ -149,7 +152,6 @@ function goToProfile(id) {
     navigate("/public-profile/" + id);
 }
 
-  
 </script>
 
 
@@ -257,7 +259,7 @@ function goToProfile(id) {
                   <div class="content">
                     
                       <div class="flex-container">
-                        <a class="flex-item" id="reply-author" on:click={() => goToProfile(post.user_id)}><em>@{comment.username}</em></a>
+                        <a class="flex-item" id="reply-author" on:click={() => goToProfile(comment.user_id)}><em>@{comment.username}</em></a>
                         <p class="flex-item"><small>{comment.date}</small> </p>
                       </div>                                         
                       <br>
@@ -274,13 +276,13 @@ function goToProfile(id) {
             <div class="reply-container">
               <div class="flex-container" id="flex-container-mb">
                 <input class="flex-item input is-rounded" type="text" placeholder="Write a reply" bind:value={reply}>
-                <button class="flex-item button is-link is-rounded" id="viewPostButton" on:click={postReply(comment.comment_id)}>Submit</button>
+                <button class="flex-item button is-link is-rounded" id="viewPostButton" on:click={() => postReply(comment.comment_id)}>Submit</button>
               </div>
               {#each replies as reply}
               {#if reply.comment_id == comment.comment_id}
                 <div id="reply-container">
                   <div class="flex-container">
-                    <a class="flex-item" id="reply-author" on:click={() => goToProfile(post.user_id)}><em>@{reply.username}</em></a>
+                    <a class="flex-item" id="reply-author" on:click={() => goToProfile(reply.user_id)}><em>@{reply.username}</em></a>
                     <p class="flex-item"><small>{reply.date}</small> </p>
                    </div>
                   {#if reply.reply.length > 54}     
