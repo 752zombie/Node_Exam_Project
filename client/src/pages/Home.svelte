@@ -2,7 +2,7 @@
     import { Link } from 'svelte-navigator';
     import { onMount } from "svelte";
     import { useNavigate } from "svelte-navigator";
-    import { loginStore, userStore} from "../stores.js";
+    import { loginStore } from "../stores.js";
     import { sortPosts } from '../components/sortingFunction'
     import { likeUnlike } from '../components/likes'
     
@@ -12,11 +12,9 @@
       
     let posts = [];
     let pageToFetch = 1;
-    let user = {};
     let currentPostSorting = "byDate"
     let topPicture = "fresh.gif"
     
-    userStore.subscribe((value) => user = value);
     let loggedIn;
     loginStore.subscribe(value => { loggedIn = value;	});
     

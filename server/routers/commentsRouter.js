@@ -3,7 +3,7 @@ import { db } from "../database/createConnection.js";
 
 const router = Router();
 
-
+// TODO: remove if unused
 router.get("/comments", async (req, res) => {
 
     try {
@@ -52,8 +52,6 @@ router.get("/comments/:id", async (req, res) => {
             
         const preparedStatement = await db.prepare("SELECT comments.id as comment_id, comment, comments.date, username " +
                                                    "FROM comments " + 
-                                                   "INNER JOIN posts on " + 
-                                                   "posts.id = comments.post_id " +
                                                    "INNER JOIN users on users.id = comments.user_id  " + 
                                                    "WHERE post_id = ?");
         await preparedStatement.bind({1 : req.params.id});
