@@ -22,16 +22,15 @@ router.get("/comments", async (req, res) => {
 })
 
 
-// Get replies on Comments from Post
+// get all replies on a post identifed by "post_id"
 router.get("/comment/replies/:post_id", async (req, res) => {
     
     try {
         
         const preparedStatement = await db.prepare("SELECT * FROM replies as r " + 
                                                    "INNER JOIN comments as c on c.id = r.comment_id " +
-                                                   "INNER JOIN posts as p on p.id = c.post_id " +
                                                    "INNER JOIN users as u on u.id = r.user_id " +
-                                                   "WHERE p.id = ?"                                           );
+                                                   "WHERE c.id = ?"                                           );
         await preparedStatement.bind({1 : req.params.post_id});
         const replies = await preparedStatement.all();
                 
@@ -45,7 +44,7 @@ router.get("/comment/replies/:post_id", async (req, res) => {
     }
 })
 
-
+// get all comments in the post identified by "id"
 router.get("/comments/:id", async (req, res) => {
 
     try {
