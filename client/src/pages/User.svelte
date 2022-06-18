@@ -1,6 +1,6 @@
 <script>
 import { onMount } from "svelte";
-import { loginStore, userStore, postStore } from "../stores.js";
+import { userStore } from "../stores.js";
 import { useNavigate } from "svelte-navigator";
 
 let posts = []
@@ -47,14 +47,6 @@ async function deletePost(postId) {
     }
 }
 
-
-
-
-// Needed to fetch current Post in ViewPost  
-function setPostInSession(id) {
-    postStore.set(id)
-    navigate("/post")
-}
 
 
 </script>
@@ -111,7 +103,7 @@ function setPostInSession(id) {
               </div>
             </div>
             <footer class="card-footer">
-              <button class="button is-link is-rounded" id="viewPostButton" on:click={setPostInSession(post.id)}>Open</button>              
+              <button class="button is-link is-rounded" id="viewPostButton" on:click={() => navigate("/post/" + post.id)}>Open</button>              
               <button class="button is-danger is-light is-rounded" on:click={deletePost(post.id)}>Delete</button>
             </footer>
           </div>
