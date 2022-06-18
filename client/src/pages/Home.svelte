@@ -29,8 +29,10 @@
               posts = data.posts;        
               currentPostSorting = "byDate"        
               topPicture = "fresh.gif"
-            }    
-      } 
+          }
+          
+          console.log(posts);
+      }
       
       catch(err) {
         console.log(err.message)

@@ -5,7 +5,7 @@ const router = Router();
 
 
 router.post("/like", async (req, res) => {
-
+    
     const user = req.session.user;
 
     if (!user) {
