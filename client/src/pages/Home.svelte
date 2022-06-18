@@ -15,7 +15,7 @@
     let currentPostSorting = "byDate"
     let topPicture = "fresh.gif"
     userStore.subscribe((value) => user = value);
-    let loggedIn = {}
+    let loggedIn;
     loginStore.subscribe(value => { loggedIn = value;	});
     
     
@@ -28,7 +28,6 @@
     
           if (data.result === "success") {
               posts = data.posts;        
-              posts.unshift({id: 0}) // Post.id needs to match array index
               currentPostSorting = "byDate"        
               topPicture = "fresh.gif"
             }    
@@ -43,14 +42,12 @@
     // Sorting options
     async function sortByLikes() {
       posts = await sortPosts(posts, pageToFetch, "sortByLikes") // imported function
-      posts.unshift({id: 0}) // Post.id needs to match array index
       currentPostSorting = "byLikes"
       topPicture = "minions-thumbs-up.gif"
     }
     
     async function sortByComments() {
       posts = await sortPosts(posts, pageToFetch, "sortByComments") // imported function
-      posts.unshift({id: 0}) // Post.id needs to match array index
       currentPostSorting = "byComments"
       topPicture = "activity.gif"
     }
@@ -146,7 +143,6 @@
     
             {#each posts as post}
     
-            {#if post.id != 0}
             <div class="card">
                 <header class="card-header">
     
@@ -155,7 +151,7 @@
                   <button class="card-header-icon" aria-label="more options">
                     <span class="icon">
     
-                      {#if loggedIn && loggedIn != "undefined"}
+                      {#if loggedIn}
                       <p class="post-header-tag">Comments <strong >{post.comment_count + post.reply_count}</strong></p>                 
                       <p class="post-header-tag">Likes <strong >{post.like}</strong></p>
                       
@@ -210,8 +206,7 @@
                 </footer>
               </div>
     
-              <br>
-            {/if}  
+              <br>  
             {/each}
     
         <div class="pagination">
