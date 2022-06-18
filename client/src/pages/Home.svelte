@@ -58,7 +58,7 @@
     async function toggleLike(postId, likeOrUnlikePost="") {
       
       try {
-        const data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // imported function
+        const data = await likeUnlike(postId, likeOrUnlikePost) // imported function
     
         if (data.statusText == "OK") {
           if (currentPostSorting == "byDate") { fetchPosts() } 
