@@ -136,17 +136,17 @@ async function postReply(commentId) {
 
 // Like or unlike function
 async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
+    
+    const data = await likeUnlike(postId, likeOrUnlikePost) // imported function
 
-const data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // imported function
-
-if (data.statusText == "OK") {
-  fetchPost(postId) 
-}
+    if (data.statusText == "OK") {
+        fetchPost(postId) 
+    }
 }
 
 
 function goToProfile(id) {
-  navigate("/public-profile/" + id);
+    navigate("/public-profile/" + id);
 }
 
   
