@@ -1,12 +1,16 @@
 <script>
     import { socketStore } from "../stores.js";
+    import { onMount } from "svelte";
     import { io } from "socket.io-client";
     
     export let userId;
 
+    onMount(getUsername);
+
     let textFieldOpen = false;
     let messageText = "";
     let result = undefined;
+    let username = "";
 
     let socket;
     socketStore.subscribe((value) => socket = value);
@@ -23,8 +27,17 @@
         socket.emit("chat message", userId, messageText);
         textFieldOpen = false;
     }
+
+    async function getUsername() {
+        const response = await fetch("http://localhost:8080/username/" + userId);
+        if (response.ok) {
+            const data = await response.json();
+            username = data.data.username;
+        }
+    }
+
 </script>
-<h1>This is a public profile for {userId}</h1>
+<h1>{username + "'s profile"}</h1>
 <button on:click={writeMessage}>Send a private message</button>
 
 {#if textFieldOpen}

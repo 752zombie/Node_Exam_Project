@@ -5,17 +5,25 @@ import { db } from "../database/createConnection.js";
 
 const router = Router();
 
+router.get("/username/:id", async (req, res) => {
+    try {
+        const preparedStatement = await db.prepare("SELECT username FROM users WHERE id = ?");
+        await preparedStatement.bind({1 : req.params.id});
+        const result = await preparedStatement.get();
 
-router.get("/secret", (req, res) => {
-    if (!req.session.isLoggedIn) {
-        res.send("this is a secret");
+        if (result) {
+            res.send({data : result});
+        }
+
+        else {
+            res.sendStatus(404);
+        }
     }
 
-    else {
-        res.send("here you go " + req.session.user.username);
+    catch(err) {
+        res.sendStatus(500);
     }
 })
-
 
 router.post("/sign-up", async (req, res) => {
     const formData = req.body;
