@@ -17,7 +17,9 @@
 	<Navbar/>
 	<main>	
 			<Route path="/" component={Home} />
-			<Route path="/post" component={ViewPost} />
+			<Route path="/post/:id" let:params>
+				<ViewPost postId={params.id}/>
+			</Route>
 			<Route path="/login" component={Login} />
 			<Route path="/user" component={User} />
 			<Route path="/create-post" component={CreatePost} />

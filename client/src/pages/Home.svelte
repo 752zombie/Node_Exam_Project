@@ -54,7 +54,7 @@
     
 
     // Like or unlike function
-    async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
+    async function toggleLike(postId, likeOrUnlikePost="") {
       
       try {
         const data = await likeUnlike(postId, user.userId, likeOrUnlikePost) // imported function
@@ -86,14 +86,7 @@
             fetchPosts();
         }
     }
-    
-    
-    // Needed to fetch current Post in ViewPost  
-    function setPostInSession(id) {
-        postStore.set(id)
-        navigate("/post")
-    }
-    
+
     
     function goToProfile(id) {
       navigate("/public-profile/" + id);
@@ -157,10 +150,10 @@
                       
                       {#if post.liked == 0}
                       <i class="fas fa-angle-down" aria-hidden="true" >                   
-                        <button id="like-button" class="button is-info is-light" on:click={likeOrUnlikePost(post.id)}>Like</button>
+                        <button id="like-button" class="button is-info is-light" on:click={toggleLike(post.id)}>Like</button>
                       </i>
                       {:else}
-                        <button id="unlike-button" class="button is-primary is-inverted" on:click={likeOrUnlikePost(post.id, "unlike")}>Liked</button>
+                        <button id="unlike-button" class="button is-primary is-inverted" on:click={toggleLike(post.id, "unlike")}>Liked</button>
                       {/if}  
                       {/if}
                       
@@ -202,7 +195,7 @@
                   </div>
                 </div>
                 <footer class="card-footer">
-                  <button class="button is-link is-rounded" id="viewPostButton" on:click={setPostInSession(post.id)}>View post</button>
+                  <button class="button is-link is-rounded" id="viewPostButton" on:click={() => navigate("/post/" + post.id)}>View post</button>
                 </footer>
               </div>
     

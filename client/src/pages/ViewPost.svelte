@@ -5,24 +5,30 @@ import { loginStore, userStore, postStore } from "../stores.js";
 import { likeUnlike } from '../components/likes'
 import { navigate } from 'svelte-navigator';
 
-
-let post = []
-let comments = []
-let comment = ""
-let currentError = ""
-let postId = ""
-let replies = []
-let reply = ""
+export let postId;
 
 
-postStore.subscribe((value) => postId = value)
+let post = [];
+let comments = [];
+let comment = "";
+let replies = [];
+let reply = "";
+
+
+postStore.subscribe((value) => postId = value);
 let user = {}
-userStore.subscribe((value) => user = value)
+userStore.subscribe((value) => user = value);
 let loggedIn = {}
 loginStore.subscribe(value => { loggedIn = value;	});
 
 
-fetchPost(postId)
+onMount(() => {
+    fetchPost(postId);
+    fetchComments(postId);
+    fetchReplies(postId);
+})
+
+
 async function fetchPost(postId) {
 
   try { 
@@ -40,7 +46,7 @@ async function fetchPost(postId) {
 }
 
 
-fetchComments(postId)
+
 async function fetchComments(postId) {
 
     try { 
@@ -58,7 +64,7 @@ async function fetchComments(postId) {
 }
 
 
-fetchReplies(postId)
+
 async function fetchReplies(postId) {
   
   try { 
