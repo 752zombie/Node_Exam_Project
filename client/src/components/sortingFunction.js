@@ -14,7 +14,7 @@
     
           if (data.result === "success") {
               posts = data.posts;             
-              }
+          }
 
         return posts
         
