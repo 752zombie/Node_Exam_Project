@@ -174,18 +174,22 @@ function goToProfile(id) {
           <button class="card-header-icon" aria-label="more options">
             <span class="icon">
 
-              {#if loggedIn}
+              
               <p class="post-header-tag">Comments <strong >{post.comment_count + post.reply_count}</strong></p>                 
               <p class="post-header-tag">Likes <strong >{post.like}</strong></p>
               
-              {#if post.liked == 0}
+              {#if loggedIn && post.liked == 0}
               <i class="fas fa-angle-down" aria-hidden="true" >                   
                 <button id="like-button" class="button is-info is-light" on:click={likeOrUnlikePost(post.id)}>Like</button>
               </i>
-              {:else}
+              {:else if loggedIn}
                 <button id="unlike-button" class="button is-primary is-inverted" on:click={likeOrUnlikePost(post.id, "unlike")}>Liked</button>
+              {:else}
+              <i class="fas fa-angle-down" aria-hidden="true" >                   
+                <button id="like-button" class="button is-info is-light" on:click={() => navigate("/login")}>Like</button>
+              </i>
               {/if}  
-              {/if}
+            
               
             </span>
           </button>

@@ -143,19 +143,25 @@
     
                   <button class="card-header-icon" aria-label="more options">
                     <span class="icon">
-    
-                      {#if loggedIn}
+                      
+                    
                       <p class="post-header-tag">Comments <strong >{post.comment_count + post.reply_count}</strong></p>                 
                       <p class="post-header-tag">Likes <strong >{post.like}</strong></p>
                       
-                      {#if post.liked == 0}
+                      
+                      
+                      {#if loggedIn && post.liked == 0 }
                       <i class="fas fa-angle-down" aria-hidden="true" >                   
                         <button id="like-button" class="button is-info is-light" on:click={toggleLike(post.id)}>Like</button>
                       </i>
-                      {:else}
+                      {:else if loggedIn}
                         <button id="unlike-button" class="button is-primary is-inverted" on:click={toggleLike(post.id, "unlike")}>Liked</button>
+                      {:else}
+                      <i class="fas fa-angle-down" aria-hidden="true" >                   
+                        <button id="like-button" class="button is-info is-light" on:click={() => navigate("/login")}>Like</button>
+                      </i>
                       {/if}  
-                      {/if}
+                     
                       
                     </span>
                   </button>
@@ -224,7 +230,8 @@
               <img class="plus_sign" src="images/plus_icon.png" style="width: 40px" alt="Plus sign">
             </Link>
           {:else}
-          <p> Login to create your own posts</p>
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <p id="navigator" on:click={() => {navigate("/login")}}> Login to create your own posts</p>
           {/if}
         </div>
        
@@ -233,6 +240,12 @@
     
     <style>
         
+        #navigator {
+          cursor:pointer;
+          color:blue;
+          text-decoration:underline;
+        } 
+
         .card-footer {
           justify-content: center;
           border: none;
