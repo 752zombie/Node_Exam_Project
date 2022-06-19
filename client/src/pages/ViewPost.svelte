@@ -311,6 +311,12 @@ function goToProfile(id) {
     margin-bottom: 5px;
     overflow-y: hidden
   }
+
+  #viewPostButton {
+    background-color: rgb(255,182,193);
+    color: white;
+    margin-bottom: 5px;
+}
 </style>
 
  

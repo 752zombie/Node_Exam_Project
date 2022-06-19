@@ -104,7 +104,7 @@ router.get("/posts/user/:user_id", async (req, res) => {
 router.post("/post", async (req, res) => {
     
     try {
-        const user = req.session.user;
+        const user = req.session.user; // TODO: improve
 
         const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, video, date, user_id) VALUES (?, ?, ?, ?, ?, ?)");
         await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.video, 5 : req.body.date, 6 : user.id});
@@ -173,6 +173,8 @@ function sortBy(sortOrder) {
 
 // Delete Post
 router.delete("/post", async (req, res) => {
+
+    // TODO: add authorisation
 
     try { 
         //retrieve Posts from db and check for Likes from User
