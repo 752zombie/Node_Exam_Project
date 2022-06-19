@@ -1,17 +1,17 @@
 <script>
 import { useNavigate } from 'svelte-navigator';
-import { userStore } from '../stores'
+import { userStore, loginStore } from '../stores'
 
 
 const navigate = useNavigate(); 
 let title = ""
 let text = ""
 let media = "picture"
-let user = []
-userStore.subscribe((value) => user = value)
+let loggedIn;
+loginStore.subscribe((value) => loggedIn = value)
 
 
-if (!user.username) {
+if (!loggedIn) {
     navigate("/")
 }
 
