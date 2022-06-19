@@ -37,15 +37,7 @@
     socket.off();
 
     socket.on("chat message", (data) => {
-            filterIncomingMessage(data);
-        })
-
-    socket.on("connect", () => {
-        console.log("connect: ", socket.id);
-    })
-
-    socket.on("reconnect", (attempt) => {
-        console.log("reconnect: ", attempt);
+        filterIncomingMessage(data);
     })
 
     // function to trigger svelte reactivity on conversations

@@ -13,9 +13,6 @@ let commentInput = "";
 let replies = [];
 let replyInput = "";
 
-
-let user = {}
-userStore.subscribe((value) => user = value);
 let loggedIn;
 loginStore.subscribe(value => { loggedIn = value;	});
 
@@ -53,8 +50,6 @@ async function fetchComments(postId) {
         
         if (data.result === "success") {
             comments = data.comments;
-            console.log("Comments:");
-            console.log(comments);
         }
 
     } catch(err) {
@@ -72,8 +67,6 @@ async function fetchReplies(postId) {
 
     if (data.result === "success") {
         replies = data.replies;
-        console.log("Replies");
-        console.log(replies);
     }
 
     } catch(err) {
@@ -98,7 +91,7 @@ async function postComment() {
         fetchComments(postId)
     }
     else {
-        currentError = data.result; //TODO: does not exist
+        console.log("Error posting comment");
     }
 }
 
@@ -123,16 +116,16 @@ async function postReply(commentId) {
       
   }
   else {
-      currentError = data.result;
+      console.log("Error replying");
   }
 }
 
 
 async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
     
-    const data = await likeUnlike(postId, likeOrUnlikePost) // imported function
+    const response = await likeUnlike(postId, likeOrUnlikePost) // imported function
 
-    if (data.statusText == "OK") {
+    if (response.ok) {
         fetchPost(postId) 
     }
 }

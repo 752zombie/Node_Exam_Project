@@ -30,7 +30,6 @@
               topPicture = "fresh.gif"
           }
           
-          console.log(posts);
       }
       
       catch(err) {
