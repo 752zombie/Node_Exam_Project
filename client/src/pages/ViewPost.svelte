@@ -7,11 +7,11 @@ import { navigate } from 'svelte-navigator';
 export let postId;
 
 
-let post = [];
+let post = {};
 let comments = [];
-let comment = "";
+let commentInput = "";
 let replies = [];
-let reply = "";
+let replyInput = "";
 
 
 let user = {}
@@ -83,19 +83,17 @@ async function fetchReplies(postId) {
 
 
 async function postComment() {
-    
-
     const request = {
         method : "POST",
         headers : {
             "Content-Type": "application/json"
         },
-        body : JSON.stringify({comment : comment, postId : postId})
+        body : JSON.stringify({comment : commentInput, postId : postId})
     }
     const response = await fetch("http://localhost:8080/comment", request);
     const data = await response.json();
     if (data.result === "success") {
-        comment = ""
+        commentInput = ""
         fetchPost(postId)
         fetchComments(postId)
     }
@@ -112,13 +110,13 @@ async function postReply(commentId) {
       headers : {
           "Content-Type": "application/json"
       },
-      body : JSON.stringify({reply : reply, commentId : commentId})
+      body : JSON.stringify({reply : replyInput, commentId : commentId})
   }
   const response = await fetch("http://localhost:8080/comment/reply", request);
   const data = await response.json();
 
   if (data.result === "success") {
-      reply = ""
+      replyInput = ""
       await fetchPost(postId)
       await fetchReplies(postId)
       await fetchComments(postId)
@@ -176,10 +174,10 @@ function goToProfile(id) {
               
               {#if loggedIn && post.liked == 0}
               <i class="fas fa-angle-down" aria-hidden="true" >                   
-                <button id="like-button" class="button is-info is-light" on:click={likeOrUnlikePost(post.id)}>Like</button>
+                <button id="like-button" class="button is-info is-light" on:click={() => likeOrUnlikePost(post.id)}>Like</button>
               </i>
               {:else if loggedIn}
-                <button id="unlike-button" class="button is-primary is-inverted" on:click={likeOrUnlikePost(post.id, "unlike")}>Liked</button>
+                <button id="unlike-button" class="button is-primary is-inverted" on:click={() => likeOrUnlikePost(post.id, "unlike")}>Liked</button>
               {:else}
               <i class="fas fa-angle-down" aria-hidden="true" >                   
                 <button id="like-button" class="button is-info is-light" on:click={() => navigate("/login")}>Like</button>
@@ -233,7 +231,7 @@ function goToProfile(id) {
         <br>
                                       <!-- Comment section -->
         <div class="comment"> 
-            <textarea class="textarea" id="textarea-mb" placeholder="Write a comment" bind:value={comment}></textarea>
+            <textarea class="textarea" id="textarea-mb" placeholder="Write a comment" bind:value={commentInput}></textarea>
 
             <button class="button is-link is-rounded" id="viewPostButton" on:click={postComment}>Submit</button>
         </div>
@@ -271,7 +269,7 @@ function goToProfile(id) {
                                                 <!-- REPLY section -->
             <div class="reply-container">
               <div class="flex-container" id="flex-container-mb">
-                <input class="flex-item input is-rounded" type="text" placeholder="Write a reply" bind:value={reply}>
+                <input class="flex-item input is-rounded" type="text" placeholder="Write a reply" bind:value={replyInput}>
                 <button class="flex-item button is-link is-rounded" id="viewPostButton" on:click={() => postReply(comment.comment_id)}>Submit</button>
               </div>
               {#each replies as reply}

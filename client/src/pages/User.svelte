@@ -8,8 +8,8 @@ let user = {};
 userStore.subscribe((value) => user = value);
 const navigate = useNavigate(); 
 
-
 onMount(fetchUserPosts)
+
 async function fetchUserPosts() {
 
     try {
@@ -104,7 +104,7 @@ async function deletePost(postId) {
             </div>
             <footer class="card-footer">
               <button class="button is-link is-rounded" id="viewPostButton" on:click={() => navigate("/post/" + post.id)}>Open</button>              
-              <button class="button is-danger is-light is-rounded" on:click={deletePost(post.id)}>Delete</button>
+              <button class="button is-danger is-light is-rounded" on:click={() => deletePost(post.id)}>Delete</button>
             </footer>
           </div>
 

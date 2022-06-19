@@ -3,7 +3,6 @@
     import { onMount } from "svelte";
     import { useNavigate } from "svelte-navigator";
     import { loginStore } from "../stores.js";
-    import { sortPosts } from '../components/sortingFunction'
     import { likeUnlike } from '../components/likes'
     
     onMount(fetchPosts);
@@ -52,24 +51,60 @@
       currentPostSorting = "byComments"
       topPicture = "activity.gif"
     }
+
+    async function sortPosts(posts, pageToFetch, sortOrder) {
+        try {
+            
+            const request = {
+                method : "POST",
+                headers : {
+                    "Content-Type": "application/json"
+              },
+                body : JSON.stringify({sortOrder : sortOrder, page : pageToFetch})
+            }
+            
+            const response = await fetch("http://localhost:8080/posts/sort", request);
+            let data = await response.json(); 
+
+            if (data.result === "success") {
+                posts = data.posts;             
+            }
+
+            return posts
+            
+        } 
+          
+        catch(err) {
+            console.log(err.message)
+            return { message : "Error sorting posts"}
+        }   
+    }
     
 
     // Like or unlike function
     async function toggleLike(postId, likeOrUnlikePost="") {
-      
-      try {
-        const data = await likeUnlike(postId, likeOrUnlikePost) // imported function
+        try {
+            const data = await likeUnlike(postId, likeOrUnlikePost) // imported function
     
-        if (data.statusText == "OK") {
-          if (currentPostSorting == "byDate") { fetchPosts() } 
-          else if (currentPostSorting == "byLikes") { sortByLikes() }
-          else { sortByComments() } 
-        }  
+            if (data.statusText == "OK") {
+
+                if (currentPostSorting == "byDate") { 
+                    fetchPosts() 
+                } 
+                
+                else if (currentPostSorting == "byLikes") { 
+                    sortByLikes() 
+                }
+                
+                else { 
+                    sortByComments() 
+                } 
+            }  
+        } 
       
-      } catch (error) {
-        console.log(error)
-      }
-     
+        catch (error) {
+            console.log(error)
+        }
     }
 
     
@@ -109,15 +144,15 @@
           <p class="title is-5">Sort your search</p>
             <div class="columns">
               <div class="column">   
-                <button class="button" id="freshInfoButton" on:click={fetchPosts}>Fresh</button>
+                <button class="button" id="freshInfoButton" on:click={() => fetchPosts}>Fresh</button>
                 <p class="freshSortinfo">Sort by date</p>
               </div>
               <div class="column">
-                <button class="button" id="likeInfoButton" on:click={sortByLikes}>Likes</button>
+                <button class="button" id="likeInfoButton" on:click={() => sortByLikes}>Likes</button>
                 <p class="likeSortInfo">Sort by likes</p>
               </div>
               <div class="column">
-                <button class="button" id="activityInfoButton" on:click={sortByComments}>Activity</button>
+                <button class="button" id="activityInfoButton" on:click={() => sortByComments}>Activity</button>
                 <p class="activitySortInfo">Sort by comments</p>
               </div>        
             </div>      
@@ -152,10 +187,10 @@
                       
                       {#if loggedIn && post.liked == 0 }
                       <i class="fas fa-angle-down" aria-hidden="true" >                   
-                        <button id="like-button" class="button is-info is-light" on:click={toggleLike(post.id)}>Like</button>
+                        <button id="like-button" class="button is-info is-light" on:click={() => toggleLike(post.id)}>Like</button>
                       </i>
                       {:else if loggedIn}
-                        <button id="unlike-button" class="button is-primary is-inverted" on:click={toggleLike(post.id, "unlike")}>Liked</button>
+                        <button id="unlike-button" class="button is-primary is-inverted" on:click={() => toggleLike(post.id, "unlike")}>Liked</button>
                       {:else}
                       <i class="fas fa-angle-down" aria-hidden="true" >                   
                         <button id="like-button" class="button is-info is-light" on:click={() => navigate("/login")}>Like</button>
