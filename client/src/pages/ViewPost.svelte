@@ -169,7 +169,7 @@ function goToProfile(id) {
       <div class="card">
         <header class="card-header">
 
-          <p class="card-header-title" >{post.title}</p>
+          <h1 class="card-header-title" >{post.title}</h1>
 
           <button class="card-header-icon" aria-label="more options">
             <span class="icon">
@@ -254,7 +254,7 @@ function goToProfile(id) {
                 <div class="media-content">
                   <div class="content">
                     
-                      <div class="flex-container">
+                      <div class="flex-container"> 
                         <a class="flex-item" id="reply-author" on:click={() => goToProfile(comment.user_id)}><em>@{comment.username}</em></a>
                         <p class="flex-item"><small>{comment.date}</small> </p>
                       </div>                                         
@@ -311,6 +311,128 @@ function goToProfile(id) {
     margin-bottom: 5px;
     overflow-y: hidden
   }
+
+  .flex-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+
+
+.flex-item {
+    flex-direction: row;
+}
+
+.flex-item-radio {
+    flex-direction: row;
+    padding: 5px;
+}
+
+#user-tag {
+    color: purple;
+    opacity : 0.5;
+    transition-duration: 0.5s;
+}
+#user-tag:hover {
+    transform: scale(1.3);
+    opacity : 1;
+    transition-duration: 0.5s;  
+}
+
+.picture {
+    border-radius: 50%;
+    max-width: 200px;
+    max-height: 100px;
+}
+
+#like-button {
+    width: 72px;
+    margin-right: 180px;
+    
+}
+
+#unlike-button {
+    margin-right: 180px;
+}
+
+
+  #viewPostButton {
+    background-color: rgb(255,182,193);
+    color: white;
+    margin-bottom: 5px;
+}
+
+  #viewPostButton:hover {
+    opacity: 0.7;
+    transition-duration: 0.5s;
+}
+
+.hr-posts-card {
+    margin: 2px;
+}
+
+.card-content {
+    padding-bottom: 5px;
+    word-break: break-all;
+}
+
+.filepond--credits {
+    display: none;
+}
+
+.reply-container {
+    margin-left: 18%;
+}
+
+#old-comment {
+    background-color: rgb(255,182,193);
+    resize: none;
+    border-radius: 18px;
+    color: white;    
+}
+
+#old-comment:focus {
+    outline-width: 0;
+}
+
+#reply-author {
+    text-align: left;
+}
+
+#reply-author {
+    color: purple;
+    opacity : 0.5;
+    transition-duration: 0.5s;
+
+}
+
+#reply-author:hover {
+    transform: scale(1.3);
+    opacity : 1;
+    transition-duration: 0.5s;
+ 
+}
+
+.columns {
+    margin-bottom: 40px;
+}
+
+#reply-container {
+    margin-bottom: 15px; 
+}
+
+p {
+  color: blue;
+}
+
+.card-header-title {
+  font-size: 25px;
+}
+
+.post-header-tag {
+    margin-right: 20px
+}
+
 </style>
 
  
