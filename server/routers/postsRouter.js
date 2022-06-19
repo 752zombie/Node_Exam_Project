@@ -102,10 +102,15 @@ router.get("/posts/user/:user_id", async (req, res) => {
 
 
 router.post("/post", async (req, res) => {
+
+    const user = req.session.user;
+
+    if (!user) {
+        res.send({result : "you need to be logged in"});
+        return;
+    }
     
     try {
-        const user = req.session.user; // TODO: improve
-
         const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, video, date, user_id) VALUES (?, ?, ?, ?, ?, ?)");
         await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.video, 5 : req.body.date, 6 : user.id});
         await preparedStatement.run();               
@@ -174,12 +179,16 @@ function sortBy(sortOrder) {
 // Delete Post
 router.delete("/post", async (req, res) => {
 
-    // TODO: add authorisation
+    const user = req.session.user;
+
+    if (!user) {
+        res.send({result : "you need to be logged in"});
+        return;
+    }
 
     try { 
-        //retrieve Posts from db and check for Likes from User
-        const preparedStatement = await db.prepare("DELETE FROM posts WHERE id = ?");
-        await preparedStatement.bind({1 : req.body.postId})
+        const preparedStatement = await db.prepare("DELETE FROM posts WHERE id = ? AND user_id = ?");
+        await preparedStatement.bind({1 : req.body.postId, 2 : user.id})
         await preparedStatement.run();
         res.send({})  
     } 
