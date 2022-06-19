@@ -312,12 +312,10 @@ function goToProfile(id) {
     overflow-y: hidden
   }
 
-<<<<<<< HEAD
   .flex-container {
     display: flex;
     justify-content: space-around;
 }
-
 
 
 .flex-item {
@@ -356,15 +354,12 @@ function goToProfile(id) {
     margin-right: 180px;
 }
 
-
-=======
->>>>>>> 6a1201f31f02a8d6a88e6dbc4866a00e854d4c37
   #viewPostButton {
     background-color: rgb(255,182,193);
     color: white;
     margin-bottom: 5px;
 }
-<<<<<<< HEAD
+
 
   #viewPostButton:hover {
     opacity: 0.7;
@@ -437,8 +432,6 @@ p {
     margin-right: 20px
 }
 
-=======
->>>>>>> 6a1201f31f02a8d6a88e6dbc4866a00e854d4c37
 </style>
 
  
