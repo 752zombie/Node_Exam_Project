@@ -1,5 +1,3 @@
-
-
 <script>
 import { useNavigate } from 'svelte-navigator';
 import { getDate } from '../components/getDate';
@@ -33,7 +31,7 @@ async function createPost() {
     const response = await fetch("http://localhost:8080/post", request);
     const data = await response.json();
     if (data.result === "success") {
-        navigate("/posts");
+        navigate("/");
     }
     else {
         console.log(data.result)
