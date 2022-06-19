@@ -9,9 +9,9 @@ router.get("/comment/replies/:post_id", async (req, res) => {
     try {
         
         const preparedStatement = await db.prepare("SELECT r.reply, r.comment_id, r.user_id, r.date, r.id, username FROM replies as r " + 
-                                                   "INNER JOIN comments as c on c.id = r.comment_id " +
+                                                   "INNER JOIN comments as c on c.id = r.comment_id " +                
                                                    "INNER JOIN users as u on u.id = r.user_id " +
-                                                   "WHERE c.id = ?");
+                                                   "WHERE c.post_id = ?");
         await preparedStatement.bind({1 : req.params.post_id});
         const replies = await preparedStatement.all();
                 

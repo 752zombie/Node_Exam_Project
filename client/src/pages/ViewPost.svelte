@@ -322,10 +322,6 @@ function goToProfile(id) {
     flex-direction: row;
 }
 
-.flex-item-radio {
-    flex-direction: row;
-    padding: 5px;
-}
 
 #user-tag {
     color: purple;
@@ -338,11 +334,6 @@ function goToProfile(id) {
     transition-duration: 0.5s;  
 }
 
-.picture {
-    border-radius: 50%;
-    max-width: 200px;
-    max-height: 100px;
-}
 
 #like-button {
     width: 72px;
@@ -375,9 +366,6 @@ function goToProfile(id) {
     word-break: break-all;
 }
 
-.filepond--credits {
-    display: none;
-}
 
 .reply-container {
     margin-left: 18%;
