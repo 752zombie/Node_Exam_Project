@@ -45,7 +45,6 @@ async function fetchPost(postId) {
 }
 
 
-
 async function fetchComments(postId) {
 
     try { 
@@ -63,7 +62,6 @@ async function fetchComments(postId) {
         console.log(err)
     }  
 }
-
 
 
 async function fetchReplies(postId) {
@@ -109,7 +107,6 @@ async function postComment() {
 }
 
 
-
 async function postReply(commentId) {
 
   const date = getDate()
@@ -137,7 +134,6 @@ async function postReply(commentId) {
 }
 
 
-// Like or unlike function
 async function likeOrUnlikePost(postId, likeOrUnlikePost="") {
     
     const data = await likeUnlike(postId, likeOrUnlikePost) // imported function
