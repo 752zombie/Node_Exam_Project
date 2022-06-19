@@ -57,55 +57,6 @@ router.get("/conversations/:id", async (req, res) => {
 
 })
 
-// adds a message to a conversation
-// creates a new conversation if an existing one does not exists or reuses an existing one
-router.post("/messages", async (req, res) => {
-    const user = req.session.user;
-    const message = req.body;
-    if (!user) {
-        res.send({result : "you need to be logged in"});
-        return;
-    }
-
-    if (!message.receiver || !message.text) {
-        res.send({result : "error"});
-        return;
-    }
-
-    try {
-        let preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
-        await preparedStatement.bind({1 : user.id, 2 : message.receiver, 3 : message.receiver, 4 : user.id});
-        let conversation = await preparedStatement.get();
-
-        if (!conversation) {
-            preparedStatement = await db.prepare("INSERT INTO conversations (participant_1, participant_2) VALUES (?, ?)");
-            await preparedStatement.bind({1 : user.id, 2 : message.receiver});
-            await preparedStatement.run();
-            
-            preparedStatement = await db.prepare("SELECT id FROM conversations WHERE (participant_1 = ? AND participant_2 = ?) OR (participant_1 = ? AND participant_2 = ?)");
-            await preparedStatement.bind({1 : user.id, 2 : message.receiver, 3 : message.receiver, 4 : user.id});
-            conversation = await preparedStatement.get();
-        }
-
-        preparedStatement = await db.prepare("INSERT INTO messages (sender_id, receiver_id, text, conversation_id) VALUES (?, ?, ?, ?)");
-        await preparedStatement.bind({1 : user.id, 2 : message.receiver, 3 : message.text, 4 : conversation.id});
-        await preparedStatement.run();
-
-        res.send({result : "success"});
-    }
-
-    catch(err) {
-        console.log(err.message);
-        res.send({result : "error"});
-    }
-
-
-
-
-
-
-})
-
 // delete a specific conversation (will not actually be deleted from database until both participants have requested a delete)
 router.delete("/conversations/:id", async (req, res) => {
     const user = req.session.user;
