@@ -62,23 +62,14 @@ io.use((socket, next) => {
 })
 
 io.on('connection', async (socket) => {
-
     const session = socket.request.session;
     
     if (!session || !session.isLoggedIn) {
         return;
     }
 
-    console.log(session.user.username, " connected with socketid = ", socket.id);
-    console.log("Total connections: ", io.engine.clientsCount);
-
-
     socket.join(session.user.id);
     socket.on('chat message', chat(socket, session));
-
-    socket.on("disconnect", () => {
-        console.log(socket.request.session.user.username, " disconnected with socketId = ", socket.id);
-    })
   });
  
   

@@ -230,11 +230,14 @@ function goToProfile(id) {
 
         <br>
                                       <!-- Comment section -->
+        
+        {#if loggedIn}
         <div class="comment"> 
             <textarea class="textarea" id="textarea-mb" placeholder="Write a comment" bind:value={commentInput}></textarea>
 
             <button class="button is-link is-rounded" id="viewPostButton" on:click={postComment}>Submit</button>
         </div>
+        {/if}
 
         <br>
 
@@ -268,10 +271,12 @@ function goToProfile(id) {
 
                                                 <!-- REPLY section -->
             <div class="reply-container">
-              <div class="flex-container" id="flex-container-mb">
-                <input class="flex-item input is-rounded" type="text" placeholder="Write a reply" bind:value={replyInput}>
-                <button class="flex-item button is-link is-rounded" id="viewPostButton" on:click={() => postReply(comment.comment_id)}>Submit</button>
-              </div>
+              {#if loggedIn}
+                <div class="flex-container" id="flex-container-mb">
+                  <input class="flex-item input is-rounded" type="text" placeholder="Write a reply" bind:value={replyInput}>
+                  <button class="flex-item button is-link is-rounded" id="viewPostButton" on:click={() => postReply(comment.comment_id)}>Submit</button>
+                </div>
+              {/if}
               {#each replies as reply}
               {#if reply.comment_id == comment.comment_id}
                 <div id="reply-container">
