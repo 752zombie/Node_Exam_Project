@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { db } from "../database/createConnection.js";
+import { getDate } from "../util/getDate.js";
 
 const router = Router();
 
@@ -112,7 +113,7 @@ router.post("/post", async (req, res) => {
     
     try {
         const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, video, date, user_id) VALUES (?, ?, ?, ?, ?, ?)");
-        await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.video, 5 : req.body.date, 6 : user.id});
+        await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.video, 5 : getDate(), 6 : user.id});
         await preparedStatement.run();               
         res.send({result : "success"});
     

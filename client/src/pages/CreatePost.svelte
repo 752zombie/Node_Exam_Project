@@ -1,6 +1,5 @@
 <script>
 import { useNavigate } from 'svelte-navigator';
-import { getDate } from '../components/getDate';
 import { userStore } from '../stores'
 
 
@@ -18,15 +17,12 @@ if (!user.username) {
 
 
 async function createPost() {
-    
-    const date = getDate()
-
     const request = {
         method : "POST",
         headers : {
             "Content-Type": "application/json"
         },
-        body : JSON.stringify({title, text, date, photo, video})
+        body : JSON.stringify({title, text, photo, video})
     }
     const response = await fetch("http://localhost:8080/post", request);
     const data = await response.json();

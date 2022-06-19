@@ -1,6 +1,5 @@
 <script>
 import { onMount } from 'svelte'
-import { getDate } from '../components/getDate.js'
 import { loginStore, userStore } from "../stores.js";
 import { likeUnlike } from '../components/likes'
 import { navigate } from 'svelte-navigator';
@@ -85,14 +84,13 @@ async function fetchReplies(postId) {
 
 async function postComment() {
     
-    const date = getDate()
 
     const request = {
         method : "POST",
         headers : {
             "Content-Type": "application/json"
         },
-        body : JSON.stringify({comment : comment, date : date, postId : postId, userId : user.userId})
+        body : JSON.stringify({comment : comment, postId : postId})
     }
     const response = await fetch("http://localhost:8080/comment", request);
     const data = await response.json();
@@ -109,14 +107,12 @@ async function postComment() {
 
 async function postReply(commentId) {
 
-  const date = getDate()
-
   const request = {
       method : "POST",
       headers : {
           "Content-Type": "application/json"
       },
-      body : JSON.stringify({reply : reply, date : date, commentId : commentId, userId : user.userId})
+      body : JSON.stringify({reply : reply, commentId : commentId})
   }
   const response = await fetch("http://localhost:8080/comment/reply", request);
   const data = await response.json();
