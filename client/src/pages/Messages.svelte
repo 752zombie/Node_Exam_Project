@@ -104,13 +104,13 @@
                 conversationId : conversationId,
                 userId : data.senderId,
                 username : sender,
-                messages : [{sender : sender, text : data.text, senderId : data.senderId}],
+                messages : [{text : data.text, senderId : data.senderId}],
                 numberOfNewmessages : 0
             });
         }
 
         else {
-            conversation.messages.push({sender : sender, text : data.text, senderId : data.senderId});
+            conversation.messages.push({text : data.text, senderId : data.senderId});
         }
 
         conversation = conversations.get(conversationId);
@@ -180,7 +180,7 @@
     function sendMessage() {
         if (activeConversation && /[^\s]/g.test(writeMessageField)) {
             socket.emit("chat message", activeConversation.userId, writeMessageField);
-            activeConversation.messages.push({sender : user.username, senderId : user.userId, text : writeMessageField});
+            activeConversation.messages.push({senderId : user.userId, text : writeMessageField});
             
             clearMessageField();
             setActiveConversation(activeConversation);
