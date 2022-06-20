@@ -2,8 +2,8 @@
 import { useNavigate } from 'svelte-navigator';
 import { loginStore } from '../stores'
 
-
 const navigate = useNavigate(); 
+
 let title = ""
 let text = ""
 let media = "picture"
@@ -42,6 +42,7 @@ const onFileSelected = (e) => {
 
     let image = e.target.files[0];
     let reader = new FileReader();
+    console.log("image: ", image);
     reader.readAsDataURL(image);
     reader.onload = e => {
         if (media == "picture") { photo = e.target.result } 

@@ -143,15 +143,15 @@
           <p class="title is-5">Sort your search</p>
             <div class="columns">
               <div class="column">   
-                <button class="button" id="freshInfoButton" on:click={() => fetchPosts}>Fresh</button>
+                <button class="button" id="freshInfoButton" on:click={fetchPosts}>Fresh</button>
                 <p class="freshSortinfo">Sort by date</p>
               </div>
               <div class="column">
-                <button class="button" id="likeInfoButton" on:click={() => sortByLikes}>Likes</button>
+                <button class="button" id="likeInfoButton" on:click={sortByLikes}>Likes</button>
                 <p class="likeSortInfo">Sort by likes</p>
               </div>
               <div class="column">
-                <button class="button" id="activityInfoButton" on:click={() => sortByComments}>Activity</button>
+                <button class="button" id="activityInfoButton" on:click={sortByComments}>Activity</button>
                 <p class="activitySortInfo">Sort by comments</p>
               </div>        
             </div>      
