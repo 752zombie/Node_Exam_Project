@@ -1,6 +1,7 @@
 import { db } from "./createConnection.js";
 
-// create some tables
+// create tables needed
+
 await db.exec(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -8,13 +9,13 @@ await db.exec(`CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(100) UNIQUE NOT NULL 
     );`);
 
-
+// both photo and video is a base64 encoded string
 await db.exec(`CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     title VARCHAR(100) NOT NULL,
     text NOT NULL,
-    photo BLOB,
-    video BLOB,
+    photo,
+    video,
     like INTEGER DEFAULT 0,
     date NOT NULL, 
     user_id NOT NULL,

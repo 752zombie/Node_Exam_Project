@@ -1,6 +1,6 @@
 <script>
 import { onMount } from 'svelte'
-import { loginStore, userStore } from "../stores.js";
+import { loginStore } from "../stores.js";
 import { likeUnlike } from '../components/likes'
 import { navigate } from 'svelte-navigator';
 

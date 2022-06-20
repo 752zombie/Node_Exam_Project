@@ -42,12 +42,14 @@ const onFileSelected = (e) => {
 
     let image = e.target.files[0];
     let reader = new FileReader();
-    console.log("image: ", image);
     reader.readAsDataURL(image);
     reader.onload = e => {
-        if (media == "picture") { photo = e.target.result } 
-        if (media == "video")   {
-            video = e.target.result  
+        if (media == "picture")  { 
+            photo = e.target.result; 
+        } 
+        
+        else if (media == "video")   {
+            video = e.target.result;  
             // Checks video format = mp4
             let formatString = video.split(";")[0]  
             let format = formatString.split("/")[1]                                   
@@ -115,10 +117,7 @@ const onFileSelected = (e) => {
 
                 {#if video}
                     <video width="320" height="240" controls>
-                        <source src={video} type="video/mpg">
                         <source src={video} type="video/mp4">
-                        
-                        <source src="movie.ogg" type="video/ogg">
                         <track src="" kind="captions" srclang="en" label="english_captions">
                         Your browser does not support the video tag.
                     </video>
@@ -129,8 +128,9 @@ const onFileSelected = (e) => {
                     <div class="chan" on:click={()=>{fileinput.click();}}>Choose Video (mp4)</div>
                     <input style="display:none"                    
                         type="file"
-                        data-max-file-size="5MB"
+                        data-max-file-size="40MB"
                         data-max-files="1"
+                        accept=".mp4"
                         on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
       
             {/if}
@@ -139,7 +139,7 @@ const onFileSelected = (e) => {
 
         <div>
             <textarea class="textarea" placeholder="e.g. This is my post to the world" bind:value={text}></textarea>
-            <button class="button is-light is-rounded" id="viewPostButton" on:click|preventDefault={createPost}>Submit</button>
+            <button class="button is-light is-rounded" id="viewPostButton" on:click={createPost}>Submit</button>
         </div>    
     </div>
     
