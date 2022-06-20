@@ -40,6 +40,7 @@
         const response = await fetch("http://localhost:8080/sign-in", request);
         
         if (response.ok) {
+            const data = await response.json();
             loginStore.set(true);
             userStore.set(data.user);
             sessionStorage.setItem("isLoggedIn", "true");

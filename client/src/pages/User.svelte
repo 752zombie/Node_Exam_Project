@@ -15,8 +15,9 @@ async function fetchUserPosts() {
     try {
         const url = "http://localhost:8080/posts/user/" + user.userId;
         const response = await fetch(url);
-        const data = await response.json();
-        if (data.result === "success") {
+        
+        if (response.ok) {
+            const data = await response.json();
             posts = data.posts;
         }
 
@@ -36,9 +37,9 @@ async function deletePost(postId) {
           },
           body : JSON.stringify({postId})
       }
-        const data = await fetch("http://localhost:8080/post", request);
+        const response = await fetch("http://localhost:8080/post", request);
 
-        if (data.statusText === "OK") {
+        if (response.ok) {
             fetchUserPosts()
         }
 

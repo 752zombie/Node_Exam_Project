@@ -32,13 +32,13 @@ router.get("/posts/:page", async (req, res) => {
                                                    "LIMIT 5 OFFSET ?");
         await preparedStatement.bind({1: user ? user.id : -1, 2 : offset});
         const posts = await preparedStatement.all();
-        res.send({result : "success", posts : posts});
+        res.send({posts : posts});
         
     } 
     
     catch (err) {
         console.log(err.message)
-        res.send({result : "Could not get the post"})
+        res.sendStatus(500);
 }     
 })
 
@@ -59,14 +59,22 @@ router.get("/post/:id", async (req, res) => {
                                                    "WHERE p.id = ? " +                                                     
                                                    "GROUP BY p.id ");
         await preparedStatement.bind({1 : user ? user.id : -1, 2 : req.params.id});
-        const post = await preparedStatement.all();       
-        res.send({result : "success", post : post[0]});
+        const post = await preparedStatement.get();
+        
+        if (post) {
+            res.send({post : post});
+        }
+
+        else {
+            res.sendStatus(404);
+        }
+        
     
     } 
     
     catch (err) {
         console.log(err.message)
-        res.send({result : "Could not get the post"})
+        res.sendStatus(500);
     }    
 
 })
@@ -90,13 +98,13 @@ router.get("/posts/user/:user_id", async (req, res) => {
                                                    "GROUP BY p.id ");
         await preparedStatement.bind({1 : user ? user.id : -1, 2 : req.params.user_id});
         const posts = await preparedStatement.all();       
-        res.send({result : "success", posts : posts});
+        res.send({posts : posts});
     
     } 
     
     catch (err) {
         console.log(err.message)
-        res.send({result : "Could not get the post"})
+        res.sendStatus(500);
     }    
 
 })
@@ -107,7 +115,7 @@ router.post("/post", async (req, res) => {
     const user = req.session.user;
 
     if (!user) {
-        res.send({result : "you need to be logged in"});
+        res.sendStatus(401);
         return;
     }
     
@@ -115,13 +123,13 @@ router.post("/post", async (req, res) => {
         const preparedStatement = await db.prepare("INSERT INTO posts (title, text, photo, video, date, user_id) VALUES (?, ?, ?, ?, ?, ?)");
         await preparedStatement.bind({1 : req.body.title, 2 : req.body.text, 3 : req.body.photo, 4 : req.body.video, 5 : getDate(), 6 : user.id});
         await preparedStatement.run();               
-        res.send({result : "success"});
+        res.sendStatus(200);
     
     } 
     
     catch(err) {
         console.log(err.message);
-        res.send({ result : "Could not send post to server"});
+        res.sendStatus(500);
     }
 })
 
@@ -153,13 +161,13 @@ router.post("/posts/sort", async (req, res) => {
         const preparedStatement = await db.prepare(sqlCall);
         await preparedStatement.bind({1 : user ? user.id : -1, 2 : offset});
         const posts = await preparedStatement.all();
-        res.send({result : "success", posts : posts});
+        res.send({posts : posts});
 
     } 
     
     catch (err) {
         console.log(err.message)
-        res.send({result : "Could not get the post"})
+        res.sendStatus(500);
 }     
 })
 
@@ -183,7 +191,7 @@ router.delete("/post", async (req, res) => {
     const user = req.session.user;
 
     if (!user) {
-        res.send({result : "you need to be logged in"});
+        res.sendStatus(401);
         return;
     }
 
@@ -191,12 +199,12 @@ router.delete("/post", async (req, res) => {
         const preparedStatement = await db.prepare("DELETE FROM posts WHERE id = ? AND user_id = ?");
         await preparedStatement.bind({1 : req.body.postId, 2 : user.id})
         await preparedStatement.run();
-        res.send({})  
+        res.sendStatus(200);
     } 
     
     catch (err) {
         console.log(err.message)
-        res.send({result : "Could not delete the post"})
+        res.sendStatus(500);
     }    
 
 })

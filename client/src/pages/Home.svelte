@@ -22,9 +22,10 @@
     
       try {
           const response = await fetch("http://localhost:8080/posts/" + pageToFetch);
-          let data = await response.json(); 
+          
     
-          if (data.result === "success") {
+          if (response.ok) {
+              const data = await response.json(); 
               posts = data.posts;        
               currentPostSorting = "byDate"        
               topPicture = "fresh.gif"
@@ -63,10 +64,11 @@
             }
             
             const response = await fetch("http://localhost:8080/posts/sort", request);
-            let data = await response.json(); 
+             
 
-            if (data.result === "success") {
-                posts = data.posts;             
+            if (response.ok) {
+              const data = await response.json();
+              posts = data.posts;             
             }
 
             return posts

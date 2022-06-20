@@ -58,9 +58,10 @@
     // get enough data about all conversations the currently logged in user is a part of to display username and fetch conversation content lazily
     async function fetchConversationsShallow() {
         const response = await fetch("http://localhost:8080/conversations");
-        const data = await response.json();
 
-        if (data.result === "success") {
+        if (response.ok) {
+            const data = await response.json();
+            
             for (let conversation of data.data) {
                 conversations.set(conversation.conversationId, 
                 {
@@ -80,9 +81,9 @@
     // fetch the messages of single conversation and put them into the appropriate conversation 
     async function fetchConversation(id) {
         const response = await fetch("http://localhost:8080/conversations/" + id);
-        const data = await response.json();
 
-        if (data.result === "success") {
+        if (response.ok) {
+            const data = await response.json();
             const conversation = conversations.get(id);
             conversation.messages = data.messages;
             conversation.isCached = true;
@@ -160,9 +161,8 @@
             }
 
             const response = await fetch("http://localhost:8080/conversations/" + activeConversation.conversationId, request);
-            const data = await response.json();
 
-            if (data.result === "success") {
+            if (response.ok) {
                 conversations.delete(activeConversation.conversationId);
                 setActiveConversation(undefined);
                 renderConversations();

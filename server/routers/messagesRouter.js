@@ -8,7 +8,7 @@ router.get("/conversations", async (req, res) => {
     const user = req.session.user;
 
     if (!user) {
-        res.send({result : "you need to be logged in"});
+        res.sendStatus(401);
         return;
     }
 
@@ -20,12 +20,12 @@ router.get("/conversations", async (req, res) => {
         
         await preparedStatement.bind({1 : user.id, 2 : user.id, 3 : user.id, 4 : user.id});
         const users = await preparedStatement.all();
-        res.send({result : "success", data : users});
+        res.send({data : users});
     }
 
     catch(err) {
         console.log(err.message);
-        res.send({result : "something went wrong"});
+        res.sendStatus(500);
     }
 })
 
@@ -34,8 +34,13 @@ router.get("/conversations/:id", async (req, res) => {
     const user = req.session.user;
     const conversationId = req.params.id;
 
-    if (!user || !conversationId) {
-        res.send({result : "error"});
+    if (!user) {
+        res.sendStatus(401);
+        return;
+    }
+
+    if (!conversationId) {
+        res.sendStatus(400);
         return;
     }
 
@@ -47,11 +52,11 @@ router.get("/conversations/:id", async (req, res) => {
         await preparedStatement.bind({1 : conversationId, 2 : user.id, 3 : user.id, 4 : user.id});
         const messages = await preparedStatement.all();
 
-        res.send({result : "success", messages : messages});
+        res.send({messages : messages});
     }
 
     catch(err) {
-        res.send({result : "something went wrong"});
+        res.sendStatus(500);
     }
 
 
@@ -61,9 +66,14 @@ router.get("/conversations/:id", async (req, res) => {
 router.delete("/conversations/:id", async (req, res) => {
     const user = req.session.user;
     const conversationId = req.params.id;
+    
+    if (!user) {
+        res.sendStatus(401);
+        return;
+    }
 
-    if (!user || !conversationId) {
-        res.send({result : "error"});
+    if (!conversationId) {
+        res.sendStatus(400);
         return;
     }
     
@@ -95,13 +105,13 @@ router.delete("/conversations/:id", async (req, res) => {
             await preparedStatement.run();
         }
 
-        res.send({result : "success"});
+        res.sendStatus(200);
         
     }
 
     catch(err) {
         console.log(err.message);
-        res.send({result : "something went wrong"});
+        res.sendStatus(500);
     }
 })
 

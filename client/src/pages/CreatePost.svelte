@@ -25,12 +25,12 @@ async function createPost() {
         body : JSON.stringify({title, text, photo, video})
     }
     const response = await fetch("http://localhost:8080/post", request);
-    const data = await response.json();
-    if (data.result === "success") {
+
+    if (response.ok) {
         navigate("/");
     }
     else {
-        console.log(data.result)
+        console.log(response.statusText);
     }
 }
 
