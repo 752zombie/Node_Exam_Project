@@ -9,7 +9,7 @@ router.post("/like", async (req, res) => {
     const user = req.session.user;
 
     if (!user) {
-        res.send({result : "you need to be logged in"});
+        res.sendStatus(401);
         return;
     }
 
@@ -23,12 +23,12 @@ router.post("/like", async (req, res) => {
         await preparedStatement.bind({1 : req.body.postId});
         await preparedStatement.run();
 
-        res.send({result : "success"});  
+        res.sendStatus(201);  
     } 
 
     catch(err) {
         console.log(err.message);
-        res.send({ result : "Could not like post"});
+        res.sendStatus(500);
     }  
     
 
@@ -41,7 +41,7 @@ router.post("/unlike", async (req, res) => {
     const user = req.session.user;
 
     if (!user) {
-        res.send({result : "you need to be logged in"});
+        res.sendStatus(401);
         return;
     }
     
@@ -61,12 +61,12 @@ router.post("/unlike", async (req, res) => {
         await preparedStatement.bind({1 : req.body.postId, 2 : user.id});
         await preparedStatement.run();
 
-        res.send({result : "success"});
+        res.sendStatus(201);
     } 
 
     catch(err) {
         console.log(err.message);
-        res.send({ result : "Could not unlike post"});
+        res.sendStatus(500);
     }
     
 

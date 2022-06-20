@@ -11,8 +11,8 @@ export async function likeUnlike(postId, likeOrUnlike="") {
         }
         
         const url = "http://localhost:8080/" + (likeOrUnlike === "unlike" ? "unlike" : "like");
-        const data = await fetch(url, request);
-        return data;
+        const response = await fetch(url, request);
+        return response;
       
   } catch(err) {
       console.log(err.message)

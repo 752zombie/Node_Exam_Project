@@ -29,7 +29,8 @@ router.post("/sign-up", async (req, res) => {
     const formData = req.body;
     // check for valid fields
     if (!formData.email || !formData.password || !formData.username) {
-        res.send({result : "invalid fields"});
+        res.statusMessage = "Invalid fields";
+        res.sendStatus(400);
         return;
     }
 
@@ -46,12 +47,13 @@ router.post("/sign-up", async (req, res) => {
         // add new user to session as currently logged in user
         req.session.isLoggedIn = true;
         req.session.user = {email : formData.email, username : formData.username};
-        res.send({result : "success", user : {email : formData.email, username : formData.username}});
+        res.send({user : {email : formData.email, username : formData.username}});
     }
 
     catch(err) {
         console.log(err.message);
-        res.send({ result : "User with email or username already exists"});
+        res.statusMessage = "User with that email or username already exists";
+        res.sendStatus(409);
     }
 
 
@@ -61,39 +63,40 @@ router.post("/sign-up", async (req, res) => {
 router.post("/sign-in", async (req, res) => {
     const formData = req.body;
     if (!formData.email || !formData.password) {
-        res.send({result : "invalid fields"});
+        res.statusMessage = "Invalid fields";
+        res.sendStatus(400);
         return;
     }
-
-    const preparedStatement = await db.prepare("SELECT * FROM users WHERE email = ?");
-    await preparedStatement.bind({1 : formData.email});
     
     try {
+
+        const preparedStatement = await db.prepare("SELECT * FROM users WHERE email = ?");
+        await preparedStatement.bind({1 : formData.email});
+        
         const user = await preparedStatement.get();
         await preparedStatement.finalize();
-
-        //console.log("LOGIN " + user)
-    
     
         bcrypt.compare(formData.password, user.password, (err, same) => {
             if (err) {
-                res.send({result : "server error"});
+                res.sendStatus(500);
             }
     
             else if (same) {
                 req.session.isLoggedIn = true;
                 req.session.user = user;
-                res.send({result : "success", user : {userId : user.id, username : user.username, email : user.email}});
+                res.send({user : {userId : user.id, username : user.username, email : user.email}});
             }
     
             else {
-                res.send({result : "wrong email or password"});
+                res.statusMessage = "Wrong email or password";
+                res.sendStatus(401);
             }
         })
     }
 
     catch(err) {
-        res.send({result : "wrong email or password"});
+        res.statusMessage = "Wrong email or password";
+        res.sendStatus(401);
     }
 
 
@@ -102,14 +105,14 @@ router.post("/sign-in", async (req, res) => {
 router.post("/sign-out", (req, res) => {
 
     try {
-    req.session.destroy((err) => {
-        res.send({result : "success"});
-    })
+        req.session.destroy((err) => {
+            res.sendStatus(200);
+        })
 
     }
 
     catch(err) {
-        res.send({result : "Could not logout"});
+        res.sendStatus(500);
     }    
 })
 

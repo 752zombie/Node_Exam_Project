@@ -19,14 +19,13 @@
             body : JSON.stringify({email : emailInpput, password : passwordInput, username : usernameInput})
         }
         const response = await fetch("http://localhost:8080/sign-up", request);
-        const data  = await response.json();
         
-        if (data.result === "success") {
+        if (response.ok) {
             signIn()
         }
 
         else {
-            currentError = data.result;
+            currentError = response.statusText;
         }
     }
 
@@ -39,9 +38,8 @@
             body : JSON.stringify({email : emailInpput, password : passwordInput})
         }
         const response = await fetch("http://localhost:8080/sign-in", request);
-        const data = await response.json();
         
-        if (data.result === "success") {
+        if (response.ok) {
             loginStore.set(true);
             userStore.set(data.user);
             sessionStorage.setItem("isLoggedIn", "true");
@@ -50,7 +48,7 @@
         }
 
         else {
-            currentError = data.result;
+            currentError = response.statusText;
         }
     }
 

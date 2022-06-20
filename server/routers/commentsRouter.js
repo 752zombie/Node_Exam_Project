@@ -16,13 +16,13 @@ router.get("/comment/replies/:post_id", async (req, res) => {
         await preparedStatement.bind({1 : req.params.post_id});
         const replies = await preparedStatement.all();
                 
-        res.send({result : "success", replies : replies});
+        res.send({replies : replies});
     
     } 
     
     catch(err) {
         console.log(err.message);
-        res.send({ result : "Could not send post to server"});
+        res.sendStatus(404);
     }
 })
 
@@ -38,13 +38,13 @@ router.get("/comments/:id", async (req, res) => {
         await preparedStatement.bind({1 : req.params.id});
         const comments = await preparedStatement.all();
 
-        res.send({result : "success", comments : comments});
+        res.send({comments : comments});
 
     }
     
     catch(err) {
         console.log(err.message);
-        res.send({ result : "Could not send post to server"});
+        res.sendStatus(404);
     }
 })
 
@@ -54,7 +54,7 @@ router.post("/comment", async (req, res) => {
     const user = req.session.user;
 
     if (!user) {
-        res.send({result : "you need to be logged in"});
+        res.sendStatus(401);
         return;
     }
     
@@ -64,13 +64,13 @@ router.post("/comment", async (req, res) => {
         await preparedStatement.bind({1 : req.body.comment, 2 : getDate(), 3 : req.body.postId, 4 : user.id});
         await preparedStatement.run();
                 
-        res.send({result : "success"});
+        res.sendStatus(201);
     
     } 
     
     catch(err) {
         console.log(err.message);
-        res.send({ result : "Could not send post to server"});
+        res.sendStatus(500);
     }
 })
 
@@ -80,7 +80,7 @@ router.post("/comment/reply", async (req, res) => {
     const user = req.session.user;
 
     if (!user) {
-        res.send({result : "you need to be logged in"});
+        res.sendStatus(401);
         return;
     }
     
@@ -90,13 +90,13 @@ router.post("/comment/reply", async (req, res) => {
         await preparedStatement.bind({1 : req.body.reply, 2 : getDate(), 3 : req.body.commentId, 4 : user.id});
         await preparedStatement.run();
                 
-        res.send({result : "success"});
+        res.sendStatus(201);
     
     } 
     
     catch(err) {
         console.log(err.message);
-        res.send({ result : "Could not send post to server"});
+        res.sendStatus(500);
     }
 })
 

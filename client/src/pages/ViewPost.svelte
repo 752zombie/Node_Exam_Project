@@ -29,9 +29,9 @@ async function fetchPost(postId) {
   try { 
     const url = "http://localhost:8080/post/" + postId;
     const response = await fetch(url);
-    const data = await response.json();
     
-    if (data.result === "success") {
+    if (response.ok) {
+        const data = await response.json();
         post = data.post;
     }
 
@@ -46,9 +46,9 @@ async function fetchComments(postId) {
     try { 
         const url = "http://localhost:8080/comments/" + postId;
         const response = await fetch(url);
-        const data = await response.json();
         
-        if (data.result === "success") {
+        if (response.ok) {
+            const data = await response.json();
             comments = data.comments;
         }
 
@@ -63,9 +63,9 @@ async function fetchReplies(postId) {
   try { 
     const url = "http://localhost:8080/comment/replies/" + postId;
     const response = await fetch(url);
-    const data = await response.json();
 
-    if (data.result === "success") {
+    if (response.ok) {
+        const data = await response.json();
         replies = data.replies;
     }
 
@@ -84,8 +84,8 @@ async function postComment() {
         body : JSON.stringify({comment : commentInput, postId : postId})
     }
     const response = await fetch("http://localhost:8080/comment", request);
-    const data = await response.json();
-    if (data.result === "success") {
+    
+    if (response.ok) {
         commentInput = ""
         fetchPost(postId)
         fetchComments(postId)
@@ -106,9 +106,8 @@ async function postReply(commentId) {
       body : JSON.stringify({reply : replyInput, commentId : commentId})
   }
   const response = await fetch("http://localhost:8080/comment/reply", request);
-  const data = await response.json();
 
-  if (data.result === "success") {
+  if (response.ok) {
       replyInput = ""
       await fetchPost(postId)
       await fetchReplies(postId)

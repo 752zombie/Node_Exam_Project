@@ -8,8 +8,8 @@ async function signOut(navigate) {
         method : "POST"
     }
     const response = await fetch("http://localhost:8080/sign-out", request);
-    const { result } = await response.json();
-    if (result === "success") {
+    
+    if (response.ok) {
         loginStore.set(false);
         sessionStorage.removeItem("isLoggedIn");
         if (socket) {
@@ -19,7 +19,7 @@ async function signOut(navigate) {
     }
 
     else {
-        alert("Something went wrong");
+        alert("Error: " + response.statusText);
     }
 }
 
