@@ -208,7 +208,7 @@
                   <div class="content">
     
                     {#if post.photo}
-                      <p><img src={post.photo} alt=""></p>
+                      <p><img src={post.photo} alt="" width="250" height="250"></p>
                     
                       <hr>
     
